@@ -22,7 +22,7 @@
             min-height: 100vh; /* 最小高度為視窗高度 */
             width: 100vw; /* 寬度為視窗寬度 */
             position: relative; /* 相對定位 */
-            background-color: black; /* 背景顏色為黑色 */
+            /* background-color: black; */ /* 已移除，由 JavaScript 控制 */
             perspective: none; /* 禁用 3D 透視 */
             transform-style: flat; /* 禁用 3D 變換樣式 */
             font-family: 'Inter', sans-serif; /* 使用 Inter 字體 */
@@ -35,7 +35,7 @@
             text-align: center; /* 文字居中對齊 */
             padding: 10px; /* 內邊距 */
             text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* 文字陰影 */
-            color: #00FF00; /* 文字顏色為綠色 */
+            /* color: #00FF00; */ /* 已移除，由 JavaScript 控制 */
             position: absolute; /* 絕對定位 */
             transition: transform 1s ease-in-out; /* 變換過渡效果 */
             z-index: 1; /* 層級 */
@@ -75,7 +75,7 @@
             font-size: 6vw; /* 字體大小根據視窗寬度調整 */
             display: block; /* 塊級元素 */
             white-space: nowrap; /* 不換行 */
-            color: #00FF00; /* 文字顏色為綠色 */
+            /* color: #00FF00; */ /* 已移除，將繼承父元素的顏色設定 */
         }
 
         /* noscript-message 樣式：當 JavaScript 被禁用時顯示的提示訊息樣式 */
@@ -284,6 +284,16 @@
                     <span class="slider"></span>
                 </label>
             </div>
+
+            <h3>顏色設定</h3>
+            <div class="setting-item">
+                <label for="textColor">文字顏色</label>
+                <input type="color" id="textColor" value="#00FF00">
+            </div>
+            <div class="setting-item">
+                <label for="backgroundColor">背景顏色</label>
+                <input type="color" id="backgroundColor" value="#000000">
+            </div>
         </div>
     </div>
 
@@ -301,7 +311,9 @@
             showLunarMonth: true,
             showLunarDay: true,
             showLunarShiChen: true,
-            showJieqi: true
+            showJieqi: true,
+            textColor: '#00FF00', // 新增文字顏色設定
+            backgroundColor: '#000000' // 新增背景顏色設定
         };
 
         /**
@@ -355,6 +367,8 @@
             document.getElementById('showLunarDay').checked = displaySettings.showLunarDay;
             document.getElementById('showLunarShiChen').checked = displaySettings.showLunarShiChen;
             document.getElementById('showJieqi').checked = displaySettings.showJieqi;
+            document.getElementById('textColor').value = displaySettings.textColor; // 更新文字顏色
+            document.getElementById('backgroundColor').value = displaySettings.backgroundColor; // 更新背景顏色
         }
 
         /**
@@ -480,13 +494,16 @@
             }
 
             // 更新畫面
-            document.getElementById('dateTimeDisplay').innerHTML = `
+            const dateTimeDisplay = document.getElementById('dateTimeDisplay');
+            dateTimeDisplay.innerHTML = `
                 <div class="time-text">
                     <span>${hoursMinutes}</span><span class="time-seconds" id="secondsDisplay">${seconds}</span>
                 </div>
                 ${gregorianDateHtml}
                 ${lunarAndJieQiHtml}
             `;
+            dateTimeDisplay.style.color = displaySettings.textColor; // 應用文字顏色
+            document.body.style.backgroundColor = displaySettings.backgroundColor; // 應用背景顏色
 
             // 為秒數元素添加點擊事件監聽器
             document.getElementById('secondsDisplay').onclick = function() {
@@ -593,6 +610,18 @@
             };
             document.getElementById('showJieqi').onchange = function(event) {
                 displaySettings.showJieqi = event.target.checked;
+                saveSettings(); // 儲存設定
+                updateDateTime(); // 更新顯示
+            };
+
+            // 新增文字顏色和背景顏色設定的變更事件
+            document.getElementById('textColor').onchange = function(event) {
+                displaySettings.textColor = event.target.value;
+                saveSettings(); // 儲存設定
+                updateDateTime(); // 更新顯示
+            };
+            document.getElementById('backgroundColor').onchange = function(event) {
+                displaySettings.backgroundColor = event.target.value;
                 saveSettings(); // 儲存設定
                 updateDateTime(); // 更新顯示
             };
