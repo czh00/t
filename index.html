@@ -25,6 +25,7 @@
             background-color: black; /* 背景顏色為黑色 */
             perspective: none; /* 禁用 3D 透視 */
             transform-style: flat; /* 禁用 3D 變換樣式 */
+            font-family: 'Inter', sans-serif; /* 使用 Inter 字體 */
         }
 
         /* dateTimeDisplay 樣式：時間顯示容器的樣式，包括字體、顏色、陰影和定位 */
@@ -57,6 +58,7 @@
             position: absolute; /* 絕對定位 */
             top: 8vw; /* 距離頂部 */
             right: -12vw; /* 距離右側 */
+            cursor: pointer; /* 鼠標懸停時顯示手型 */
         }
 
         /* gregorian-date-text 樣式：顯示公曆日期的文字樣式 */
@@ -83,9 +85,122 @@
             margin-top: 10px; /* 頂部外邊距 */
             display: block; /* 塊級元素 */
         }
+
+        /* 設定彈出視窗的樣式 */
+        .settings-modal {
+            display: none; /* 預設隱藏 */
+            position: fixed; /* 固定定位 */
+            z-index: 100; /* 確保在最上層 */
+            left: 0;
+            top: 0;
+            width: 100%; /* 全寬 */
+            height: 100%; /* 全高 */
+            overflow: auto; /* 允許滾動 */
+            background-color: rgba(0, 0, 0, 0.7); /* 半透明黑色背景 */
+            display: flex; /* 使用 Flexbox 居中內容 */
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 設定彈出視窗內容的樣式 */
+        .settings-content {
+            background-color: #333; /* 深灰色背景 */
+            margin: auto; /* 自動外邊距，用於居中 */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* 寬度佔 80% */
+            max-width: 400px; /* 最大寬度 */
+            border-radius: 10px; /* 圓角 */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); /* 陰影 */
+            color: #00FF00; /* 文字顏色 */
+            text-align: center; /* 文字居中 */
+        }
+
+        /* 關閉按鈕樣式 */
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* 設定項目樣式 */
+        .setting-item {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .setting-item label {
+            font-size: 1.2em;
+        }
+
+        /* 開關按鈕樣式 */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #00FF00;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #00FF00;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
     </style>
     <!-- 加入對外部 lunar-javascript 函式庫的引用，用於農曆和節氣計算 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.7.0/lunar.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
     <!-- 時間、日期、農曆和節氣的顯示容器 -->
@@ -98,9 +213,96 @@
             </div>
     </noscript>
 
+    <!-- 設定彈出視窗 -->
+    <div id="settingsModal" class="settings-modal">
+        <div class="settings-content">
+            <span class="close-button" id="closeModalBtn">&times;</span>
+            <h2>顯示設定</h2>
+            <h3>公曆</h3>
+            <div class="setting-item">
+                <label for="showGregorianYear">年</label>
+                <label class="switch">
+                    <input type="checkbox" id="showGregorianYear" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <label for="showGregorianMonth">月</label>
+                <label class="switch">
+                    <input type="checkbox" id="showGregorianMonth" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <label for="showGregorianDay">日</label>
+                <label class="switch">
+                    <input type="checkbox" id="showGregorianDay" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <label for="showGregorianWeekday">周</label>
+                <label class="switch">
+                    <input type="checkbox" id="showGregorianWeekday" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <h3>農曆</h3>
+            <div class="setting-item">
+                <label for="showMinguoYear">年</label>
+                <label class="switch">
+                    <input type="checkbox" id="showMinguoYear" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <label for="showLunarMonth">月</label>
+                <label class="switch">
+                    <input type="checkbox" id="showLunarMonth" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <label for="showLunarDay">日</label>
+                <label class="switch">
+                    <input type="checkbox" id="showLunarDay" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <label for="showLunarShiChen">時</label>
+                <label class="switch">
+                    <input type="checkbox" id="showLunarShiChen" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <label for="showJieqi">節氣</label>
+                <label class="switch">
+                    <input type="checkbox" id="showJieqi" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+
     <script>
         let lastSecondTensDigit = -1; // 用於追蹤秒數的十位數，以觸發每十秒的隨機移動
         let currentPosition = { x: 0, y: 0 }; // 追蹤時間顯示元素的當前位置
+
+        // 預設顯示設定
+        let displaySettings = {
+            showGregorianYear: true,
+            showGregorianMonth: true,
+            showGregorianDay: true,
+            showGregorianWeekday: true,
+            showMinguoYear: true,
+            showLunarMonth: true, // 新增農曆月選項
+            showLunarDay: true,    // 新增農曆日選項
+            showLunarShiChen: true, // 新增農曆時選項
+            showJieqi: true
+        };
 
         /**
          * 更新時間、日期、農曆和節氣的顯示。
@@ -117,17 +319,9 @@
                 lastSecondTensDigit = secondTensDigit; // 更新秒數的十位數
             }
 
-            // 格式化時間和公曆日期
+            // 格式化時間
             const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }; // 時間格式選項
-            // 將 weekday 設置為 'long' 以便後續替換為「周幾」
-            const gregorianDateOptions = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' }; // 公曆日期格式選項
-
             const fullTimeString = now.toLocaleTimeString('zh-Hant', timeOptions); // 格式化完整時間字串
-            let gregorianDateString = now.toLocaleDateString('zh-Hant', gregorianDateOptions); // 格式化公曆日期字串
-
-            // 將「星期幾」替換為「周幾」
-            gregorianDateString = gregorianDateString.replace('星期', '周');
-
             const timeParts = fullTimeString.split(':'); // 分割時間字串
             let hoursMinutes = ''; // 時分部分
             let seconds = ''; // 秒數部分
@@ -138,19 +332,35 @@
                 hoursMinutes = fullTimeString;
             }
 
-            let lunarAndJieQiHtml = ''; // 初始化為空字串，用於存放農曆和節氣的 HTML
+            // 公曆日期邏輯
+            let gregorianDateHtml = '';
+            if (displaySettings.showGregorianYear || displaySettings.showGregorianMonth || displaySettings.showGregorianDay || displaySettings.showGregorianWeekday) {
+                const year = now.getFullYear();
+                const month = now.getMonth() + 1;
+                const day = now.getDate();
+                const weekday = ['日', '一', '二', '三', '四', '五', '六'][now.getDay()];
+
+                let gregorianParts = [];
+                if (displaySettings.showGregorianYear) gregorianParts.push(`${year}年`);
+                if (displaySettings.showGregorianMonth) gregorianParts.push(`${month}月`);
+                if (displaySettings.showGregorianDay) gregorianParts.push(`${day}日`);
+                if (displaySettings.showGregorianWeekday) gregorianParts.push(`周${weekday}`);
+
+                if (gregorianParts.length > 0) {
+                    gregorianDateHtml = `<div class="gregorian-date-text">${gregorianParts.join('')}</div>`;
+                }
+            }
 
             // 農曆和節氣邏輯 (僅在 lunar-javascript 函式庫載入成功時執行)
-            // 檢查 Lunar 和 Solar 物件是否存在，以確保函式庫已載入
-            if (typeof Lunar !== 'undefined' && typeof Solar !== 'undefined') {
-                const year = now.getFullYear(); // 當前年份
-                const month = now.getMonth() + 1; // 當前月份 (0-11)
-                const day = now.getDate(); // 當前日期
-                const hour = now.getHours(); // 當前小時
-                const minguoYear = year - 1911; // 計算民國年份
+            let lunarAndJieQiHtml = '';
+            if ((displaySettings.showMinguoYear || displaySettings.showLunarMonth || displaySettings.showLunarDay || displaySettings.showLunarShiChen || displaySettings.showJieqi) && typeof Lunar !== 'undefined' && typeof Solar !== 'undefined') {
+                const year = now.getFullYear();
+                const day = now.getDate();
+                const hour = now.getHours();
+                const minguoYear = year - 1911;
 
-                const solar = Solar.fromYmd(year, month, day); // 創建公曆日期物件
-                const lunar = solar.getLunar(); // 獲取對應的農曆日期物件
+                const solar = Solar.fromYmd(year, now.getMonth() + 1, day);
+                const lunar = solar.getLunar();
 
                 /**
                  * 根據小時獲取時辰。
@@ -173,49 +383,72 @@
                     return '';
                 }
 
-                const shiChen = getShiChen(hour); // 獲取當前時辰
-                const lunarDateString = `${minguoYear}${lunar.getYearShengXiao()}年${lunar.getMonthInChinese()}月${lunar.getDayInChinese()}${shiChen}時`; // 組合農曆日期字串
+                let lunarParts = [];
+                if (displaySettings.showMinguoYear) lunarParts.push(`${minguoYear}${lunar.getYearShengXiao()}年`);
+                if (displaySettings.showLunarMonth) lunarParts.push(`${lunar.getMonthInChinese()}月`);
+                if (displaySettings.showLunarDay) lunarParts.push(`${lunar.getDayInChinese()}`);
+                if (displaySettings.showLunarShiChen) lunarParts.push(`${getShiChen(hour)}時`);
 
-                // 節氣倒數邏輯
-                const today = Solar.fromDate(now); // 創建今天的公曆日期物件
-                const lunarToday = today.getLunar(); // 獲取今天的農曆日期物件
-                let nextJieQi = null; // 下一個節氣名稱
-                let nextJieQiDate = null; // 下一個節氣日期
-                let minDiff = Infinity; // 最小天數差
+                let lunarDateString = lunarParts.join('');
 
-                const jieQis = lunarToday.getJieQiTable(); // 獲取節氣表
-                for (const [name, dateStr] of Object.entries(jieQis)) {
-                    const date = new Date(dateStr + 'T00:00:00'); // 將節氣日期轉換為 Date 物件
-                    if (date >= now) { // 如果節氣日期在當前或未來
-                        const diff = Math.ceil((date - now) / (1000 * 60 * 60 * 24)); // 計算與當前日期的天數差
-                        if (diff < minDiff) {
-                            nextJieQi = name;
-                            nextJieQiDate = date;
-                            minDiff = diff;
+                let jieQiText = '';
+                if (displaySettings.showJieqi) {
+                    const today = Solar.fromDate(now);
+                    const lunarToday = today.getLunar();
+                    let nextJieQi = null;
+                    let nextJieQiDate = null;
+                    let minDiff = Infinity;
+
+                    const jieQis = lunarToday.getJieQiTable();
+                    for (const [name, dateStr] of Object.entries(jieQis)) {
+                        const date = new Date(dateStr + 'T00:00:00');
+                        if (date >= now) {
+                            const diff = Math.ceil((date - now) / (1000 * 60 * 60 * 24));
+                            if (diff < minDiff) {
+                                nextJieQi = name;
+                                nextJieQiDate = date;
+                                minDiff = diff;
+                            }
+                        }
+                    }
+
+                    if (nextJieQi && nextJieQiDate) {
+                        if (minDiff === 0) {
+                            jieQiText = `${nextJieQi}`;
+                        } else {
+                            jieQiText = `再${minDiff}天${nextJieQi}`;
                         }
                     }
                 }
 
-                let jieQiText = ''; // 節氣文字
-                if (nextJieQi && nextJieQiDate) {
-                    if (minDiff === 0) { // 如果天數差為 0，表示節氣就是今天
-                        jieQiText = `${nextJieQi}`;
-                    } else {
-                        jieQiText = `再${minDiff}天${nextJieQi}`;
-                    }
+                if (lunarDateString || jieQiText) {
+                    lunarAndJieQiHtml = `<div class="lunar-jieqi-combined-text">${lunarDateString} ${jieQiText}</div>`;
                 }
-                // 只有當農曆函式庫載入成功時才生成這部分的 HTML
-                lunarAndJieQiHtml = `<div class="lunar-jieqi-combined-text">${lunarDateString} ${jieQiText}</div>`;
             }
 
             // 更新畫面
             document.getElementById('dateTimeDisplay').innerHTML = `
                 <div class="time-text">
-                    <span>${hoursMinutes}</span><span class="time-seconds">${seconds}</span>
+                    <span>${hoursMinutes}</span><span class="time-seconds" id="secondsDisplay">${seconds}</span>
                 </div>
-                <div class="gregorian-date-text">${gregorianDateString}</div>
-                ${lunarAndJieQiHtml} <!-- 根據 lunarAndJieQiHtml 的內容有條件地包含農曆/節氣 HTML -->
+                ${gregorianDateHtml}
+                ${lunarAndJieQiHtml}
             `;
+
+            // 為秒數元素添加點擊事件監聽器
+            document.getElementById('secondsDisplay').onclick = function() {
+                document.getElementById('settingsModal').style.display = 'flex';
+                // 更新設定視窗中的開關狀態以匹配當前設定
+                document.getElementById('showGregorianYear').checked = displaySettings.showGregorianYear;
+                document.getElementById('showGregorianMonth').checked = displaySettings.showGregorianMonth;
+                document.getElementById('showGregorianDay').checked = displaySettings.showGregorianDay;
+                document.getElementById('showGregorianWeekday').checked = displaySettings.showGregorianWeekday;
+                document.getElementById('showMinguoYear').checked = displaySettings.showMinguoYear;
+                document.getElementById('showLunarMonth').checked = displaySettings.showLunarMonth;
+                document.getElementById('showLunarDay').checked = displaySettings.showLunarDay;
+                document.getElementById('showLunarShiChen').checked = displaySettings.showLunarShiChen;
+                document.getElementById('showJieqi').checked = displaySettings.showJieqi;
+            };
         }
 
         /**
@@ -255,7 +488,8 @@
             // 更新當前位置並應用 CSS 變換
             currentPosition.x = newTargetX;
             currentPosition.y = newTargetY;
-            displayElement.style.transform = `translate(calc(-50% + ${newTargetX}px), calc(-65% + ${newTargetY}px))`;
+            // 調整 transform 確保居中，因為內容高度可能會因顯示設定而變化
+            displayElement.style.transform = `translate(calc(-50% + ${newTargetX}px), calc(-50% + ${newTargetY}px))`;
         }
 
         // 頁面載入後開始更新時間
@@ -263,6 +497,49 @@
             currentPosition = { x: 0, y: 0 }; // 初始化元素位置
             setInterval(updateDateTime, 1000); // 每秒更新一次
             updateDateTime(); // 立即更新一次以避免延遲
+
+            // 設定彈出視窗的關閉按鈕事件
+            document.getElementById('closeModalBtn').onclick = function() {
+                document.getElementById('settingsModal').style.display = 'none';
+            };
+
+            // 設定選項的變更事件
+            document.getElementById('showGregorianYear').onchange = function(event) {
+                displaySettings.showGregorianYear = event.target.checked;
+                updateDateTime(); // 更新顯示
+            };
+            document.getElementById('showGregorianMonth').onchange = function(event) {
+                displaySettings.showGregorianMonth = event.target.checked;
+                updateDateTime(); // 更新顯示
+            };
+            document.getElementById('showGregorianDay').onchange = function(event) {
+                displaySettings.showGregorianDay = event.target.checked;
+                updateDateTime(); // 更新顯示
+            };
+            document.getElementById('showGregorianWeekday').onchange = function(event) {
+                displaySettings.showGregorianWeekday = event.target.checked;
+                updateDateTime(); // 更新顯示
+            };
+            document.getElementById('showMinguoYear').onchange = function(event) {
+                displaySettings.showMinguoYear = event.target.checked;
+                updateDateTime(); // 更新顯示
+            };
+            document.getElementById('showLunarMonth').onchange = function(event) {
+                displaySettings.showLunarMonth = event.target.checked;
+                updateDateTime(); // 更新顯示
+            };
+            document.getElementById('showLunarDay').onchange = function(event) {
+                displaySettings.showLunarDay = event.target.checked;
+                updateDateTime(); // 更新顯示
+            };
+            document.getElementById('showLunarShiChen').onchange = function(event) {
+                displaySettings.showLunarShiChen = event.target.checked;
+                updateDateTime(); // 更新顯示
+            };
+            document.getElementById('showJieqi').onchange = function(event) {
+                displaySettings.showJieqi = event.target.checked;
+                updateDateTime(); // 更新顯示
+            };
         };
     </script>
 </body>
