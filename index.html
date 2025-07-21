@@ -222,28 +222,28 @@
             <div class="setting-item">
                 <label for="showGregorianYear">年</label>
                 <label class="switch">
-                    <input type="checkbox" id="showGregorianYear" checked>
+                    <input type="checkbox" id="showGregorianYear">
                     <span class="slider"></span>
                 </label>
             </div>
             <div class="setting-item">
                 <label for="showGregorianMonth">月</label>
                 <label class="switch">
-                    <input type="checkbox" id="showGregorianMonth" checked>
+                    <input type="checkbox" id="showGregorianMonth">
                     <span class="slider"></span>
                 </label>
             </div>
             <div class="setting-item">
                 <label for="showGregorianDay">日</label>
                 <label class="switch">
-                    <input type="checkbox" id="showGregorianDay" checked>
+                    <input type="checkbox" id="showGregorianDay">
                     <span class="slider"></span>
                 </label>
             </div>
             <div class="setting-item">
                 <label for="showGregorianWeekday">周</label>
                 <label class="switch">
-                    <input type="checkbox" id="showGregorianWeekday" checked>
+                    <input type="checkbox" id="showGregorianWeekday">
                     <span class="slider"></span>
                 </label>
             </div>
@@ -252,35 +252,35 @@
             <div class="setting-item">
                 <label for="showMinguoYear">年</label>
                 <label class="switch">
-                    <input type="checkbox" id="showMinguoYear" checked>
+                    <input type="checkbox" id="showMinguoYear">
                     <span class="slider"></span>
                 </label>
             </div>
             <div class="setting-item">
                 <label for="showLunarMonth">月</label>
                 <label class="switch">
-                    <input type="checkbox" id="showLunarMonth" checked>
+                    <input type="checkbox" id="showLunarMonth">
                     <span class="slider"></span>
                 </label>
             </div>
             <div class="setting-item">
                 <label for="showLunarDay">日</label>
                 <label class="switch">
-                    <input type="checkbox" id="showLunarDay" checked>
+                    <input type="checkbox" id="showLunarDay">
                     <span class="slider"></span>
                 </label>
             </div>
             <div class="setting-item">
                 <label for="showLunarShiChen">時</label>
                 <label class="switch">
-                    <input type="checkbox" id="showLunarShiChen" checked>
+                    <input type="checkbox" id="showLunarShiChen">
                     <span class="slider"></span>
                 </label>
             </div>
             <div class="setting-item">
                 <label for="showJieqi">節氣</label>
                 <label class="switch">
-                    <input type="checkbox" id="showJieqi" checked>
+                    <input type="checkbox" id="showJieqi">
                     <span class="slider"></span>
                 </label>
             </div>
@@ -298,11 +298,64 @@
             showGregorianDay: true,
             showGregorianWeekday: true,
             showMinguoYear: true,
-            showLunarMonth: true, // 新增農曆月選項
-            showLunarDay: true,    // 新增農曆日選項
-            showLunarShiChen: true, // 新增農曆時選項
+            showLunarMonth: true,
+            showLunarDay: true,
+            showLunarShiChen: true,
             showJieqi: true
         };
+
+        /**
+         * 將顯示設定儲存到 Cookie 中。
+         */
+        function saveSettings() {
+            // 將 displaySettings 物件轉換為 JSON 字串
+            const settingsJson = JSON.stringify(displaySettings);
+            // 將 JSON 字串儲存為名為 'displaySettings' 的 Cookie，有效期為 365 天
+            document.cookie = `displaySettings=${settingsJson}; expires=${new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString()}; path=/`;
+        }
+
+        /**
+         * 從 Cookie 中載入顯示設定。
+         */
+        function loadSettings() {
+            // 讀取所有 Cookie
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                // 查找名為 'displaySettings' 的 Cookie
+                if (cookie.startsWith('displaySettings=')) {
+                    try {
+                        // 解析 Cookie 中的 JSON 字串，並更新 displaySettings
+                        const settingsJson = cookie.substring('displaySettings='.length);
+                        const loadedSettings = JSON.parse(settingsJson);
+                        // 遍歷 loadedSettings 並更新 displaySettings，確保所有預設值都被覆蓋
+                        for (const key in loadedSettings) {
+                            if (displaySettings.hasOwnProperty(key)) {
+                                displaySettings[key] = loadedSettings[key];
+                            }
+                        }
+                    } catch (e) {
+                        console.error("Failed to parse display settings from cookie:", e);
+                    }
+                    break;
+                }
+            }
+        }
+
+        /**
+         * 更新設定彈出視窗中的開關狀態以匹配當前設定。
+         */
+        function updateSettingsModalCheckboxes() {
+            document.getElementById('showGregorianYear').checked = displaySettings.showGregorianYear;
+            document.getElementById('showGregorianMonth').checked = displaySettings.showGregorianMonth;
+            document.getElementById('showGregorianDay').checked = displaySettings.showGregorianDay;
+            document.getElementById('showGregorianWeekday').checked = displaySettings.showGregorianWeekday;
+            document.getElementById('showMinguoYear').checked = displaySettings.showMinguoYear;
+            document.getElementById('showLunarMonth').checked = displaySettings.showLunarMonth;
+            document.getElementById('showLunarDay').checked = displaySettings.showLunarDay;
+            document.getElementById('showLunarShiChen').checked = displaySettings.showLunarShiChen;
+            document.getElementById('showJieqi').checked = displaySettings.showJieqi;
+        }
 
         /**
          * 更新時間、日期、農曆和節氣的顯示。
@@ -439,15 +492,7 @@
             document.getElementById('secondsDisplay').onclick = function() {
                 document.getElementById('settingsModal').style.display = 'flex';
                 // 更新設定視窗中的開關狀態以匹配當前設定
-                document.getElementById('showGregorianYear').checked = displaySettings.showGregorianYear;
-                document.getElementById('showGregorianMonth').checked = displaySettings.showGregorianMonth;
-                document.getElementById('showGregorianDay').checked = displaySettings.showGregorianDay;
-                document.getElementById('showGregorianWeekday').checked = displaySettings.showGregorianWeekday;
-                document.getElementById('showMinguoYear').checked = displaySettings.showMinguoYear;
-                document.getElementById('showLunarMonth').checked = displaySettings.showLunarMonth;
-                document.getElementById('showLunarDay').checked = displaySettings.showLunarDay;
-                document.getElementById('showLunarShiChen').checked = displaySettings.showLunarShiChen;
-                document.getElementById('showJieqi').checked = displaySettings.showJieqi;
+                updateSettingsModalCheckboxes();
             };
         }
 
@@ -494,6 +539,8 @@
 
         // 頁面載入後開始更新時間
         window.onload = function () {
+            loadSettings(); // 載入之前儲存的設定
+            updateSettingsModalCheckboxes(); // 在載入設定後立即更新設定視窗中的開關狀態
             currentPosition = { x: 0, y: 0 }; // 初始化元素位置
             setInterval(updateDateTime, 1000); // 每秒更新一次
             updateDateTime(); // 立即更新一次以避免延遲
@@ -506,38 +553,47 @@
             // 設定選項的變更事件
             document.getElementById('showGregorianYear').onchange = function(event) {
                 displaySettings.showGregorianYear = event.target.checked;
+                saveSettings(); // 儲存設定
                 updateDateTime(); // 更新顯示
             };
             document.getElementById('showGregorianMonth').onchange = function(event) {
                 displaySettings.showGregorianMonth = event.target.checked;
+                saveSettings(); // 儲存設定
                 updateDateTime(); // 更新顯示
             };
             document.getElementById('showGregorianDay').onchange = function(event) {
                 displaySettings.showGregorianDay = event.target.checked;
+                saveSettings(); // 儲存設定
                 updateDateTime(); // 更新顯示
             };
             document.getElementById('showGregorianWeekday').onchange = function(event) {
                 displaySettings.showGregorianWeekday = event.target.checked;
+                saveSettings(); // 儲存設定
                 updateDateTime(); // 更新顯示
             };
             document.getElementById('showMinguoYear').onchange = function(event) {
                 displaySettings.showMinguoYear = event.target.checked;
+                saveSettings(); // 儲存設定
                 updateDateTime(); // 更新顯示
             };
             document.getElementById('showLunarMonth').onchange = function(event) {
                 displaySettings.showLunarMonth = event.target.checked;
+                saveSettings(); // 儲存設定
                 updateDateTime(); // 更新顯示
             };
             document.getElementById('showLunarDay').onchange = function(event) {
                 displaySettings.showLunarDay = event.target.checked;
+                saveSettings(); // 儲存設定
                 updateDateTime(); // 更新顯示
             };
             document.getElementById('showLunarShiChen').onchange = function(event) {
                 displaySettings.showLunarShiChen = event.target.checked;
+                saveSettings(); // 儲存設定
                 updateDateTime(); // 更新顯示
             };
             document.getElementById('showJieqi').onchange = function(event) {
                 displaySettings.showJieqi = event.target.checked;
+                saveSettings(); // 儲存設定
                 updateDateTime(); // 更新顯示
             };
         };
