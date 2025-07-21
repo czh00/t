@@ -138,6 +138,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap; /* 允許換行 */
         }
 
         .setting-item label {
@@ -150,6 +151,7 @@
             display: inline-block;
             width: 60px;
             height: 34px;
+            margin-right: 10px; /* 在開關和顏色選擇器之間增加間距 */
         }
 
         .switch input {
@@ -197,6 +199,32 @@
             -ms-transform: translateX(26px);
             transform: translateX(26px);
         }
+
+        /* 顏色選擇器樣式 */
+        .setting-item input[type="color"] {
+            width: 40px; /* 調整顏色選擇器寬度 */
+            height: 34px; /* 調整顏色選擇器高度 */
+            border: none;
+            padding: 0;
+            background: none;
+            cursor: pointer;
+        }
+
+        /* 恢復預設按鈕樣式 */
+        .restore-button {
+            background-color: #555;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 20px;
+        }
+
+        .restore-button:hover {
+            background-color: #777;
+        }
     </style>
     <!-- 加入對外部 lunar-javascript 函式庫的引用，用於農曆和節氣計算 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.7.0/lunar.min.js"></script>
@@ -225,6 +253,7 @@
                     <input type="checkbox" id="showGregorianYear">
                     <span class="slider"></span>
                 </label>
+                <input type="color" id="gregorianYearColor" value="#00FF00">
             </div>
             <div class="setting-item">
                 <label for="showGregorianMonth">月</label>
@@ -232,6 +261,7 @@
                     <input type="checkbox" id="showGregorianMonth">
                     <span class="slider"></span>
                 </label>
+                <input type="color" id="gregorianMonthColor" value="#00FF00">
             </div>
             <div class="setting-item">
                 <label for="showGregorianDay">日</label>
@@ -239,6 +269,7 @@
                     <input type="checkbox" id="showGregorianDay">
                     <span class="slider"></span>
                 </label>
+                <input type="color" id="gregorianDayColor" value="#00FF00">
             </div>
             <div class="setting-item">
                 <label for="showGregorianWeekday">周</label>
@@ -246,6 +277,7 @@
                     <input type="checkbox" id="showGregorianWeekday">
                     <span class="slider"></span>
                 </label>
+                <input type="color" id="gregorianWeekdayColor" value="#00FF00">
             </div>
 
             <h3>農曆</h3>
@@ -255,6 +287,7 @@
                     <input type="checkbox" id="showMinguoYear">
                     <span class="slider"></span>
                 </label>
+                <input type="color" id="minguoYearColor" value="#00FF00">
             </div>
             <div class="setting-item">
                 <label for="showLunarMonth">月</label>
@@ -262,6 +295,7 @@
                     <input type="checkbox" id="showLunarMonth">
                     <span class="slider"></span>
                 </label>
+                <input type="color" id="lunarMonthColor" value="#00FF00">
             </div>
             <div class="setting-item">
                 <label for="showLunarDay">日</label>
@@ -269,6 +303,7 @@
                     <input type="checkbox" id="showLunarDay">
                     <span class="slider"></span>
                 </label>
+                <input type="color" id="lunarDayColor" value="#00FF00">
             </div>
             <div class="setting-item">
                 <label for="showLunarShiChen">時</label>
@@ -276,6 +311,7 @@
                     <input type="checkbox" id="showLunarShiChen">
                     <span class="slider"></span>
                 </label>
+                <input type="color" id="lunarShiChenColor" value="#00FF00">
             </div>
             <div class="setting-item">
                 <label for="showJieqi">節氣</label>
@@ -283,17 +319,20 @@
                     <input type="checkbox" id="showJieqi">
                     <span class="slider"></span>
                 </label>
+                <input type="color" id="jieqiColor" value="#00FF00">
             </div>
 
-            <h3>顏色設定</h3>
+            <h3>整體顏色設定</h3>
             <div class="setting-item">
-                <label for="textColor">文字顏色</label>
+                <label for="textColor">主時間文字顏色</label>
                 <input type="color" id="textColor" value="#00FF00">
             </div>
             <div class="setting-item">
                 <label for="backgroundColor">背景顏色</label>
                 <input type="color" id="backgroundColor" value="#000000">
             </div>
+
+            <button id="restoreDefaultsBtn" class="restore-button">恢復預設</button>
         </div>
     </div>
 
@@ -301,8 +340,8 @@
         let lastSecondTensDigit = -1; // 用於追蹤秒數的十位數，以觸發每十秒的隨機移動
         let currentPosition = { x: 0, y: 0 }; // 追蹤時間顯示元素的當前位置
 
-        // 預設顯示設定
-        let displaySettings = {
+        // 預設顯示設定的初始值
+        const defaultDisplaySettings = {
             showGregorianYear: true,
             showGregorianMonth: true,
             showGregorianDay: true,
@@ -312,35 +351,49 @@
             showLunarDay: true,
             showLunarShiChen: true,
             showJieqi: true,
-            textColor: '#00FF00', // 新增文字顏色設定
-            backgroundColor: '#000000' // 新增背景顏色設定
+            textColor: '#00FF00', // 主時間文字顏色設定
+            backgroundColor: '#000000', // 背景顏色設定
+            // 個別顯示項目的預設顏色設定
+            gregorianYearColor: '#00FF00',
+            gregorianMonthColor: '#00FF00',
+            gregorianDayColor: '#00FF00',
+            gregorianWeekdayColor: '#00FF00',
+            minguoYearColor: '#00FF00',
+            lunarMonthColor: '#00FF00',
+            lunarDayColor: '#00FF00',
+            lunarShiChenColor: '#00FF00',
+            jieqiColor: '#00FF00'
         };
+
+        // displaySettings 儲存當前應用於顯示的設定。
+        // 使用展開運算符 (...) 複製 defaultDisplaySettings，確保 displaySettings 獨立於預設值，
+        // 允許用戶修改並儲存這些設定而不會影響原始預設值。
+        let displaySettings = { ...defaultDisplaySettings }; 
 
         /**
          * 將顯示設定儲存到 Cookie 中。
+         * 將 displaySettings 物件轉換為 JSON 字串並儲存到名為 'displaySettings' 的 Cookie 中。
+         * Cookie 有效期設定為 365 天，並在整個網站路徑下可用。
          */
         function saveSettings() {
-            // 將 displaySettings 物件轉換為 JSON 字串
             const settingsJson = JSON.stringify(displaySettings);
-            // 將 JSON 字串儲存為名為 'displaySettings' 的 Cookie，有效期為 365 天
             document.cookie = `displaySettings=${settingsJson}; expires=${new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString()}; path=/`;
         }
 
         /**
          * 從 Cookie 中載入顯示設定。
+         * 讀取 'displaySettings' Cookie，解析 JSON 字串，並更新 displaySettings 物件。
+         * 如果 Cookie 不存在或解析失敗，將保留當前的 displaySettings（預設值或之前載入的值）。
+         * 這種遍歷確保了即使在 Cookie 中缺少某些設定時，新的預設值也能被應用。
          */
         function loadSettings() {
-            // 讀取所有 Cookie
             const cookies = document.cookie.split(';');
             for (let i = 0; i < cookies.length; i++) {
                 let cookie = cookies[i].trim();
-                // 查找名為 'displaySettings' 的 Cookie
                 if (cookie.startsWith('displaySettings=')) {
                     try {
-                        // 解析 Cookie 中的 JSON 字串，並更新 displaySettings
                         const settingsJson = cookie.substring('displaySettings='.length);
                         const loadedSettings = JSON.parse(settingsJson);
-                        // 遍歷 loadedSettings 並更新 displaySettings，確保所有預設值都被覆蓋
                         for (const key in loadedSettings) {
                             if (displaySettings.hasOwnProperty(key)) {
                                 displaySettings[key] = loadedSettings[key];
@@ -355,7 +408,7 @@
         }
 
         /**
-         * 更新設定彈出視窗中的開關狀態以匹配當前設定。
+         * 更新設定彈出視窗中的所有 UI 元素（開關和顏色選擇器）以匹配當前 displaySettings。
          */
         function updateSettingsModalCheckboxes() {
             document.getElementById('showGregorianYear').checked = displaySettings.showGregorianYear;
@@ -367,13 +420,25 @@
             document.getElementById('showLunarDay').checked = displaySettings.showLunarDay;
             document.getElementById('showLunarShiChen').checked = displaySettings.showLunarShiChen;
             document.getElementById('showJieqi').checked = displaySettings.showJieqi;
-            document.getElementById('textColor').value = displaySettings.textColor; // 更新文字顏色
-            document.getElementById('backgroundColor').value = displaySettings.backgroundColor; // 更新背景顏色
+
+            document.getElementById('textColor').value = displaySettings.textColor;
+            document.getElementById('backgroundColor').value = displaySettings.backgroundColor;
+
+            document.getElementById('gregorianYearColor').value = displaySettings.gregorianYearColor;
+            document.getElementById('gregorianMonthColor').value = displaySettings.gregorianMonthColor;
+            document.getElementById('gregorianDayColor').value = displaySettings.gregorianDayColor;
+            document.getElementById('gregorianWeekdayColor').value = displaySettings.gregorianWeekdayColor;
+            document.getElementById('minguoYearColor').value = displaySettings.minguoYearColor;
+            document.getElementById('lunarMonthColor').value = displaySettings.lunarMonthColor;
+            document.getElementById('lunarDayColor').value = displaySettings.lunarDayColor;
+            document.getElementById('lunarShiChenColor').value = displaySettings.lunarShiChenColor;
+            document.getElementById('jieqiColor').value = displaySettings.jieqiColor;
         }
 
         /**
          * 更新時間、日期、農曆和節氣的顯示。
-         * 每十秒會觸發一次隨機移動效果。
+         * 每秒呼叫一次，並在每十秒觸發一次隨機移動效果。
+         * 根據 displaySettings 中的值動態生成 HTML 並應用顏色。
          */
         function updateDateTime() {
             const now = new Date(); // 獲取當前日期和時間
@@ -387,11 +452,11 @@
             }
 
             // 格式化時間
-            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }; // 時間格式選項
-            const fullTimeString = now.toLocaleTimeString('zh-Hant', timeOptions); // 格式化完整時間字串
-            const timeParts = fullTimeString.split(':'); // 分割時間字串
-            let hoursMinutes = ''; // 時分部分
-            let seconds = ''; // 秒數部分
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            const fullTimeString = now.toLocaleTimeString('zh-Hant', timeOptions);
+            const timeParts = fullTimeString.split(':');
+            let hoursMinutes = '';
+            let seconds = '';
             if (timeParts.length === 3) {
                 hoursMinutes = `${timeParts[0]}:${timeParts[1]}`;
                 seconds = timeParts[2];
@@ -408,10 +473,10 @@
                 const weekday = ['日', '一', '二', '三', '四', '五', '六'][now.getDay()];
 
                 let gregorianParts = [];
-                if (displaySettings.showGregorianYear) gregorianParts.push(`${year}年`);
-                if (displaySettings.showGregorianMonth) gregorianParts.push(`${month}月`);
-                if (displaySettings.showGregorianDay) gregorianParts.push(`${day}日`);
-                if (displaySettings.showGregorianWeekday) gregorianParts.push(`周${weekday}`);
+                if (displaySettings.showGregorianYear) gregorianParts.push(`<span style="color: ${displaySettings.gregorianYearColor};">${year}年</span>`);
+                if (displaySettings.showGregorianMonth) gregorianParts.push(`<span style="color: ${displaySettings.gregorianMonthColor};">${month}月</span>`);
+                if (displaySettings.showGregorianDay) gregorianParts.push(`<span style="color: ${displaySettings.gregorianDayColor};">${day}日</span>`);
+                if (displaySettings.showGregorianWeekday) gregorianParts.push(`<span style="color: ${displaySettings.gregorianWeekdayColor};">周${weekday}</span>`);
 
                 if (gregorianParts.length > 0) {
                     gregorianDateHtml = `<div class="gregorian-date-text">${gregorianParts.join('')}</div>`;
@@ -451,10 +516,10 @@
                 }
 
                 let lunarParts = [];
-                if (displaySettings.showMinguoYear) lunarParts.push(`${minguoYear}${lunar.getYearShengXiao()}年`);
-                if (displaySettings.showLunarMonth) lunarParts.push(`${lunar.getMonthInChinese()}月`);
-                if (displaySettings.showLunarDay) lunarParts.push(`${lunar.getDayInChinese()}`);
-                if (displaySettings.showLunarShiChen) lunarParts.push(`${getShiChen(hour)}時`);
+                if (displaySettings.showMinguoYear) lunarParts.push(`<span style="color: ${displaySettings.minguoYearColor};">${minguoYear}${lunar.getYearShengXiao()}年</span>`);
+                if (displaySettings.showLunarMonth) lunarParts.push(`<span style="color: ${displaySettings.lunarMonthColor};">${lunar.getMonthInChinese()}月</span>`);
+                if (displaySettings.showLunarDay) lunarParts.push(`<span style="color: ${displaySettings.lunarDayColor};">${lunar.getDayInChinese()}</span>`);
+                if (displaySettings.showLunarShiChen) lunarParts.push(`<span style="color: ${displaySettings.lunarShiChenColor};">${getShiChen(hour)}時</span>`);
 
                 let lunarDateString = lunarParts.join('');
 
@@ -489,20 +554,19 @@
                 }
 
                 if (lunarDateString || jieQiText) {
-                    lunarAndJieQiHtml = `<div class="lunar-jieqi-combined-text">${lunarDateString} ${jieQiText}</div>`;
+                    lunarAndJieQiHtml = `<div class="lunar-jieqi-combined-text" style="color: ${displaySettings.lunarTextColor};">${lunarDateString} <span style="color: ${displaySettings.jieqiColor};">${jieQiText}</span></div>`;
                 }
             }
 
             // 更新畫面
             const dateTimeDisplay = document.getElementById('dateTimeDisplay');
             dateTimeDisplay.innerHTML = `
-                <div class="time-text">
+                <div class="time-text" style="color: ${displaySettings.textColor};">
                     <span>${hoursMinutes}</span><span class="time-seconds" id="secondsDisplay">${seconds}</span>
                 </div>
                 ${gregorianDateHtml}
                 ${lunarAndJieQiHtml}
             `;
-            dateTimeDisplay.style.color = displaySettings.textColor; // 應用文字顏色
             document.body.style.backgroundColor = displaySettings.backgroundColor; // 應用背景顏色
 
             // 為秒數元素添加點擊事件監聽器
@@ -554,6 +618,17 @@
             displayElement.style.transform = `translate(calc(-50% + ${newTargetX}px), calc(-65% + ${newTargetY}px))`;
         }
 
+        /**
+         * 將所有設定恢復為預設值。
+         * 將 displaySettings 重置為 defaultDisplaySettings 的副本，然後儲存並更新 UI。
+         */
+        function restoreDefaults() {
+            displaySettings = { ...defaultDisplaySettings }; // 將當前設定重置為預設值
+            saveSettings(); // 儲存預設設定
+            updateSettingsModalCheckboxes(); // 更新設定視窗中的顯示
+            updateDateTime(); // 更新主畫面顯示
+        }
+
         // 頁面載入後開始更新時間
         window.onload = function () {
             loadSettings(); // 載入之前儲存的設定
@@ -568,63 +643,112 @@
             };
 
             // 設定選項的變更事件
+            // 每當任何開關或顏色選擇器改變時，都會更新 displaySettings，儲存設定並更新顯示。
             document.getElementById('showGregorianYear').onchange = function(event) {
                 displaySettings.showGregorianYear = event.target.checked;
-                saveSettings(); // 儲存設定
-                updateDateTime(); // 更新顯示
+                saveSettings();
+                updateDateTime();
             };
             document.getElementById('showGregorianMonth').onchange = function(event) {
                 displaySettings.showGregorianMonth = event.target.checked;
-                saveSettings(); // 儲存設定
-                updateDateTime(); // 更新顯示
+                saveSettings();
+                updateDateTime();
             };
             document.getElementById('showGregorianDay').onchange = function(event) {
                 displaySettings.showGregorianDay = event.target.checked;
-                saveSettings(); // 儲存設定
-                updateDateTime(); // 更新顯示
+                saveSettings();
+                updateDateTime();
             };
             document.getElementById('showGregorianWeekday').onchange = function(event) {
                 displaySettings.showGregorianWeekday = event.target.checked;
-                saveSettings(); // 儲存設定
-                updateDateTime(); // 更新顯示
+                saveSettings();
+                updateDateTime();
             };
             document.getElementById('showMinguoYear').onchange = function(event) {
                 displaySettings.showMinguoYear = event.target.checked;
-                saveSettings(); // 儲存設定
-                updateDateTime(); // 更新顯示
+                saveSettings();
+                updateDateTime();
             };
             document.getElementById('showLunarMonth').onchange = function(event) {
                 displaySettings.showLunarMonth = event.target.checked;
-                saveSettings(); // 儲存設定
-                updateDateTime(); // 更新顯示
+                saveSettings();
+                updateDateTime();
             };
             document.getElementById('showLunarDay').onchange = function(event) {
                 displaySettings.showLunarDay = event.target.checked;
-                saveSettings(); // 儲存設定
-                updateDateTime(); // 更新顯示
+                saveSettings();
+                updateDateTime();
             };
             document.getElementById('showLunarShiChen').onchange = function(event) {
                 displaySettings.showLunarShiChen = event.target.checked;
-                saveSettings(); // 儲存設定
-                updateDateTime(); // 更新顯示
+                saveSettings();
+                updateDateTime();
             };
             document.getElementById('showJieqi').onchange = function(event) {
                 displaySettings.showJieqi = event.target.checked;
-                saveSettings(); // 儲存設定
-                updateDateTime(); // 更新顯示
+                saveSettings();
+                updateDateTime();
             };
 
-            // 新增文字顏色和背景顏色設定的變更事件
             document.getElementById('textColor').onchange = function(event) {
                 displaySettings.textColor = event.target.value;
-                saveSettings(); // 儲存設定
-                updateDateTime(); // 更新顯示
+                saveSettings();
+                updateDateTime();
             };
             document.getElementById('backgroundColor').onchange = function(event) {
                 displaySettings.backgroundColor = event.target.value;
-                saveSettings(); // 儲存設定
-                updateDateTime(); // 更新顯示
+                saveSettings();
+                updateDateTime();
             };
+
+            document.getElementById('gregorianYearColor').onchange = function(event) {
+                displaySettings.gregorianYearColor = event.target.value;
+                saveSettings();
+                updateDateTime();
+            };
+            document.getElementById('gregorianMonthColor').onchange = function(event) {
+                displaySettings.gregorianMonthColor = event.target.value;
+                saveSettings();
+                updateDateTime();
+            };
+            document.getElementById('gregorianDayColor').onchange = function(event) {
+                displaySettings.gregorianDayColor = event.target.value;
+                saveSettings();
+                updateDateTime();
+            };
+            document.getElementById('gregorianWeekdayColor').onchange = function(event) {
+                displaySettings.gregorianWeekdayColor = event.target.value;
+                saveSettings();
+                updateDateTime();
+            };
+            document.getElementById('minguoYearColor').onchange = function(event) {
+                displaySettings.minguoYearColor = event.target.value;
+                saveSettings();
+                updateDateTime();
+            };
+            document.getElementById('lunarMonthColor').onchange = function(event) {
+                displaySettings.lunarMonthColor = event.target.value;
+                saveSettings();
+                updateDateTime();
+            };
+            document.getElementById('lunarDayColor').onchange = function(event) {
+                displaySettings.lunarDayColor = event.target.value;
+                saveSettings();
+                updateDateTime();
+            };
+            document.getElementById('lunarShiChenColor').onchange = function(event) {
+                displaySettings.lunarShiChenColor = event.target.value;
+                saveSettings();
+                updateDateTime();
+            };
+            document.getElementById('jieqiColor').onchange = function(event) {
+                displaySettings.jieqiColor = event.target.value;
+                saveSettings();
+                updateDateTime();
+            };
+
+            // 恢復預設按鈕事件
+            document.getElementById('restoreDefaultsBtn').onclick = restoreDefaults;
         };
     </script>
 </body>
