@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>時間</title>
     <style>
-        /* CSS 樣式保持不變 */
         /* 全局樣式：設定所有元素的盒模型為 border-box */
         *, *::before, *::after {
             box-sizing: border-box;
@@ -22,7 +21,6 @@
             min-height: 100vh; /* 最小高度為視窗高度 */
             width: 100vw; /* 寬度為視窗寬度 */
             position: relative; /* 相對定位 */
-            /* background-color: black; */ /* 已移除，由 JavaScript 控制 */
             perspective: none; /* 禁用 3D 透視 */
             transform-style: flat; /* 禁用 3D 變換樣式 */
             font-family: 'Inter', sans-serif; /* 使用 Inter 字體 */
@@ -35,7 +33,6 @@
             text-align: center; /* 文字居中對齊 */
             padding: 10px; /* 內邊距 */
             text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* 文字陰影 */
-            /* color: #00FF00; */ /* 已移除，由 JavaScript 控制 */
             position: absolute; /* 絕對定位 */
             transition: transform 1s ease-in-out; /* 變換過渡效果 */
             z-index: 1; /* 層級 */
@@ -55,9 +52,9 @@
         /* time-seconds 樣式：顯示秒數的文字樣式 */
         .time-seconds {
             font-size: 6.25vw; /* 字體大小根據視窗寬度調整 */
-            position: absolute; /* 絕對定位 */
-            top: 8vw; /* 距離頂部 */
-            right: -12vw; /* 距離右側 */
+            display: inline-block; /* 設置為行內塊級元素 */
+            vertical-align: 14vw; /* 將秒數對齊到上緣 */
+            margin-left: 0.5vw; /* 與分鐘的間距 */
             cursor: pointer; /* 鼠標懸停時顯示手型 */
         }
 
@@ -69,13 +66,11 @@
             white-space: nowrap; /* 不換行 */
         }
 
-        /* 加入農曆和節氣相關的樣式 */
         /* lunar-jieqi-combined-text 樣式：顯示農曆和節氣的文字樣式 */
         .lunar-jieqi-combined-text {
             font-size: 6vw; /* 字體大小根據視窗寬度調整 */
             display: block; /* 塊級元素 */
             white-space: nowrap; /* 不換行 */
-            /* color: #00FF00; */ /* 已移除，將繼承父元素的顏色設定 */
         }
 
         /* noscript-message 樣式：當 JavaScript 被禁用時顯示的提示訊息樣式 */
@@ -225,6 +220,14 @@
         .restore-button:hover {
             background-color: #777;
         }
+
+        /* 按鈕群組樣式，用於排列「恢復預設」和「完成」按鈕 */
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px; /* 按鈕之間的間距 */
+            margin-top: 20px;
+        }
     </style>
     <!-- 加入對外部 lunar-javascript 函式庫的引用，用於農曆和節氣計算 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.7.0/lunar.min.js"></script>
@@ -244,7 +247,6 @@
     <!-- 設定彈出視窗 -->
     <div id="settingsModal" class="settings-modal">
         <div class="settings-content">
-            <span class="close-button" id="closeModalBtn">&times;</span>
             <h2>顯示設定</h2>
             <h3>公曆</h3>
             <div class="setting-item">
@@ -332,7 +334,10 @@
                 <input type="color" id="backgroundColor" value="#000000">
             </div>
 
-            <button id="restoreDefaultsBtn" class="restore-button">恢復預設</button>
+            <div class="button-group">
+                <button id="restoreDefaultsBtn" class="restore-button">恢復預設</button>
+                <button id="doneBtn" class="restore-button">完成</button>
+            </div>
         </div>
     </div>
 
@@ -491,8 +496,8 @@
                 const hour = now.getHours();
                 const minguoYear = year - 1911;
 
-                const solar = Solar.fromYmd(year, now.getMonth() + 1, day);
-                const lunar = solar.getLunar();
+                const solar = Solar.fromDate(now); // 使用 Solar.fromDate(now) 獲取當前日期的陽曆物件
+                const lunar = solar.getLunar(); // 根據陽曆物件獲取農曆物件
 
                 /**
                  * 根據小時獲取時辰。
@@ -525,30 +530,54 @@
 
                 let jieQiText = '';
                 if (displaySettings.showJieqi) {
-                    const today = Solar.fromDate(now);
-                    const lunarToday = today.getLunar();
-                    let nextJieQi = null;
-                    let nextJieQiDate = null;
-                    let minDiff = Infinity;
+                    const solarToday = Solar.fromDate(now);
+                    const jieQisForYear = solarToday.getLunar().getJieQiTable(); // 獲取當前農曆年的所有節氣表
 
-                    const jieQis = lunarToday.getJieQiTable();
-                    for (const [name, dateStr] of Object.entries(jieQis)) {
-                        const date = new Date(dateStr + 'T00:00:00');
-                        if (date >= now) {
-                            const diff = Math.ceil((date - now) / (1000 * 60 * 60 * 24));
-                            if (diff < minDiff) {
-                                nextJieQi = name;
-                                nextJieQiDate = date;
-                                minDiff = diff;
-                            }
+                    let currentOrNextJieqiName = '';
+                    let daysUntilNext = -1;
+
+                    // 將節氣表轉換為物件陣列，以便於處理和排序
+                    const allJieqis = Object.entries(jieQisForYear).map(([name, dateStr]) => {
+                        return { name: name, date: new Date(dateStr) };
+                    }).sort((a, b) => a.date.getTime() - b.date.getTime()); // 根據日期排序
+
+                    let foundTodayJieqi = false;
+                    for (const jq of allJieqis) {
+                        // 檢查今天是否為此節氣的日期（忽略時間）
+                        if (jq.date.getFullYear() === now.getFullYear() &&
+                            jq.date.getMonth() === now.getMonth() &&
+                            jq.date.getDate() === now.getDate()) {
+                            currentOrNextJieqiName = jq.name;
+                            foundTodayJieqi = true;
+                            break; // 找到今天的節氣，顯示並退出
                         }
                     }
 
-                    if (nextJieQi && nextJieQiDate) {
-                        if (minDiff === 0) {
-                            jieQiText = `${nextJieQi}`;
-                        } else {
-                            jieQiText = `再${minDiff}天${nextJieQi}`;
+                    if (foundTodayJieqi) {
+                        jieQiText = `${currentOrNextJieqiName}`;
+                    } else {
+                        // 如果今天不是節氣日，則尋找下一個即將到來的節氣
+                        for (const jq of allJieqis) {
+                            // 只考慮未來的日期 (或者如果 'now' 的時間在節氣時間之前，則為當前日期)
+                            // 節氣的日期字串通常表示該天的 00:00:00。
+                            // 因此，如果現在是 2025-07-22 11:00:00，而節氣日期是 2025-07-22 00:00:00，則 jq.date > now 將為 false。
+                            // 先前的 `foundTodayJieqi` 檢查處理了同一日曆日的情況。
+                            // 此 `else if` 區塊用於未來的節氣。
+                            if (jq.date > now) { 
+                                const diffTime = jq.date.getTime() - now.getTime();
+                                // 使用 Math.ceil 向上取整，因此 0.1 天也會變成 1 天
+                                daysUntilNext = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                currentOrNextJieqiName = jq.name;
+                                break; // 找到第一個未來的節氣
+                            }
+                        }
+
+                        if (currentOrNextJieqiName && daysUntilNext !== -1) {
+                            // 如果 daysUntilNext 為 0，表示是今天，但 'now' 的時間在節氣時間之前。
+                            // 然而，`lunar-javascript` 函式庫的節氣日期通常是在午夜。
+                            // `foundTodayJieqi` 檢查應該涵蓋了節氣日的情況。
+                            // 此處的 `else if` 區塊用於未來的節氣。
+                            jieQiText = `再${daysUntilNext}天${currentOrNextJieqiName}`;
                         }
                     }
                 }
@@ -569,7 +598,7 @@
             `;
             document.body.style.backgroundColor = displaySettings.backgroundColor; // 應用背景顏色
 
-            // 為秒數元素添加點擊事件監聽器
+            // 為秒數元素添加點擊事件監聽器，點擊後顯示設定彈出視窗
             document.getElementById('secondsDisplay').onclick = function() {
                 document.getElementById('settingsModal').style.display = 'flex';
                 // 更新設定視窗中的開關狀態以匹配當前設定
@@ -579,7 +608,7 @@
 
         /**
          * 使時間顯示元素在螢幕上隨機移動。
-         * 移動範圍受限於安全邊距，以確保元素不會移出視窗。
+         * 移動範圍受限於安全邊界，以確保元素不會移出視窗。
          */
         function moveRandomly() {
             const displayElement = document.getElementById('dateTimeDisplay'); // 獲取時間顯示元素
@@ -637,8 +666,8 @@
             setInterval(updateDateTime, 1000); // 每秒更新一次
             updateDateTime(); // 立即更新一次以避免延遲
 
-            // 設定彈出視窗的關閉按鈕事件
-            document.getElementById('closeModalBtn').onclick = function() {
+            // 設定彈出視窗的「完成」按鈕事件，點擊後關閉彈出視窗
+            document.getElementById('doneBtn').onclick = function() {
                 document.getElementById('settingsModal').style.display = 'none';
             };
 
