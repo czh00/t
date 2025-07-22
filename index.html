@@ -43,24 +43,24 @@
 
         /* time-text 樣式：顯示時分的主時間文字樣式 */
         .time-text {
-            font-size: 26vw; /* 字體大小根據視窗寬度調整 */
-            margin-bottom: -10vw; /* 底部外邊距 */
+            font-size: 28vw; /* 字體大小根據視窗寬度調整 */
+            margin-bottom: -16vw; /* 底部外邊距 */
             position: relative; /* 相對定位 */
             display: inline-block; /* 行內塊級元素 */
         }
 
         /* time-seconds 樣式：顯示秒數的文字樣式 */
         .time-seconds {
-            font-size: 6.25vw; /* 字體大小根據視窗寬度調整 */
+            font-size: 6vw; /* 字體大小根據視窗寬度調整 */
             display: inline-block; /* 設置為行內塊級元素 */
-            vertical-align: 14vw; /* 將秒數對齊到上緣 */
+            vertical-align: 15vw; /* 將秒數對齊到上緣 */
             margin-left: 0.5vw; /* 與分鐘的間距 */
             cursor: pointer; /* 鼠標懸停時顯示手型 */
         }
 
         /* gregorian-date-text 樣式：顯示公曆日期的文字樣式 */
         .gregorian-date-text {
-            font-size: 9vw; /* 字體大小根據視窗寬度調整 */
+            font-size: 10vw; /* 字體大小根據視窗寬度調整 */
             margin-bottom: -3vw; /* 底部外邊距 */
             display: block; /* 塊級元素 */
             white-space: nowrap; /* 不換行 */
@@ -68,7 +68,7 @@
 
         /* lunar-jieqi-combined-text 樣式：顯示農曆和節氣的文字樣式 */
         .lunar-jieqi-combined-text {
-            font-size: 6vw; /* 字體大小根據視窗寬度調整 */
+            font-size: 7vw; /* 字體大小根據視窗寬度調整 */
             display: block; /* 塊級元素 */
             white-space: nowrap; /* 不換行 */
         }
@@ -228,6 +228,7 @@
             justify-content: center;
             gap: 10px; /* 按鈕之間的間距 */
             margin-top: 20px;
+            white-space: nowrap; /* 不換行 */
         }
     </style>
     <!-- 加入對外部 lunar-javascript 函式庫的引用，用於農曆和節氣計算 -->
@@ -646,7 +647,7 @@
             currentPosition.x = newTargetX;
             currentPosition.y = newTargetY;
             // 調整 transform 確保居中，因為內容高度可能會因顯示設定而變化
-            displayElement.style.transform = `translate(calc(-50% + ${newTargetX}px), calc(-65% + ${newTargetY}px))`;
+            displayElement.style.transform = `translate(calc(-50% + ${newTargetX}px), calc(-72% + ${newTargetY}px))`;
         }
 
         /**
