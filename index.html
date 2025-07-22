@@ -131,7 +131,7 @@
         .setting-item {
             margin-bottom: 15px;
             display: flex;
-            justify-content: space-between;
+            justify-content: space-between; /* 將內容分開對齊 */
             align-items: center;
             flex-wrap: wrap; /* 允許換行 */
         }
@@ -146,6 +146,7 @@
             display: inline-block;
             width: 60px;
             height: 34px;
+            margin-left: auto; /* 將開關推到右邊 */
             margin-right: 10px; /* 在開關和顏色選擇器之間增加間距 */
         }
 
@@ -205,8 +206,8 @@
             cursor: pointer;
         }
 
-        /* 恢復預設按鈕樣式 */
-        .restore-button {
+        /* 恢復預設和隨機按鈕樣式 */
+        .action-button {
             background-color: #555;
             color: white;
             padding: 10px 20px;
@@ -217,11 +218,11 @@
             margin-top: 20px;
         }
 
-        .restore-button:hover {
+        .action-button:hover {
             background-color: #777;
         }
 
-        /* 按鈕群組樣式，用於排列「恢復預設」和「完成」按鈕 */
+        /* 按鈕群組樣式，用於排列「恢復預設」、「隨機」和「完成」按鈕 */
         .button-group {
             display: flex;
             justify-content: center;
@@ -335,8 +336,9 @@
             </div>
 
             <div class="button-group">
-                <button id="restoreDefaultsBtn" class="restore-button">恢復預設</button>
-                <button id="doneBtn" class="restore-button">完成</button>
+                <button id="restoreDefaultsBtn" class="action-button">恢復預設</button>
+                <button id="randomColorsBtn" class="action-button">隨機顏色</button>
+                <button id="doneBtn" class="action-button">完成</button>
             </div>
         </div>
     </div>
@@ -658,6 +660,42 @@
             updateDateTime(); // 更新主畫面顯示
         }
 
+        /**
+         * 生成一個隨機的十六進制顏色碼。
+         * @returns {string} 隨機的十六進制顏色碼，例如 '#RRGGBB'。
+         */
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        /**
+         * 隨機設定所有顏色選項的顏色。
+         * 更新 displaySettings 中的所有顏色屬性為隨機顏色，然後儲存並更新 UI。
+         */
+        function setRandomColors() {
+            displaySettings.textColor = getRandomColor();
+            displaySettings.backgroundColor = getRandomColor();
+            displaySettings.gregorianYearColor = getRandomColor();
+            displaySettings.gregorianMonthColor = getRandomColor();
+            displaySettings.gregorianDayColor = getRandomColor();
+            displaySettings.gregorianWeekdayColor = getRandomColor();
+            displaySettings.minguoYearColor = getRandomColor();
+            displaySettings.lunarMonthColor = getRandomColor();
+            displaySettings.lunarDayColor = getRandomColor();
+            displaySettings.lunarShiChenColor = getRandomColor();
+            displaySettings.jieqiColor = getRandomColor();
+
+            saveSettings(); // 儲存新的隨機顏色設定
+            updateSettingsModalCheckboxes(); // 更新設定視窗中的顯示
+            updateDateTime(); // 更新主畫面顯示
+        }
+
+
         // 頁面載入後開始更新時間
         window.onload = function () {
             loadSettings(); // 載入之前儲存的設定
@@ -778,6 +816,8 @@
 
             // 恢復預設按鈕事件
             document.getElementById('restoreDefaultsBtn').onclick = restoreDefaults;
+            // 新增隨機顏色按鈕事件
+            document.getElementById('randomColorsBtn').onclick = setRandomColors;
         };
     </script>
 </body>
