@@ -43,8 +43,8 @@
 
         /* time-text 樣式：顯示時分的主時間文字樣式 */
         .time-text {
-            font-size: 28vw; /* 字體大小根據視窗寬度調整 */
-            margin-bottom: -16vw; /* 底部外邊距 */
+            font-size: 32vw; /* 字體大小根據視窗寬度調整 */
+            margin-bottom: -10vw; /* 底部外邊距 */
             position: relative; /* 相對定位 */
             display: inline-block; /* 行內塊級元素 */
         }
@@ -61,14 +61,15 @@
         /* gregorian-date-text 樣式：顯示公曆日期的文字樣式 */
         .gregorian-date-text {
             font-size: 10vw; /* 字體大小根據視窗寬度調整 */
-            margin-bottom: -3vw; /* 底部外邊距 */
+            margin-top: -2vw; /* 新增：對公曆日期元素設定負上外邊距 */
+            margin-bottom: -4vw; /* 底部外邊距 */
             display: block; /* 塊級元素 */
             white-space: nowrap; /* 不換行 */
         }
 
         /* lunar-jieqi-combined-text 樣式：顯示農曆和節氣的文字樣式 */
         .lunar-jieqi-combined-text {
-            font-size: 7vw; /* 字體大小根據視窗寬度調整 */
+            font-size: 6.8vw; /* 字體大小根據視窗寬度調整 */
             display: block; /* 塊級元素 */
             white-space: nowrap; /* 不換行 */
         }
@@ -444,6 +445,29 @@
         }
 
         /**
+         * 將生肖名稱轉換為對應的 emoji。
+         * @param {string} shengXiaoName - 生肖的中文名稱。
+         * @returns {string} 對應的生肖 emoji。
+         */
+        function getShengXiaoEmoji(shengXiaoName) {
+            const emojiMap = {
+                '鼠': '🐭',
+                '牛': '🐂',
+                '虎': '🐅',
+                '兔': '🐇',
+                '龍': '🐉',
+                '蛇': '🐍',
+                '馬': '🐎',
+                '羊': '🐑',
+                '猴': '🐒',
+                '雞': '🐓',
+                '狗': '🐕',
+                '豬': '🐖'
+            };
+            return emojiMap[shengXiaoName] || shengXiaoName; // 如果找不到對應的 emoji，則返回原始名稱
+        }
+
+        /**
          * 更新時間、日期、農曆和節氣的顯示。
          * 每秒呼叫一次，並在每十秒觸發一次隨機移動效果。
          * 根據 displaySettings 中的值動態生成 HTML 並應用顏色。
@@ -476,8 +500,9 @@
             let gregorianDateHtml = '';
             if (displaySettings.showGregorianYear || displaySettings.showGregorianMonth || displaySettings.showGregorianDay || displaySettings.showGregorianWeekday) {
                 const year = now.getFullYear();
-                const month = now.getMonth() + 1;
-                const day = now.getDate();
+                // 將月份和日期補足兩位數
+                const month = (now.getMonth() + 1).toString().padStart(2, '0');
+                const day = now.getDate().toString().padStart(2, '0');
                 const weekday = ['日', '一', '二', '三', '四', '五', '六'][now.getDay()];
 
                 let gregorianParts = [];
@@ -524,7 +549,10 @@
                 }
 
                 let lunarParts = [];
-                if (displaySettings.showMinguoYear) lunarParts.push(`<span style="color: ${displaySettings.minguoYearColor};">${minguoYear}${lunar.getYearShengXiao()}年</span>`);
+                if (displaySettings.showMinguoYear) {
+                    const shengXiaoEmoji = getShengXiaoEmoji(lunar.getYearShengXiao());
+                    lunarParts.push(`<span style="color: ${displaySettings.minguoYearColor};">${minguoYear}年${shengXiaoEmoji}</span>`);
+                }
                 if (displaySettings.showLunarMonth) lunarParts.push(`<span style="color: ${displaySettings.lunarMonthColor};">${lunar.getMonthInChinese()}月</span>`);
                 if (displaySettings.showLunarDay) lunarParts.push(`<span style="color: ${displaySettings.lunarDayColor};">${lunar.getDayInChinese()}</span>`);
                 if (displaySettings.showLunarShiChen) lunarParts.push(`<span style="color: ${displaySettings.lunarShiChenColor};">${getShiChen(hour)}時</span>`);
@@ -580,13 +608,13 @@
                             // 然而，`lunar-javascript` 函式庫的節氣日期通常是在午夜。
                             // `foundTodayJieqi` 檢查應該涵蓋了節氣日的情況。
                             // 此處的 `else if` 區塊用於未來的節氣。
-                            jieQiText = `再${daysUntilNext}天${currentOrNextJieqiName}`;
+                            jieQiText = `${daysUntilNext}⇨${currentOrNextJieqiName}`;
                         }
                     }
                 }
 
                 if (lunarDateString || jieQiText) {
-                    lunarAndJieQiHtml = `<div class="lunar-jieqi-combined-text" style="color: ${displaySettings.lunarTextColor};">${lunarDateString} <span style="color: ${displaySettings.jieqiColor};">${jieQiText}</span></div>`;
+                    lunarAndJieQiHtml = `<div class="lunar-jieqi-combined-text" style="color: ${displaySettings.lunarTextColor};">${lunarDateString}<span style="color: ${displaySettings.jieqiColor};">${jieQiText}</span></div>`;
                 }
             }
 
