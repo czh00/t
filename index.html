@@ -69,7 +69,7 @@
 
         /* lunar-jieqi-combined-text 樣式：顯示農曆和節氣的文字樣式 */
         .lunar-jieqi-combined-text {
-            font-size: 6.8vw; /* 字體大小根據視窗寬度調整 */
+            font-size: 6.4vw; /* 字體大小根據視窗寬度調整 */
             display: block; /* 塊級元素 */
             white-space: nowrap; /* 不換行 */
         }
@@ -553,7 +553,7 @@
                     const shengXiaoEmoji = getShengXiaoEmoji(lunar.getYearShengXiao());
                     lunarParts.push(`<span style="color: ${displaySettings.minguoYearColor};">${minguoYear}年${shengXiaoEmoji}</span>`);
                 }
-                if (displaySettings.showLunarMonth) lunarParts.push(`<span style="color: ${displaySettings.lunarMonthColor};">${lunar.getMonthInChinese()}月</span>`);
+                if (displaySettings.showLunarMonth) lunarParts.push(`<span style="color: ${displaySettings.lunarMonthColor};">${lunar.getMonthInChinese().replace('闰', '閏')}月</span>`);
                 if (displaySettings.showLunarDay) lunarParts.push(`<span style="color: ${displaySettings.lunarDayColor};">${lunar.getDayInChinese()}</span>`);
                 if (displaySettings.showLunarShiChen) lunarParts.push(`<span style="color: ${displaySettings.lunarShiChenColor};">${getShiChen(hour)}時</span>`);
 
