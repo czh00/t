@@ -21,8 +21,6 @@
             min-height: 100vh; /* 最小高度為視窗高度 */
             width: 100vw; /* 寬度為視窗寬度 */
             position: relative; /* 相對定位 */
-            perspective: none; /* 禁用 3D 透視 */
-            transform-style: flat; /* 禁用 3D 變換樣式 */
             font-family: 'Inter', sans-serif; /* 使用 Inter 字體 */
         }
 
@@ -35,7 +33,6 @@
             text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* 文字陰影 */
             position: absolute; /* 絕對定位 */
             transition: transform 1s ease-in-out; /* 變換過渡效果 */
-            z-index: 1; /* 層級 */
             transform: translate(-50%, -50%); /* 居中定位 */
             left: 50%; /* 左邊距 50% */
             top: 50%; /* 上邊距 50% */
@@ -79,7 +76,6 @@
             font-size: 0.5em; /* 字體大小 */
             color: #FFB3BA; /* 淺紅色 */
             margin-top: 10px; /* 頂部外邊距 */
-            display: block; /* 塊級元素 */
         }
 
         /* 設定彈出視窗的樣式 */
@@ -104,28 +100,17 @@
             margin: auto; /* 自動外邊距，用於居中 */
             padding: 20px;
             border: 1px solid #888;
-            width: 80%; /* 寬度佔 80% */
-            max-width: 400px; /* 最大寬度 */
+            width: 90%; /* 寬度佔 90% */
+            max-width: 600px; /* 最大寬度 */
             border-radius: 10px; /* 圓角 */
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); /* 陰影 */
             color: #00FF00; /* 文字顏色 */
             text-align: center; /* 文字居中 */
-        }
-
-        /* 關閉按鈕樣式 */
-        .close-button {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close-button:hover,
-        .close-button:focus {
-            color: #fff;
-            text-decoration: none;
-            cursor: pointer;
+            display: flex; /* 使用 Flexbox 進行整體內容佈局 */
+            flex-direction: column; /* 垂直堆疊其子元素 */
+            gap: 15px; /* 子元素之間的間距 */
+            max-height: 90vh; /* 限制最大高度為視窗的 90% */
+            overflow-y: auto; /* 如果內容超出高度，則允許垂直滾動 */
         }
 
         /* 設定項目樣式 */
@@ -134,11 +119,13 @@
             display: flex;
             justify-content: space-between; /* 將內容分開對齊 */
             align-items: center;
-            flex-wrap: wrap; /* 允許換行 */
+            flex-wrap: nowrap; /* 防止單個設定項目內容換行 */
         }
 
         .setting-item label {
             font-size: 1.2em;
+            flex-shrink: 0; /* 防止標籤縮小 */
+            margin-right: 10px; /* 標籤與開關之間的間距 */
         }
 
         /* 開關按鈕樣式 */
@@ -149,6 +136,7 @@
             height: 34px;
             margin-left: auto; /* 將開關推到右邊 */
             margin-right: 10px; /* 在開關和顏色選擇器之間增加間距 */
+            flex-shrink: 0; /* 防止開關縮小 */
         }
 
         .switch input {
@@ -205,6 +193,7 @@
             padding: 0;
             background: none;
             cursor: pointer;
+            flex-shrink: 0; /* 防止顏色選擇器縮小 */
         }
 
         /* 恢復預設和隨機按鈕樣式 */
@@ -231,6 +220,33 @@
             margin-top: 20px;
             white-space: nowrap; /* 不換行 */
         }
+
+        /* 新增：日曆設定容器，用於並排顯示公曆和農曆設定 */
+        .calendar-settings-container {
+            display: flex;
+            flex-wrap: wrap; /* 允許在小螢幕上換行 */
+            gap: 20px; /* 列之間的間距 */
+            justify-content: space-around; /* 分散空間 */
+            width: 100%; /* 佔用可用寬度 */
+        }
+
+        /* 新增：公曆和農曆設定的列樣式 */
+        .gregorian-settings-column,
+        .lunar-settings-column {
+            flex: 1; /* 每列佔用相等空間 */
+            min-width: 80px; /* 每列的最小寬度，防止在小螢幕上過度壓縮 */
+            padding: 10px;
+            border: 1px solid #555; /* 可選：為視覺分離添加邊框 */
+            border-radius: 8px;
+            background-color: #444; /* 列的背景顏色 */
+            text-align: left; /* 將列內的文字左對齊 */
+        }
+
+        .gregorian-settings-column h3,
+        .lunar-settings-column h3 {
+            text-align: center; /* 列標題居中 */
+            margin-top: 0;
+        }
     </style>
     <!-- 加入對外部 lunar-javascript 函式庫的引用，用於農曆和節氣計算 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.7.0/lunar.min.js"></script>
@@ -251,89 +267,94 @@
     <div id="settingsModal" class="settings-modal">
         <div class="settings-content">
             <h2>顯示設定</h2>
-            <h3>公曆</h3>
-            <div class="setting-item">
-                <label for="showGregorianYear">年</label>
-                <label class="switch">
-                    <input type="checkbox" id="showGregorianYear">
-                    <span class="slider"></span>
-                </label>
-                <input type="color" id="gregorianYearColor" value="#00FF00">
-            </div>
-            <div class="setting-item">
-                <label for="showGregorianMonth">月</label>
-                <label class="switch">
-                    <input type="checkbox" id="showGregorianMonth">
-                    <span class="slider"></span>
-                </label>
-                <input type="color" id="gregorianMonthColor" value="#00FF00">
-            </div>
-            <div class="setting-item">
-                <label for="showGregorianDay">日</label>
-                <label class="switch">
-                    <input type="checkbox" id="showGregorianDay">
-                    <span class="slider"></span>
-                </label>
-                <input type="color" id="gregorianDayColor" value="#00FF00">
-            </div>
-            <div class="setting-item">
-                <label for="showGregorianWeekday">周</label>
-                <label class="switch">
-                    <input type="checkbox" id="showGregorianWeekday">
-                    <span class="slider"></span>
-                </label>
-                <input type="color" id="gregorianWeekdayColor" value="#00FF00">
+            <div class="calendar-settings-container"> <!-- 新增：用於並排顯示公曆和農曆設定的容器 -->
+                <div class="gregorian-settings-column"> <!-- 公曆設定列 -->
+                    <h3>公曆</h3>
+                    <div class="setting-item">
+                        <label for="textColor">時間</label>
+                    <input type="color" id="textColor" value="#00FF00">
+                    </div>
+                    <div class="setting-item">
+                        <label for="showGregorianYear">年</label>
+                        <label class="switch">
+                            <input type="checkbox" id="showGregorianYear">
+                            <span class="slider"></span>
+                        </label>
+                        <input type="color" id="gregorianYearColor" value="#00FF00">
+                    </div>
+                    <div class="setting-item">
+                        <label for="showGregorianMonth">月</label>
+                        <label class="switch">
+                            <input type="checkbox" id="showGregorianMonth">
+                            <span class="slider"></span>
+                        </label>
+                        <input type="color" id="gregorianMonthColor" value="#00FF00">
+                    </div>
+                    <div class="setting-item">
+                        <label for="showGregorianDay">日</label>
+                        <label class="switch">
+                            <input type="checkbox" id="showGregorianDay">
+                            <span class="slider"></span>
+                        </label>
+                        <input type="color" id="gregorianDayColor" value="#00FF00">
+                    </div>
+                    <div class="setting-item">
+                        <label for="showGregorianWeekday">周</label>
+                        <label class="switch">
+                            <input type="checkbox" id="showGregorianWeekday">
+                            <span class="slider"></span>
+                        </label>
+                        <input type="color" id="gregorianWeekdayColor" value="#00FF00">
+                    </div>
+                </div>
+
+                <div class="lunar-settings-column"> <!-- 農曆設定列 -->
+                    <h3>農曆</h3>
+                    <div class="setting-item">
+                        <label for="showMinguoYear">年</label>
+                        <label class="switch">
+                            <input type="checkbox" id="showMinguoYear">
+                            <span class="slider"></span>
+                        </label>
+                        <input type="color" id="minguoYearColor" value="#00FF00">
+                    </div>
+                    <div class="setting-item">
+                        <label for="showLunarMonth">月</label>
+                        <label class="switch">
+                            <input type="checkbox" id="showLunarMonth">
+                            <span class="slider"></span>
+                        </label>
+                        <input type="color" id="lunarMonthColor" value="#00FF00">
+                    </div>
+                    <div class="setting-item">
+                        <label for="showLunarDay">日</label>
+                        <label class="switch">
+                            <input type="checkbox" id="showLunarDay">
+                            <span class="slider"></span>
+                        </label>
+                        <input type="color" id="lunarDayColor" value="#00FF00">
+                    </div>
+                    <div class="setting-item">
+                        <label for="showLunarShiChen">時</label>
+                        <label class="switch">
+                            <input type="checkbox" id="showLunarShiChen">
+                            <span class="slider"></span>
+                        </label>
+                        <input type="color" id="lunarShiChenColor" value="#00FF00">
+                    </div>
+                    <div class="setting-item">
+                        <label for="showJieqi">節氣</label>
+                        <label class="switch">
+                            <input type="checkbox" id="showJieqi">
+                            <span class="slider"></span>
+                        </label>
+                        <input type="color" id="jieqiColor" value="#00FF00">
+                    </div>
+                </div>
             </div>
 
-            <h3>農曆</h3>
             <div class="setting-item">
-                <label for="showMinguoYear">年</label>
-                <label class="switch">
-                    <input type="checkbox" id="showMinguoYear">
-                    <span class="slider"></span>
-                </label>
-                <input type="color" id="minguoYearColor" value="#00FF00">
-            </div>
-            <div class="setting-item">
-                <label for="showLunarMonth">月</label>
-                <label class="switch">
-                    <input type="checkbox" id="showLunarMonth">
-                    <span class="slider"></span>
-                </label>
-                <input type="color" id="lunarMonthColor" value="#00FF00">
-            </div>
-            <div class="setting-item">
-                <label for="showLunarDay">日</label>
-                <label class="switch">
-                    <input type="checkbox" id="showLunarDay">
-                    <span class="slider"></span>
-                </label>
-                <input type="color" id="lunarDayColor" value="#00FF00">
-            </div>
-            <div class="setting-item">
-                <label for="showLunarShiChen">時</label>
-                <label class="switch">
-                    <input type="checkbox" id="showLunarShiChen">
-                    <span class="slider"></span>
-                </label>
-                <input type="color" id="lunarShiChenColor" value="#00FF00">
-            </div>
-            <div class="setting-item">
-                <label for="showJieqi">節氣</label>
-                <label class="switch">
-                    <input type="checkbox" id="showJieqi">
-                    <span class="slider"></span>
-                </label>
-                <input type="color" id="jieqiColor" value="#00FF00">
-            </div>
-
-            <h3>顏色設定</h3>
-            <div class="setting-item">
-                <label for="textColor">時間</label>
-                <input type="color" id="textColor" value="#00FF00">
-            </div>
-            <div class="setting-item">
-                <label for="backgroundColor">背景</label>
+                <label for="backgroundColor">背景顏色</label>
                 <input type="color" id="backgroundColor" value="#000000">
             </div>
 
@@ -451,7 +472,7 @@
          */
         function getShengXiaoEmoji(shengXiaoName) {
             const emojiMap = {
-                '鼠': '🐭',
+                '鼠': '�',
                 '牛': '🐂',
                 '虎': '🐅',
                 '兔': '🐇',
@@ -851,3 +872,4 @@
     </script>
 </body>
 </html>
+�
