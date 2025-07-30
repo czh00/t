@@ -73,7 +73,7 @@
         .gregorian-date-text {
             font-size: 10vw; /* 字體大小根據視窗寬度調整 */
             margin-top: -2vw; /* 新增：對公曆日期元素設定負上外邊距 */
-            margin-bottom: -4vw; /* 底部外邊距 */
+            margin-bottom: -3vw; /* 底部外邊距 */
             display: block; /* 塊級元素 */
             white-space: nowrap; /* 不換行 */
         }
@@ -299,7 +299,6 @@
     </style>
     <!-- 加入對外部 lunar-javascript 函式庫的引用，用於農曆和節氣計算 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.7.0/lunar.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
     <!-- 時間、日期、農曆和節氣的顯示容器 -->
@@ -559,7 +558,7 @@
         function getShengXiaoEmoji(shengXiaoName) {
             const emojiMap = {
                 '鼠': '🐭',
-                '牛': '🐂',
+                '牛': '�',
                 '虎': '🐅',
                 '兔': '🐇',
                 '龍': '🐉',
@@ -618,34 +617,34 @@
         function getHolidays(year) {
             const holidays = [
                 { name: '元旦', date: new Date(year, 0, 1) }, // Jan 1
-                { name: '和平紀念日', date: new Date(year, 1, 28) }, // Feb 28
-                { name: '兒童節', date: new Date(year, 3, 4) }, // Apr 4
+                { name: '和平', date: new Date(year, 1, 28) }, // Feb 28
+                { name: '兒童', date: new Date(year, 3, 4) }, // Apr 4
                 // 清明節通常在 4/4 或 4/5，這裡暫時寫死 4/4，實際應與節氣計算同步
-                { name: '清明節', date: new Date(year, 3, 4) }, // Apr 4
-                { name: '勞動節', date: new Date(year, 4, 1) }, // May 1
-                { name: '國慶日', date: new Date(year, 9, 10) }, // Oct 10
-                { name: '聖誕節', date: new Date(year, 11, 25) } // Dec 25
+                { name: '清明', date: new Date(year, 3, 4) }, // Apr 4
+                { name: '勞動', date: new Date(year, 4, 1) }, // May 1
+                { name: '國慶', date: new Date(year, 9, 10) }, // Oct 10
+                { name: '聖誕', date: new Date(year, 11, 25) } // Dec 25
             ];
 
             // 農曆新年 (根據 Lunar 庫獲取)
             const lunarNewYear = Lunar.fromYmd(year, 1, 1).getSolar();
-            holidays.push({ name: '農曆新年', date: new Date(lunarNewYear.getYear(), lunarNewYear.getMonth() - 1, lunarNewYear.getDay()) });
+            holidays.push({ name: '過年', date: new Date(lunarNewYear.getYear(), lunarNewYear.getMonth() - 1, lunarNewYear.getDay()) });
 
             // 端午節 (農曆五月初五)
             const dragonBoatFestival = Lunar.fromYmd(year, 5, 5).getSolar();
-            holidays.push({ name: '端午節', date: new Date(dragonBoatFestival.getYear(), dragonBoatFestival.getMonth() - 1, dragonBoatFestival.getDay()) });
+            holidays.push({ name: '端午', date: new Date(dragonBoatFestival.getYear(), dragonBoatFestival.getMonth() - 1, dragonBoatFestival.getDay()) });
 
             // 中元節 (農曆七月十五)
             const ghostFestival = Lunar.fromYmd(year, 7, 15).getSolar();
-            holidays.push({ name: '中元節', date: new Date(ghostFestival.getYear(), ghostFestival.getMonth() - 1, ghostFestival.getDay()) });
+            holidays.push({ name: '中元', date: new Date(ghostFestival.getYear(), ghostFestival.getMonth() - 1, ghostFestival.getDay()) });
 
             // 中秋節 (農曆八月十五)
             const midAutumnFestival = Lunar.fromYmd(year, 8, 15).getSolar();
-            holidays.push({ name: '中秋節', date: new Date(midAutumnFestival.getYear(), midAutumnFestival.getMonth() - 1, midAutumnFestival.getDay()) });
+            holidays.push({ name: '中秋', date: new Date(midAutumnFestival.getYear(), midAutumnFestival.getMonth() - 1, midAutumnFestival.getDay()) });
 
             // 重陽節 (農曆九月初九)
             const doubleNinthFestival = Lunar.fromYmd(year, 9, 9).getSolar();
-            holidays.push({ name: '重陽節', date: new Date(doubleNinthFestival.getYear(), doubleNinthFestival.getMonth() - 1, doubleNinthFestival.getDay()) });
+            holidays.push({ name: '重陽', date: new Date(doubleNinthFestival.getYear(), doubleNinthFestival.getMonth() - 1, doubleNinthFestival.getDay()) });
 
             // 除夕 (農曆十二月最後一天)
             // 獲取下一個農曆年的第一天，然後回溯一天得到當年的除夕
@@ -767,7 +766,8 @@
             // 農曆和節氣邏輯 (僅在 lunar-javascript 函式庫載入成功時執行)
             let lunarAndJieQiHtml = '';
             let currentJieqiInfo = null; // 用於儲存當前或下一個節氣的完整資訊
-            let nextHolidayInfo = null; // 用於儲存下一個即將到來的節日資訊
+            let nextHolidayInfo = null; // 用於儲存下一個即將到來的節日資訊 (for modal)
+            let currentHolidayName = ''; // 用於儲存當天的節日名稱 (for modal)
 
             if ((displaySettings.showMinguoYear || displaySettings.showLunarMonth || displaySettings.showLunarDay || displaySettings.showLunarShiChen || displaySettings.showJieqi || displaySettings.showHolidays) && typeof Lunar !== 'undefined' && typeof Solar !== 'undefined') {
                 const year = now.getFullYear();
@@ -833,7 +833,6 @@
                     currentJieqiInfo = { name: tempJieqiName, date: tempJieqiDate };
                 }
 
-
                 let jieQiText = '';
                 if (displaySettings.showJieqi) { // 只有當節氣開關開啟時才顯示
                     if (foundTodayJieqi) {
@@ -843,38 +842,55 @@
                     }
                 }
 
-                // 節日倒數邏輯 (無論開關是否開啟，都計算 nextHolidayInfo)
+                // --- START: Unconditional Holiday Data Calculation for Modal ---
                 const holidays = getHolidays(now.getFullYear());
-                const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1); // 從明天開始找
+                let foundTodayHoliday = false;
 
                 for (const holiday of holidays) {
-                    // 設置 holiday.date 的時間為當天結束，以便正確計算天數
-                    const holidayDateAtEndOfDay = new Date(holiday.date.getFullYear(), holiday.date.getMonth(), holiday.date.getDate(), 23, 59, 59, 999);
-                    if (holidayDateAtEndOfDay >= tomorrow) { // 尋找從明天或之後開始的節日
-                        const diffTime = holidayDateAtEndOfDay.getTime() - now.getTime();
-                        const daysUntilHoliday = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                        nextHolidayInfo = {
-                            name: holiday.name,
-                            date: holiday.date,
-                            daysUntil: daysUntilHoliday
-                        };
-                        break; // 找到第一個即將到來的節日
+                    if (holiday.date.getFullYear() === now.getFullYear() &&
+                        holiday.date.getMonth() === now.getMonth() &&
+                        holiday.date.getDate() === now.getDate()) {
+                        currentHolidayName = holiday.name; // Always store current holiday name
+                        foundTodayHoliday = true;
+                        break;
                     }
                 }
 
-                let holidayCountdownText = '';
-                if (nextHolidayInfo) {
-                    // 移除這裡的開頭空格，以便在組合時更精確控制
-                    holidayCountdownText = `${nextHolidayInfo.daysUntil}➡${nextHolidayInfo.name}`;
+                if (!foundTodayHoliday) { // Only search for next upcoming holiday if today is NOT a holiday
+                    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+                    for (const holiday of holidays) {
+                        const holidayDateAtEndOfDay = new Date(holiday.date.getFullYear(), holiday.date.getMonth(), holiday.date.getDate(), 23, 59, 59, 999);
+                        if (holidayDateAtEndOfDay >= tomorrow) {
+                            const diffTime = holidayDateAtEndOfDay.getTime() - now.getTime();
+                            nextHolidayInfo = { // Always populate nextHolidayInfo if applicable
+                                name: holiday.name,
+                                date: holiday.date,
+                                daysUntil: Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+                            };
+                            break;
+                        }
+                    }
                 }
+                // --- END: Unconditional Holiday Data Calculation for Modal ---
+
+
+                let holidayCountdownText = ''; // This is for the main display
+                if (displaySettings.showHolidays) { // Only display on main screen if setting is ON
+                    if (foundTodayHoliday) {
+                        holidayCountdownText = `${currentHolidayName}`; // Only name, no countdown
+                    } else if (nextHolidayInfo) { // If no current holiday, and nextHolidayInfo exists
+                        holidayCountdownText = `${nextHolidayInfo.daysUntil}➡${nextHolidayInfo.name}`;
+                    }
+                }
+
 
                 let combinedJieqiHolidayText = '';
                 // 移除節氣和節日之間的空格
-                if (jieQiText && displaySettings.showHolidays && nextHolidayInfo) {
+                if (jieQiText && holidayCountdownText) { // 兩者都有顯示時才組合
                     combinedJieqiHolidayText = `<span style="color: ${displaySettings.jieqiColor};">${jieQiText}</span><span style="color: ${displaySettings.holidayColor};">${holidayCountdownText}</span>`;
-                } else if (jieQiText) {
+                } else if (jieQiText) { // 只有節氣
                     combinedJieqiHolidayText = `<span style="color: ${displaySettings.jieqiColor};">${jieQiText}</span>`;
-                } else if (displaySettings.showHolidays && nextHolidayInfo) {
+                } else if (holidayCountdownText) { // 只有節日（當天節日或倒數）
                     combinedJieqiHolidayText = `<span style="color: ${displaySettings.holidayColor};">${holidayCountdownText}</span>`;
                 }
 
@@ -888,6 +904,7 @@
                                 data-next-holiday-name="${nextHolidayInfo ? nextHolidayInfo.name : ''}"
                                 data-next-holiday-date="${nextHolidayInfo ? nextHolidayInfo.date.toISOString() : ''}"
                                 data-next-holiday-days-until="${nextHolidayInfo ? nextHolidayInfo.daysUntil : ''}"
+                                data-current-holiday-name="${currentHolidayName}"
                             >${combinedJieqiHolidayText}</span>
                         </div>
                     `;
@@ -1067,13 +1084,23 @@
                 saveSettings();
                 updateDateTime();
             };
+            
+            // 節氣和節日互斥邏輯
             document.getElementById('showJieqi').onchange = function(event) {
                 displaySettings.showJieqi = event.target.checked;
+                if (event.target.checked) {
+                    displaySettings.showHolidays = false;
+                    document.getElementById('showHolidays').checked = false; // 更新 UI
+                }
                 saveSettings();
                 updateDateTime();
             };
             document.getElementById('showHolidays').onchange = function(event) { // 新增
                 displaySettings.showHolidays = event.target.checked;
+                if (event.target.checked) {
+                    displaySettings.showJieqi = false;
+                    document.getElementById('showJieqi').checked = false; // 更新 UI
+                }
                 saveSettings();
                 updateDateTime();
             };
@@ -1167,6 +1194,7 @@
                     const nextHolidayName = jieqiElement.getAttribute('data-next-holiday-name');
                     const nextHolidayDateStr = jieqiElement.getAttribute('data-next-holiday-date');
                     const nextHolidayDaysUntil = jieqiElement.getAttribute('data-next-holiday-days-until');
+                    const currentHolidayNameFromData = jieqiElement.getAttribute('data-current-holiday-name'); // 從 data 屬性獲取當前節日名稱
 
                     let detailsHtml = '';
 
@@ -1191,7 +1219,13 @@
                     }
 
                     // 節日資訊 (無論 showHolidays 設定如何，都顯示)
-                    if (nextHolidayName && nextHolidayDateStr && nextHolidayDaysUntil) {
+                    // 如果當天有節日，則只顯示當天節日資訊，不顯示即將到來的節日
+                    if (currentHolidayNameFromData) {
+                        detailsHtml += `
+                            <h3>今日節日</h3>
+                            <p><strong>節日名稱：</strong> ${currentHolidayNameFromData}</p>
+                        `;
+                    } else if (nextHolidayName && nextHolidayDateStr && nextHolidayDaysUntil) {
                         const nextHolidayDate = new Date(nextHolidayDateStr);
                         const formattedHolidayDate = `${nextHolidayDate.getFullYear()}年${(nextHolidayDate.getMonth() + 1).toString().padStart(2, '0')}月${nextHolidayDate.getDate().toString().padStart(2, '0')}日`;
                         detailsHtml += `
@@ -1230,7 +1264,7 @@
                     let yijiHtml = `
                         <p><strong>時辰：：</strong> ${shiChenName}時</p>
                         <p style="margin-top: 15px;"><strong>宜：</strong> ${hourYiList.join('、')}</p>
-                        <p style="margin-top: 15px;"><strong>忌：</strong> ${hourJiList.join('、')}</p>
+                        <p style="margin-top: 15px;"><strong>忌：：</strong> ${hourJiList.join('、')}</p>
                         <p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">
                             時辰宜忌僅供參考，請勿過度迷信。
                         </p>
@@ -1243,3 +1277,4 @@
     </script>
 </body>
 </html>
+�
