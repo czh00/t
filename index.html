@@ -558,7 +558,7 @@
         function getShengXiaoEmoji(shengXiaoName) {
             const emojiMap = {
                 '鼠': '🐭',
-                '牛': '�',
+                '牛': '🐂',
                 '虎': '🐅',
                 '兔': '🐇',
                 '龍': '🐉',
@@ -719,7 +719,7 @@
                 hour: 'numeric',
                 minute: '2-digit',
                 second: '2-digit',
-                hour12: true // 始終使用 12 小時制來獲取小時和 AM/PM，以便後續判斷詳細時間段
+                hour12: displaySettings.showAmPm // 根據設定切換 12/24 小時制
             };
             
             const formatter = new Intl.DateTimeFormat('zh-Hant', timeOptions);
@@ -1277,4 +1277,3 @@
     </script>
 </body>
 </html>
-�
