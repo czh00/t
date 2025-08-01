@@ -952,6 +952,12 @@
                 dateTimeDisplay.innerHTML = currentDateTimeHtml;
             } else {
                 // 如果結構已經存在，只更新變化的部分
+                // *** FIX: Update time color style directly ***
+                const timeTextElement = dateTimeDisplay.querySelector('.time-text');
+                if (timeTextElement) {
+                    timeTextElement.style.color = displaySettings.textColor;
+                }
+                
                 dateTimeDisplay.querySelector('.time-text span:first-child').textContent = hoursMinutes;
                 dateTimeDisplay.querySelector('#secondsDisplay').textContent = seconds;
                 const amPmSpan = dateTimeDisplay.querySelector('.time-ampm');
@@ -965,23 +971,33 @@
                 }
 
                 const gregorianDiv = dateTimeDisplay.querySelector('.gregorian-date-text');
-                if (gregorianDateHtml && !gregorianDiv) {
+                if (gregorianDateHtml && gregorianDiv) {
+                    gregorianDiv.innerHTML = gregorianDateHtml;
+                } else if (gregorianDateHtml && !gregorianDiv) {
                     const newGregorianDiv = document.createElement('div');
                     newGregorianDiv.className = 'gregorian-date-text';
                     newGregorianDiv.innerHTML = gregorianDateHtml;
-                    dateTimeDisplay.querySelector('.lunar-and-jieqi-line').before(newGregorianDiv);
-                } else if (gregorianDiv) {
-                    gregorianDiv.innerHTML = gregorianDateHtml;
+                    const lunarLine = dateTimeDisplay.querySelector('.lunar-and-jieqi-line');
+                    if(lunarLine) {
+                        dateTimeDisplay.insertBefore(newGregorianDiv, lunarLine);
+                    } else {
+                        dateTimeDisplay.appendChild(newGregorianDiv);
+                    }
+                } else if (!gregorianDateHtml && gregorianDiv) {
+                     gregorianDiv.remove();
                 }
 
+
                 const lunarDateStaticText = dateTimeDisplay.querySelector('.lunar-date-static-text');
-                if (lunarDateString && !lunarDateStaticText) {
+                if (lunarDateString && lunarDateStaticText) {
+                    lunarDateStaticText.innerHTML = lunarDateString;
+                } else if (lunarDateString && !lunarDateStaticText) {
                     const newLunarSpan = document.createElement('span');
                     newLunarSpan.className = 'lunar-date-static-text lunar-date-clickable';
                     newLunarSpan.innerHTML = lunarDateString;
                     dateTimeDisplay.querySelector('.lunar-and-jieqi-line').prepend(newLunarSpan);
-                } else if (lunarDateStaticText) {
-                    lunarDateStaticText.innerHTML = lunarDateString;
+                } else if (!lunarDateString && lunarDateStaticText) {
+                    lunarDateStaticText.remove();
                 }
             }
             
@@ -1159,64 +1175,65 @@
                 updateDateTime();
             };
 
+            // *** FIX: Use 'oninput' for immediate color updates ***
             // 顏色選擇器事件
-            document.getElementById('textColor').onchange = function(event) {
+            document.getElementById('textColor').oninput = function(event) {
                 displaySettings.textColor = event.target.value;
                 saveSettings();
                 updateDateTime();
             };
-            document.getElementById('backgroundColor').onchange = function(event) {
+            document.getElementById('backgroundColor').oninput = function(event) {
                 displaySettings.backgroundColor = event.target.value;
                 saveSettings();
                 updateDateTime();
             };
 
-            document.getElementById('gregorianYearColor').onchange = function(event) {
+            document.getElementById('gregorianYearColor').oninput = function(event) {
                 displaySettings.gregorianYearColor = event.target.value;
                 saveSettings();
                 updateDateTime();
             };
-            document.getElementById('gregorianMonthColor').onchange = function(event) {
+            document.getElementById('gregorianMonthColor').oninput = function(event) {
                 displaySettings.gregorianMonthColor = event.target.value;
                 saveSettings();
                 updateDateTime();
             };
-            document.getElementById('gregorianDayColor').onchange = function(event) {
+            document.getElementById('gregorianDayColor').oninput = function(event) {
                 displaySettings.gregorianDayColor = event.target.value;
                 saveSettings();
                 updateDateTime();
             };
-            document.getElementById('gregorianWeekdayColor').onchange = function(event) {
+            document.getElementById('gregorianWeekdayColor').oninput = function(event) {
                 displaySettings.gregorianWeekdayColor = event.target.value;
                 saveSettings();
                 updateDateTime();
             };
-            document.getElementById('minguoYearColor').onchange = function(event) {
+            document.getElementById('minguoYearColor').oninput = function(event) {
                 displaySettings.minguoYearColor = event.target.value;
                 saveSettings();
                 updateDateTime();
             };
-            document.getElementById('lunarMonthColor').onchange = function(event) {
+            document.getElementById('lunarMonthColor').oninput = function(event) {
                 displaySettings.lunarMonthColor = event.target.value;
                 saveSettings();
                 updateDateTime();
             };
-            document.getElementById('lunarDayColor').onchange = function(event) {
+            document.getElementById('lunarDayColor').oninput = function(event) {
                 displaySettings.lunarDayColor = event.target.value;
                 saveSettings();
                 updateDateTime();
             };
-            document.getElementById('lunarShiChenColor').onchange = function(event) {
+            document.getElementById('lunarShiChenColor').oninput = function(event) {
                 displaySettings.lunarShiChenColor = event.target.value;
                 saveSettings();
                 updateDateTime();
             };
-            document.getElementById('jieqiColor').onchange = function(event) {
+            document.getElementById('jieqiColor').oninput = function(event) {
                 displaySettings.jieqiColor = event.target.value;
                 saveSettings();
                 updateDateTime();
             };
-            document.getElementById('holidayColor').onchange = function(event) {
+            document.getElementById('holidayColor').oninput = function(event) {
                 displaySettings.holidayColor = event.target.value;
                 saveSettings();
                 updateDateTime();
