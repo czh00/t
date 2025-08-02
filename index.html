@@ -498,27 +498,26 @@
 
         let displaySettings = { ...defaultDisplaySettings }; 
 
-        // 儲存設定到 Cookie
+        // [修改] 儲存設定到 localStorage
         function saveSettings() {
-            const settingsJson = JSON.stringify(displaySettings);
-            document.cookie = `displaySettings=${settingsJson}; expires=${new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString()}; path=/`;
+            try {
+                const settingsJson = JSON.stringify(displaySettings);
+                localStorage.setItem('displaySettings', settingsJson);
+            } catch (e) {
+                console.error("Failed to save settings to localStorage:", e);
+            }
         }
 
-        // 從 Cookie 載入設定
+        // [修改] 從 localStorage 載入設定
         function loadSettings() {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                let cookie = cookies[i].trim();
-                if (cookie.startsWith('displaySettings=')) {
-                    try {
-                        const settingsJson = cookie.substring('displaySettings='.length);
-                        const loadedSettings = JSON.parse(settingsJson);
-                        displaySettings = Object.assign({ ...defaultDisplaySettings }, loadedSettings);
-                    } catch (e) {
-                        console.error("Failed to parse display settings from cookie:", e);
-                    }
-                    return;
+            try {
+                const settingsJson = localStorage.getItem('displaySettings');
+                if (settingsJson) {
+                    const loadedSettings = JSON.parse(settingsJson);
+                    displaySettings = Object.assign({ ...defaultDisplaySettings }, loadedSettings);
                 }
+            } catch (e) {
+                console.error("Failed to parse display settings from localStorage:", e);
             }
         }
 
