@@ -860,7 +860,7 @@
 
                 if (displaySettings.showJieqi) {
                     if (foundTodayJieqi) {
-                        jieQiText = `今日節氣：${tempJieqiName}`; // 當天節氣顯示「今日節氣」
+                        jieQiText = `${tempJieqiName}`; // 當天節氣顯示「今日節氣」
                     } else if (tempJieqiName && tempDaysUntilNextJieqi !== -1) {
                         jieQiText = `${tempDaysUntilNextJieqi}➡${tempJieqiName}`;
                     }
@@ -1248,7 +1248,7 @@
                     let yijiHtml = `
                         <p><strong>農曆日期：</strong> ${lunar.getMonthInChinese().replace('闰', '閏')}月${lunar.getDayInChinese()}</p>
                         <p style="margin-top: 15px;"><strong>宜：</strong> ${yiList.join('、')}</p>
-                        <p style="margin-top: 15px;"><strong>忌：：</strong> ${jiList.join('、')}</p>
+                        <p style="margin-top: 15px;"><strong>忌：</strong> ${jiList.join('、')}</p>
                         <p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">
                             每日宜忌僅供參考，請勿過度迷信。
                         </p>
@@ -1263,7 +1263,7 @@
                     const hourJiList = lunar.getTimeJi() || ['無'];
 
                     let yijiHtml = `
-                        <p><strong>時辰：：</strong> ${shiChenName}時</p>
+                        <p><strong>時辰：</strong> ${shiChenName}時</p>
                         <p style="margin-top: 15px;"><strong>宜：</strong> ${hourYiList.join('、')}</p>
                         <p style="margin-top: 15px;"><strong>忌：</strong> ${hourJiList.join('、')}</p>
                         <p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">
