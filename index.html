@@ -106,14 +106,21 @@
             display: flex;
             flex-wrap: nowrap;
             width: max-content;
+            /* Safari相容性：加上 -webkit- 前綴 */
+            -webkit-animation-name: marquee;
             animation-name: marquee;
+            -webkit-animation-timing-function: linear;
             animation-timing-function: linear;
+            -webkit-animation-iteration-count: infinite;
             animation-iteration-count: infinite;
+            -webkit-animation-play-state: paused; /* 預設暫停 */
             animation-play-state: paused; /* 預設暫停 */
         }
 
         /* 滾動時應用的動畫樣式 */
         .jieqi-holiday-marquee-container.scrolling .jieqi-holiday-marquee-inner {
+            /* Safari相容性：加上 -webkit- 前綴 */
+            -webkit-animation-play-state: running; /* 開始動畫 */
             animation-play-state: running; /* 開始動畫 */
         }
 
@@ -126,7 +133,11 @@
             flex-shrink: 0;
         }
 
-        /* 跑馬燈動畫定義 */
+        /* 跑馬燈動畫定義 (Safari相容性修正) */
+        @-webkit-keyframes marquee {
+            from { -webkit-transform: translateX(0); transform: translateX(0); }
+            to { -webkit-transform: translateX(var(--marquee-scroll-distance)); transform: translateX(var(--marquee-scroll-distance)); }
+        }
         @keyframes marquee {
             from { transform: translateX(0); }
             to { transform: translateX(var(--marquee-scroll-distance)); }
@@ -619,7 +630,7 @@
             return '';
         }
 
-        // [修正] 獨立的跑馬燈更新邏輯，根據傳入的內容決定顯示/隱藏及動畫
+        // [Safari相容性修正] 獨立的跑馬燈更新邏輯
         function updateMarquee(combinedJieqiHolidayText) {
             const jieqiHolidayMarqueeContainer = document.getElementById('jieqiHolidayMarqueeContainer');
             const jieqiHolidayMarqueeInner = document.getElementById('jieqiHolidayMarqueeInner');
@@ -636,14 +647,15 @@
                 jieqiHolidayMarqueeContent.innerHTML = '';
                 jieqiHolidayMarqueeContentDuplicate.innerHTML = '';
                 jieqiHolidayMarqueeContainer.classList.remove('scrolling');
-                jieqiHolidayMarqueeInner.style.animationName = 'none'; // 停止動畫
+                // Safari相容性：加上 -webkit- 前綴
+                jieqiHolidayMarqueeInner.style.webkitAnimationName = 'none';
+                jieqiHolidayMarqueeInner.style.animationName = 'none';
                 return;
             }
 
             // 如果有文字，顯示容器並只更新主內容
             jieqiHolidayMarqueeContainer.style.display = ''; // 恢復預設顯示
             jieqiHolidayMarqueeContent.innerHTML = combinedJieqiHolidayText;
-            // *** FIX: 先清除重複的內容以避免閃爍 ***
             jieqiHolidayMarqueeContentDuplicate.innerHTML = ''; 
 
             // 使用 setTimeout 確保 DOM 更新後再計算寬度
@@ -652,20 +664,26 @@
                 const containerWidth = jieqiHolidayMarqueeContainer.offsetWidth;
 
                 if (singleContentWidth > containerWidth) {
-                    // *** FIX: 只有在需要滾動時才設定重複的內容 ***
                     jieqiHolidayMarqueeContentDuplicate.innerHTML = combinedJieqiHolidayText;
                     jieqiHolidayMarqueeContainer.classList.add('scrolling');
                     const speed = 60; // 每秒像素
                     const animationDuration = singleContentWidth / speed;
+                    
+                    // Safari相容性：更新動畫屬性時，同時設定 -webkit- 前綴的版本
                     jieqiHolidayMarqueeInner.style.setProperty('--marquee-scroll-distance', `-${singleContentWidth}px`);
-                    jieqiHolidayMarqueeInner.style.animationName = 'marquee'; // 重新應用動畫
+                    jieqiHolidayMarqueeInner.style.webkitAnimationName = 'marquee';
+                    jieqiHolidayMarqueeInner.style.animationName = 'marquee';
+                    jieqiHolidayMarqueeInner.style.webkitAnimationDuration = `${animationDuration}s`;
                     jieqiHolidayMarqueeInner.style.animationDuration = `${animationDuration}s`;
+                    jieqiHolidayMarqueeInner.style.webkitAnimationPlayState = 'running';
                     jieqiHolidayMarqueeInner.style.animationPlayState = 'running';
                     jieqiHolidayMarqueeContainer.style.textAlign = 'left';
                 } else {
                     jieqiHolidayMarqueeContainer.classList.remove('scrolling');
-                    // 重複的內容已經被清除
+                    // Safari相容性：停止動畫時，同時設定 -webkit- 前綴的版本
+                    jieqiHolidayMarqueeInner.style.webkitAnimationName = 'none';
                     jieqiHolidayMarqueeInner.style.animationName = 'none';
+                    jieqiHolidayMarqueeInner.style.webkitAnimationPlayState = 'paused';
                     jieqiHolidayMarqueeInner.style.animationPlayState = 'paused';
                     jieqiHolidayMarqueeContainer.style.textAlign = 'center';
                 }
