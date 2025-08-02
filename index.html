@@ -1212,51 +1212,65 @@
 
                     let detailsHtml = '';
 
+                    // 節氣資訊顯示
                     if (jieqiName && jieqiDateStr) {
-                        hasJieqiInfo = true;
                         const jieqiDate = new Date(jieqiDateStr);
                         const formattedDate = `${jieqiDate.getFullYear()}年${(jieqiDate.getMonth() + 1).toString().padStart(2, '0')}月${jieqiDate.getDate().toString().padStart(2, '0')}日`;
                         const description = getJieqiDescription(jieqiName);
-                        if (parseInt(daysUntilNextJieqi) === 0) {
+                        
+                        if (parseInt(daysUntilNextJieqi) === 0) { // 如果是當天節氣
                             detailsHtml += `<p>今日 <strong>${formattedDate} ${jieqiName}</strong></p>`;
-                        } else {
+                        } else { // 即將到來的節氣
                             detailsHtml += `<p>${formattedDate} <strong>${jieqiName}</strong> 還有${daysUntilNextJieqi}天</p>`;
                         }
                         detailsHtml += `<p style="margin-top: 15px;">說明： ${description}</p>`;
-                    }
-                    
-                    if (currentHolidayNameFromData || (nextHolidayName && nextHolidayDateStr && nextHolidayDaysUntil)) {
-                        if(hasJieqiInfo) detailsHtml += `<hr style="margin: 20px 0; border-color: #555;">`;
-                        if (currentHolidayNameFromData) {
-                            detailsHtml += `<p>今日 <strong>${currentHolidayNameFromData}</strong></p>`;
-                        } else {
-                            const nextHolidayDate = new Date(nextHolidayDateStr);
-                            const formattedHolidayDate = `${nextHolidayDate.getFullYear()}年${(nextHolidayDate.getMonth() + 1).toString().padStart(2, '0')}月${nextHolidayDate.getDate().toString().padStart(2, '0')}日`;
-                            detailsHtml += `<p>${formattedHolidayDate} <strong>${nextHolidayName}</strong> 還有${nextHolidayDaysUntil}天</p>`;
-                        }
+                    } else {
+                        detailsHtml += `<p>目前沒有節氣資訊可顯示。</p><hr style="margin: 20px 0; border-color: #555;">`;
                     }
 
-                    if (!detailsHtml) detailsHtml = `<p>目前沒有節氣或節日資訊可顯示。</p>`;
+                    // 節日資訊顯示
+                    if (currentHolidayNameFromData) { // 如果是當天節日
+                            detailsHtml += `<p>今日 <strong>${currentHolidayNameFromData}</strong></p>`;
+                    } else if (nextHolidayName && nextHolidayDateStr && nextHolidayDaysUntil) { // 即將到來的節日
+                        const nextHolidayDate = new Date(nextHolidayDateStr);
+                        const formattedHolidayDate = `${nextHolidayDate.getFullYear()}年${(nextHolidayDate.getMonth() + 1).toString().padStart(2, '0')}月${nextHolidayDate.getDate().toString().padStart(2, '0')}日`;
+                            detailsHtml += `<p>${formattedHolidayDate} <strong>${nextHolidayName}</strong> 還有${nextHolidayDaysUntil}天</p>`;
+                    } else {
+                        detailsHtml += `<p>目前沒有即將到來的節日資訊。</p>`;
+                    }
 
                     document.getElementById('jieqiDetailsContent').innerHTML = detailsHtml;
                     document.getElementById('jieqiDetailsModal').classList.add('is-active');
                 } else if (lunarDayElement) {
                     const yiList = lunar.getDayYi() || [];
                     const jiList = lunar.getDayJi() || [];
-                    document.getElementById('yijiDetailsContent').innerHTML = `
+
+                    let yijiHtml = `
                         <p><strong>農曆日期：</strong> ${lunar.getMonthInChinese().replace('闰', '閏')}月${lunar.getDayInChinese()}</p>
-                        <p style="margin-top: 15px;"><strong>宜：</strong> ${yiList.join('、') || '無'}</p>
-                        <p style="margin-top: 15px;"><strong>忌：</strong> ${jiList.join('、') || '無'}</p>
-                        <p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">每日宜忌僅供參考，請勿過度迷信。</p>`;
+                        <p style="margin-top: 15px;"><strong>宜：</strong> ${yiList.join('、')}</p>
+                        <p style="margin-top: 15px;"><strong>忌：：</strong> ${jiList.join('、')}</p>
+                        <p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">
+                            每日宜忌僅供參考，請勿過度迷信。
+                        </p>
+                    `;
+                    document.getElementById('yijiDetailsContent').innerHTML = yijiHtml;
                     document.getElementById('yijiDetailsModal').classList.add('is-active');
                 } else if (lunarShiChenElement) {
-                    const hourYiList = lunar.getTimeYi() || [];
-                    const hourJiList = lunar.getTimeJi() || [];
-                    document.getElementById('yijiDetailsContent').innerHTML = `
-                        <p><strong>時辰：</strong> ${getShiChen(now.getHours())}時</p>
-                        <p style="margin-top: 15px;"><strong>宜：</strong> ${hourYiList.join('、') || '無'}</p>
-                        <p style="margin-top: 15px;"><strong>忌：</strong> ${hourJiList.join('、') || '無'}</p>
-                        <p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">時辰宜忌僅供參考，請勿過度迷信。</p>`;
+                    const currentHour = now.getHours();
+                    const shiChenName = getShiChen(currentHour);
+
+                    const hourYiList = lunar.getTimeYi() || ['無'];
+                    const hourJiList = lunar.getTimeJi() || ['無'];
+
+                    let yijiHtml = `
+                        <p><strong>時辰：：</strong> ${shiChenName}時</p>
+                        <p style="margin-top: 15px;"><strong>宜：</strong> ${hourYiList.join('、')}</p>
+                        <p style="margin-top: 15px;"><strong>忌：</strong> ${hourJiList.join('、')}</p>
+                        <p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">
+                            時辰宜忌僅供參考，請勿過度迷信。
+                        </p>
+                    `;
+                    document.getElementById('yijiDetailsContent').innerHTML = yijiHtml;
                     document.getElementById('yijiDetailsModal').classList.add('is-active');
                 }
             });
