@@ -93,43 +93,43 @@
 
         /* 節氣與節日跑馬燈容器樣式 */
         .jieqi-holiday-marquee-container {
-            flex-grow: 1; /* 讓跑馬燈容器佔據剩餘空間 */
-            overflow: hidden; /* 隱藏超出部分 */
+            flex-grow: 1;
+            overflow: hidden;
             position: relative;
-            text-align: left; /* 跑馬燈內容左對齊 */
-            min-width: 0; /* 允許 flex item 縮小 */
-            max-width: 40vw; /* 縮小跑馬燈的寬度 */
+            text-align: left;
+            min-width: 0;
+            max-width: 40vw;
         }
 
         /* 跑馬燈內部容器，實際被動畫的元素 */
         .jieqi-holiday-marquee-inner {
-            display: flex; /* 讓內容並排顯示 */
-            flex-wrap: nowrap; /* 確保內容不換行 */
-            width: max-content; /* 讓其寬度適應內容總寬度 */
-            /* animation 屬性將由 JS 動態設定 */
+            display: flex;
+            flex-wrap: nowrap;
+            width: max-content;
+            animation-name: marquee;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            animation-play-state: paused; /* 預設暫停 */
+        }
+
+        /* 滾動時應用的動畫樣式 */
+        .jieqi-holiday-marquee-container.scrolling .jieqi-holiday-marquee-inner {
+            animation-play-state: running; /* 開始動畫 */
         }
 
         /* 跑馬燈內容和重複內容的樣式 */
         .jieqi-holiday-marquee-content,
         .jieqi-holiday-marquee-content-duplicate {
-            display: inline-block; /* 讓內容在同一行 */
-            padding-right: 0.2em; /* 原始內容與重複內容之間留出間距 */
+            display: inline-block;
+            padding-right: 0.2em;
             white-space: nowrap;
-            flex-shrink: 0; /* 防止內容被壓縮 */
-        }
-
-        /* 滾動時應用的動畫樣式 */
-        .jieqi-holiday-marquee-container.scrolling .jieqi-holiday-marquee-inner {
-            animation-name: marquee;
-            animation-timing-function: linear;
-            animation-iteration-count: infinite;
+            flex-shrink: 0;
         }
 
         /* 跑馬燈動畫定義 */
         @keyframes marquee {
             from { transform: translateX(0); }
-            /* 捲動距離為單個內容塊的寬度 */
-            to { transform: translateX(var(--marquee-scroll-distance)); } 
+            to { transform: translateX(var(--marquee-scroll-distance)); }
         }
 
         .noscript-message {
@@ -467,6 +467,8 @@
     <script>
         let lastSecondTensDigit = -1;
         let currentPosition = { x: 0, y: 0 };
+        let lastJieqiHolidayContent = '';
+        let lastDay = -1;
 
         const defaultDisplaySettings = {
             showAmPm: true,
@@ -833,8 +835,11 @@
             marqueeContainer.setAttribute('data-next-holiday-days-until', nextHolidayInfo ? nextHolidayInfo.daysUntil : '');
             marqueeContainer.setAttribute('data-current-holiday-name', currentHolidayName);
             
-            // 呼叫跑馬燈更新
-            updateMarquee(combinedJieqiHolidayText);
+            // [修正] 只有在節氣/節日內容實際變更時才更新跑馬燈，以防止動畫閃爍
+            if (combinedJieqiHolidayText !== lastJieqiHolidayContent) {
+                updateMarquee(combinedJieqiHolidayText);
+                lastJieqiHolidayContent = combinedJieqiHolidayText;
+            }
             
             document.body.style.backgroundColor = displaySettings.backgroundColor;
         }
@@ -878,6 +883,9 @@
             saveSettings();
             updateSettingsModalCheckboxes();
             updateDateTime();
+            // 強制更新跑馬燈
+            lastJieqiHolidayContent = ''; 
+            updateDateTime();
         }
 
         // 取得隨機顏色
@@ -899,6 +907,8 @@
             });
             saveSettings();
             updateSettingsModalCheckboxes();
+            // 強制更新跑馬燈
+            lastJieqiHolidayContent = ''; 
             updateDateTime();
         }
 
@@ -920,6 +930,8 @@
                 document.getElementById(id).onchange = function(event) {
                     displaySettings[id] = event.target.checked;
                     saveSettings();
+                    // 強制更新跑馬燈
+                    lastJieqiHolidayContent = '';
                     updateDateTime();
                 };
             });
@@ -930,6 +942,8 @@
                 document.getElementById(id).oninput = function(event) {
                     displaySettings[id] = event.target.value;
                     saveSettings();
+                    // 顏色變化也需要強制更新
+                    lastJieqiHolidayContent = '';
                     updateDateTime();
                 };
             });
@@ -970,9 +984,9 @@
                         const formattedDate = `${jieqiDate.getFullYear()}年${(jieqiDate.getMonth() + 1).toString().padStart(2, '0')}月${jieqiDate.getDate().toString().padStart(2, '0')}日`;
                         const description = getJieqiDescription(jieqiName);
                         if (parseInt(daysUntilNextJieqi) === 0) {
-                            detailsHtml += `<h3>今日節氣</h3><p>${formattedDate} <strong>${jieqiName}</strong></p>`;
+                            detailsHtml += `<p>今日 <strong>${formattedDate} ${jieqiName}</strong></p>`;
                         } else {
-                            detailsHtml += `<h3>即將到來的節氣</h3><p>${formattedDate} <strong>${jieqiName}</strong> 還有${daysUntilNextJieqi}天</p>`;
+                            detailsHtml += `<p>${formattedDate} <strong>${jieqiName}</strong> 還有${daysUntilNextJieqi}天</p>`;
                         }
                         detailsHtml += `<p style="margin-top: 15px;">說明： ${description}</p>`;
                     }
@@ -980,11 +994,11 @@
                     if (currentHolidayNameFromData || (nextHolidayName && nextHolidayDateStr && nextHolidayDaysUntil)) {
                         if(hasJieqiInfo) detailsHtml += `<hr style="margin: 20px 0; border-color: #555;">`;
                         if (currentHolidayNameFromData) {
-                            detailsHtml += `<h3>今日節日</h3><p><strong>節日名稱：</strong> ${currentHolidayNameFromData}</p>`;
+                            detailsHtml += `<p>今日 <strong>${currentHolidayNameFromData}</strong></p>`;
                         } else {
                             const nextHolidayDate = new Date(nextHolidayDateStr);
                             const formattedHolidayDate = `${nextHolidayDate.getFullYear()}年${(nextHolidayDate.getMonth() + 1).toString().padStart(2, '0')}月${nextHolidayDate.getDate().toString().padStart(2, '0')}日`;
-                            detailsHtml += `<h3>即將到來的節日</h3><p>${formattedHolidayDate} <strong>${nextHolidayName}</strong> 還有${nextHolidayDaysUntil}天</p>`;
+                            detailsHtml += `<p>${formattedHolidayDate} <strong>${nextHolidayName}</strong> 還有${nextHolidayDaysUntil}天</p>`;
                         }
                     }
 
