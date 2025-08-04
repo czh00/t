@@ -88,7 +88,7 @@
         .lunar-date-static-text {
             flex-shrink: 0; /* 防止農曆日期被壓縮 */
             text-align: right; /* 確保內容靠右對齊 */
-            /* 移除 margin-right 以消除空格 */
+            /* margin-right: 1em;  <-- 移除此行以消除空隙 */
         }
 
         /* 節氣與節日跑馬燈容器樣式 */
@@ -106,14 +106,12 @@
             display: flex; /* 讓內容並排顯示 */
             flex-wrap: nowrap; /* 確保內容不換行 */
             width: max-content; /* 讓其寬度適應內容總寬度 */
-            /* animation 屬性將由 JS 動態設定 */
         }
 
         /* 跑馬燈內容和重複內容的樣式 */
         .jieqi-holiday-marquee-content,
         .jieqi-holiday-marquee-content-duplicate {
-            display: inline-block; /* 讓內容在同一行 */
-            padding-right: 0.2em; /* 原始內容與重複內容之間留出間距 */
+            display: inline-block;
             white-space: nowrap;
             flex-shrink: 0; /* 防止內容被壓縮 */
         }
@@ -125,11 +123,20 @@
             animation-iteration-count: infinite;
         }
 
-        /* 跑馬燈動畫定義 */
+        /* 跑馬燈動畫定義 (關鍵修改) */
         @keyframes marquee {
-            from { transform: translateX(0); }
-            /* 捲動距離為單個內容塊的寬度 */
-            to { transform: translateX(var(--marquee-scroll-distance)); } 
+            from {
+                transform: translateX(0);
+            }
+            to {
+                /*
+                 * 將內部容器向左移動自身寬度的一半。
+                 * 因為內部容器包含兩個完全相同的內容副本，
+                 * 所以移動 50% 的寬度剛好等於一個內容副本的寬度，
+                 * 動畫結束時，第二個副本會完美接上第一個副本的初始位置，實現無縫循環。
+                 */
+                transform: translateX(-50%);
+            }
         }
 
         .noscript-message {
@@ -553,7 +560,7 @@
                 '鼠': '🐭',
                 '牛': '🐂',
                 '虎': '🐅',
-                '兔': '🐇',
+                '兔': '�',
                 '龍': '🐉',
                 '蛇': '🐍',
                 '馬': '🐎',
@@ -665,7 +672,7 @@
             return '';
         }
 
-        // 獨立的跑馬燈更新邏輯
+        // 獨立的跑馬燈更新邏輯 (關鍵修改)
         function updateMarquee(combinedJieqiHolidayText) {
             const jieqiHolidayMarqueeContainer = document.getElementById('jieqiHolidayMarqueeContainer');
             const jieqiHolidayMarqueeInner = document.getElementById('jieqiHolidayMarqueeInner');
@@ -676,56 +683,46 @@
                 return; // 元素不存在，不執行
             }
 
-            // 更新內容
-            jieqiHolidayMarqueeContent.innerHTML = combinedJieqiHolidayText;
-            jieqiHolidayMarqueeContentDuplicate.innerHTML = combinedJieqiHolidayText;
+            // 為了讓兩個內容副本完全一樣，我們在兩者後面都加上固定的間隔
+            const separator = '&nbsp;&nbsp;&nbsp;';
+            jieqiHolidayMarqueeContent.innerHTML = combinedJieqiHolidayText + separator;
+            jieqiHolidayMarqueeContentDuplicate.innerHTML = combinedJieqiHolidayText + separator;
 
             // 只有當節氣或節日顯示時才處理跑馬燈
             if (displaySettings.showJieqi || displaySettings.showHolidays) {
                 // 使用小延遲以確保 DOM 渲染完成，才能正確計算寬度
                 setTimeout(() => {
-                    // 獲取單個內容塊的實際寬度，包括其 padding-right
+                    // 獲取單個內容塊的實際寬度
                     const singleContentWidth = jieqiHolidayMarqueeContent.scrollWidth;
                     const containerWidth = jieqiHolidayMarqueeContainer.offsetWidth;
 
-                    // Check if content actually overflows the container
+                    // 檢查內容是否真的溢出容器
                     if (singleContentWidth > containerWidth) {
                         jieqiHolidayMarqueeContainer.classList.add('scrolling');
                         
-                        // Calculate animation duration based on content width and desired speed (e.g., 50 pixels per second)
-                        const speed = 50; // pixels per second
-                        const animationDuration = singleContentWidth / speed; // seconds
+                        // 根據內容寬度和期望速度計算動畫時間
+                        const speed = 50; // 每秒移動的像素
+                        const animationDuration = singleContentWidth / speed; // 秒
                         
-                        // 設定 CSS 變數，用於 @keyframes 中的捲動距離
-                        // 這裡的距離是單個內容塊的寬度，使得動畫剛好捲動一個內容塊的長度
-                        jieqiHolidayMarqueeInner.style.setProperty('--marquee-scroll-distance', `-${singleContentWidth}px`); 
-
-                        // Apply animation duration to the inner container
+                        // 應用動畫時間
                         jieqiHolidayMarqueeInner.style.animationDuration = `${animationDuration}s`;
-                        
-                        // 確保動畫在開始時就應用
                         jieqiHolidayMarqueeInner.style.animationPlayState = 'running';
-
-                        jieqiHolidayMarqueeContainer.style.textAlign = 'left'; // Align content to left when scrolling
+                        jieqiHolidayMarqueeContainer.style.textAlign = 'left';
                     } else {
-                        // If content doesn't overflow, remove scrolling classes and reset styles
+                        // 如果內容沒有溢出，移除滾動樣式並重置
                         jieqiHolidayMarqueeContainer.classList.remove('scrolling');
-                        jieqiHolidayMarqueeContentDuplicate.innerHTML = ''; // Clear duplicate if not scrolling
+                        jieqiHolidayMarqueeContentDuplicate.innerHTML = ''; // 不滾動時清空重複的內容
                         jieqiHolidayMarqueeInner.style.animationDuration = '';
-                        jieqiHolidayMarqueeContainer.style.textAlign = 'center'; // Center content when not scrolling
-                        jieqiHolidayMarqueeInner.style.removeProperty('--marquee-scroll-distance'); // Remove variable
-                        // Pause animation
+                        jieqiHolidayMarqueeContainer.style.textAlign = 'center';
                         jieqiHolidayMarqueeInner.style.animationPlayState = 'paused';
                     }
-                }, 50); // 50 ms delay
+                }, 50); // 50 毫秒延遲
             } else {
-                // If no jieqi/holiday content to show, ensure marquee is off and content cleared
+                // 如果不顯示節氣/節日，確保跑馬燈關閉且內容清空
                 jieqiHolidayMarqueeContainer.classList.remove('scrolling');
                 jieqiHolidayMarqueeContent.innerHTML = '';
                 jieqiHolidayMarqueeContentDuplicate.innerHTML = '';
                 jieqiHolidayMarqueeInner.style.animationDuration = '';
-                jieqiHolidayMarqueeInner.style.removeProperty('--marquee-scroll-distance'); // 移除變數
-                // Pause animation
                 jieqiHolidayMarqueeInner.style.animationPlayState = 'paused';
             }
         }
@@ -951,7 +948,6 @@
                 dateTimeDisplay.innerHTML = currentDateTimeHtml;
             } else {
                 // 如果結構已經存在，只更新變化的部分
-                // *** FIX: Update time color style directly ***
                 const timeTextElement = dateTimeDisplay.querySelector('.time-text');
                 if (timeTextElement) {
                     timeTextElement.style.color = displaySettings.textColor;
@@ -1112,13 +1108,12 @@
                     displaySettings[id] = event.target.checked;
                     saveSettings();
                     // 強制更新跑馬燈
-                    lastJieqiHolidayContent = '';
+                    lastMarqueeContent = '';
                     updateDateTime();
                 };
             });
 
-            // *** FIX: Use 'oninput' for immediate color updates ***
-            // 顏色選擇器事件
+            // 顏色選擇器事件 (使用 'oninput' 以即時更新)
             document.getElementById('textColor').oninput = function(event) {
                 displaySettings.textColor = event.target.value;
                 saveSettings();
@@ -1278,3 +1273,4 @@
     </script>
 </body>
 </html>
+�
