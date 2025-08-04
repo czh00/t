@@ -683,7 +683,6 @@
                 return; // 元素不存在，不執行
             }
 
-            // 為了讓兩個內容副本完全一樣，我們在兩者後面都加上固定的間隔
             jieqiHolidayMarqueeContent.innerHTML = combinedJieqiHolidayText;
             jieqiHolidayMarqueeContentDuplicate.innerHTML = combinedJieqiHolidayText;
 
@@ -896,7 +895,7 @@
 
                 if (displaySettings.showHolidays) {
                     if (foundTodayHoliday) {
-                        holidayCountdownText = `今日節日：${currentHolidayName}`; // 當天節日顯示「今日節日」
+                        holidayCountdownText = `${currentHolidayName}`; // 當天節日顯示「今日節日」
                     } else if (nextHolidayInfo) {
                         holidayCountdownText = `${nextHolidayInfo.daysUntil}➡${nextHolidayInfo.name}`;
                     }
@@ -931,8 +930,7 @@
                             data-next-holiday-name="${nextHolidayInfo ? nextHolidayInfo.name : ''}"
                             data-next-holiday-date="${nextHolidayInfo ? nextHolidayInfo.date.toISOString() : ''}"
                             data-next-holiday-days-until="${nextHolidayInfo ? nextHolidayInfo.daysUntil : ''}"
-                            data-current-holiday-name="${currentHolidayName}"
-                        >
+                            data-current-holiday-name="${currentHolidayName}">
                             <div id="jieqiHolidayMarqueeInner" class="jieqi-holiday-marquee-inner">
                                 <span class="jieqi-holiday-marquee-content"></span>
                                 <span class="jieqi-holiday-marquee-content-duplicate"></span>
