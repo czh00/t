@@ -325,7 +325,7 @@
             color: #FFD700;
         }
 
-        /* 月曆/周曆共用 Header */
+        /* 月曆/周曆/年曆 共用 Header */
         .calendar-header {
             display: flex;
             justify-content: space-between;
@@ -410,7 +410,7 @@
             color: #ccc;
         }
 
-        /* 新增：周曆 Modal 樣式 */
+        /* 周曆 Modal 樣式 */
         .weekly-calendar-content {
              background-color: #2c2c2c;
             margin: auto;
@@ -465,6 +465,70 @@
             font-size: 0.9em;
             color: #ccc;
             margin-top: 5px;
+        }
+        
+        /* 新增：年曆 Modal 樣式 */
+        .yearly-calendar-content {
+            background-color: #2c2c2c;
+            margin: auto;
+            padding: 15px;
+            border: 1px solid #888;
+            width: 98%;
+            max-width: 1400px; /* 年曆需要更寬 */
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 95vh;
+        }
+
+        .yearly-calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .yearly-month-container {
+            background-color: #3a3a3a;
+            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid #555;
+        }
+
+        .yearly-month-header {
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #00FF00;
+        }
+
+        .yearly-weekdays, .yearly-day-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 3px;
+            text-align: center;
+        }
+
+        .yearly-weekdays div {
+            font-size: 0.8em;
+            color: #aaa;
+        }
+
+        .yearly-day {
+            font-size: 0.9em;
+            padding: 2px;
+            border-radius: 3px;
+        }
+
+        .yearly-day.is-today {
+            background-color: #00FF00;
+            color: #000;
+            font-weight: bold;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.7.0/lunar.min.js"></script>
@@ -642,7 +706,7 @@
         </div>
     </div>
 
-    <!-- 新增：周曆 Modal -->
+    <!-- 周曆 Modal -->
     <div id="weeklyCalendarModal" class="modal">
         <div class="weekly-calendar-content">
             <div class="calendar-header">
@@ -654,14 +718,27 @@
             <button id="closeWeeklyCalendarBtn" class="action-button">關閉</button>
         </div>
     </div>
+    
+    <!-- 新增：年曆 Modal -->
+    <div id="yearlyCalendarModal" class="modal">
+        <div class="yearly-calendar-content">
+            <div class="calendar-header">
+                <button id="prevYearBtn">&lt;</button>
+                <h2 id="yearlyCalendarTitle"></h2>
+                <button id="nextYearBtn">&gt;</button>
+            </div>
+            <div id="yearlyCalendarGrid" class="yearly-calendar-grid"></div>
+            <button id="closeYearlyCalendarBtn" class="action-button">關閉</button>
+        </div>
+    </div>
 
     <script>
         // 全域變數
         let lastSecondTensDigit = -1;
-        let currentPosition = { x: 0, y: 0 };
         let lastMarqueeContent = ''; // 用於追蹤跑馬燈內容是否變化
         let calendarDate = new Date(); // 用於月曆的日期對象
-        let weeklyCalendarDate = new Date(); // 新增：用於周曆的日期對象
+        let weeklyCalendarDate = new Date(); // 用於周曆的日期對象
+        let yearlyCalendarDate = new Date(); // 新增：用於年曆的日期對象
 
         // 預設顯示設定
         const defaultDisplaySettings = {
@@ -747,7 +824,7 @@
 
         // 取得生肖 emoji
         function getShengXiaoEmoji(shengXiaoName) {
-            const emojiMap = { '鼠': '🐭', '牛': '🐂', '虎': '🐅', '兔': '🐰', '龍': '🐉', '蛇': '🐍', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '�', '狗': '🐕', '豬': '🐖' };
+            const emojiMap = { '鼠': '🐭', '牛': '�', '虎': '🐅', '兔': '🐰', '龍': '🐉', '蛇': '🐍', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '🐕', '豬': '🐖' };
             return emojiMap[shengXiaoName] || shengXiaoName;
         }
 
@@ -849,7 +926,7 @@
                 const month = (now.getMonth() + 1).toString().padStart(2, '0');
                 const day = now.getDate().toString().padStart(2, '0');
                 const weekday = ['日', '一', '二', '三', '四', '五', '六'][now.getDay()];
-                if (displaySettings.showGregorianYear) gregorianParts.push(`<span style="color: ${displaySettings.gregorianYearColor};">${year}年</span>`);
+                if (displaySettings.showGregorianYear) gregorianParts.push(`<span class="gregorian-year-target" style="color: ${displaySettings.gregorianYearColor}; cursor: pointer;">${year}年</span>`);
                 if (displaySettings.showGregorianMonth) gregorianParts.push(`<span style="color: ${displaySettings.gregorianMonthColor};">${month}月</span>`);
                 if (displaySettings.showGregorianDay) gregorianParts.push(`<span style="color: ${displaySettings.gregorianDayColor};">${day}日</span>`);
                 if (displaySettings.showGregorianWeekday) gregorianParts.push(`<span class="weekday-target" style="color: ${displaySettings.gregorianWeekdayColor}; cursor: pointer;">周${weekday}</span>`);
@@ -869,7 +946,7 @@
                 const minguoYear = now.getFullYear() - 1911;
 
                 if (displaySettings.showMinguoYear || displaySettings.showLunarMonth || displaySettings.showLunarDay || displaySettings.showLunarShiChen) {
-                    if (displaySettings.showMinguoYear) lunarParts.push(`<span style="color: ${displaySettings.minguoYearColor};">${minguoYear}年${getShengXiaoEmoji(lunar.getYearShengXiao())}</span>`);
+                    if (displaySettings.showMinguoYear) lunarParts.push(`<span class="lunar-year-target" style="color: ${displaySettings.minguoYearColor}; cursor: pointer;">${minguoYear}年${getShengXiaoEmoji(lunar.getYearShengXiao())}</span>`);
                     if (displaySettings.showLunarMonth) lunarParts.push(`<span style="color: ${displaySettings.lunarMonthColor};">${lunar.getMonthInChinese().replace('闰', '閏')}月</span>`);
                     if (displaySettings.showLunarDay) lunarParts.push(`<span class="lunar-day-target lunar-date-clickable" style="color: ${displaySettings.lunarDayColor};">${lunar.getDayInChinese()}</span>`);
                     if (displaySettings.showLunarShiChen) lunarParts.push(`<span class="lunar-shichen-target lunar-shichen-clickable" style="color: ${displaySettings.lunarShiChenColor};">${getShiChen(now.getHours())}時</span>`);
@@ -969,29 +1046,29 @@
             document.body.style.backgroundColor = displaySettings.backgroundColor;
         }
 
-        // 隨機移動顯示元素
+        // [修正] 隨機移動顯示元素
         function moveRandomly() {
             const displayElement = document.getElementById('dateTimeDisplay');
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight;
+            // 獲取元素的實際渲染尺寸
             const elementRect = displayElement.getBoundingClientRect();
-            const safeMargin = 20;
-            const smallOffsetRange = 40;
+            const safeMargin = 20; // 確保不會完全貼到邊緣
 
-            const minAllowedX = - (viewportWidth / 2) + (elementRect.width / 2) + safeMargin;
-            const maxAllowedX = (viewportWidth / 2) - (elementRect.width / 2) - safeMargin;
-            const minAllowedY = - (viewportHeight / 2) + (elementRect.height / 2) + safeMargin;
-            const maxAllowedY = (viewportHeight / 2) - (elementRect.height / 2) - safeMargin;
+            // 計算元素中心點可移動的範圍
+            const maxX = (viewportWidth - elementRect.width) / 2 - safeMargin;
+            const maxY = (viewportHeight - elementRect.height) / 2 - safeMargin;
 
-            const offsetX = (Math.random() * 2 - 1) * smallOffsetRange;
-            const offsetY = (Math.random() * 2 - 1) * smallOffsetRange;
+            // 在允許的範圍內產生一個新的隨機目標位置 (相對於畫面中心)
+            // 乘以2再減去最大值，可以得到一個從 -maxX 到 +maxX 的隨機數
+            const newTargetX = Math.random() * (maxX * 2) - maxX;
+            const newTargetY = Math.random() * (maxY * 2) - maxY;
 
-            let newTargetX = Math.max(minAllowedX, Math.min(currentPosition.x + offsetX, maxAllowedX));
-            let newTargetY = Math.max(minAllowedY, Math.min(currentPosition.y + offsetY, maxAllowedY));
-
-            currentPosition = { x: newTargetX, y: newTargetY };
-            displayElement.style.transform = `translate(calc(-50% + ${newTargetX}px), calc(-70% + ${newTargetY}px))`;
+            // 應用新的 transform
+            // 使用 calc 將百分比中心點(-50%)與像素偏移量結合
+            displayElement.style.transform = `translate(calc(-50% + ${newTargetX}px), calc(-60% + ${newTargetY}px))`;
         }
+
 
         // 恢復預設設定
         function restoreDefaults() {
@@ -1062,7 +1139,7 @@
             }
         }
 
-        // 新增：產生周曆
+        // 產生周曆
         function generateWeekCalendar(baseDate) {
             const grid = document.getElementById('weeklyCalendarGrid');
             const title = document.getElementById('weeklyCalendarTitle');
@@ -1099,6 +1176,60 @@
                     <div class="weekly-lunar-day">${lunar.getDay() === 1 ? lunar.getMonthInChinese().replace('闰', '閏') + '月' : lunar.getDayInChinese()}</div>
                 `;
                 grid.appendChild(dayCell);
+            }
+        }
+
+        // 新增：產生年曆
+        function generateYearCalendar(year) {
+            const grid = document.getElementById('yearlyCalendarGrid');
+            const title = document.getElementById('yearlyCalendarTitle');
+            if (!grid || !title) return;
+
+            grid.innerHTML = '';
+            title.textContent = `${year}年`;
+            const today = new Date();
+            const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+
+            for (let month = 0; month < 12; month++) {
+                const monthContainer = document.createElement('div');
+                monthContainer.classList.add('yearly-month-container');
+
+                const monthHeader = document.createElement('div');
+                monthHeader.classList.add('yearly-month-header');
+                monthHeader.textContent = `${month + 1}月`;
+                monthContainer.appendChild(monthHeader);
+
+                const weekdaysDiv = document.createElement('div');
+                weekdaysDiv.classList.add('yearly-weekdays');
+                weekdays.forEach(day => {
+                    const weekdayEl = document.createElement('div');
+                    weekdayEl.textContent = day;
+                    weekdaysDiv.appendChild(weekdayEl);
+                });
+                monthContainer.appendChild(weekdaysDiv);
+
+                const dayGrid = document.createElement('div');
+                dayGrid.classList.add('yearly-day-grid');
+
+                const firstDayOfMonth = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                for (let i = 0; i < firstDayOfMonth; i++) {
+                    const emptyCell = document.createElement('div');
+                    dayGrid.appendChild(emptyCell);
+                }
+
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dayCell = document.createElement('div');
+                    dayCell.classList.add('yearly-day');
+                    dayCell.textContent = day;
+                    if (today.getFullYear() === year && today.getMonth() === month && day === today.getDate()) {
+                        dayCell.classList.add('is-today');
+                    }
+                    dayGrid.appendChild(dayCell);
+                }
+                monthContainer.appendChild(dayGrid);
+                grid.appendChild(monthContainer);
             }
         }
 
@@ -1141,6 +1272,16 @@
                 weeklyCalendarDate.setDate(weeklyCalendarDate.getDate() + 7);
                 generateWeekCalendar(weeklyCalendarDate);
             };
+            
+            // 年曆導航
+            document.getElementById('prevYearBtn').onclick = () => {
+                yearlyCalendarDate.setFullYear(yearlyCalendarDate.getFullYear() - 1);
+                generateYearCalendar(yearlyCalendarDate.getFullYear());
+            };
+            document.getElementById('nextYearBtn').onclick = () => {
+                yearlyCalendarDate.setFullYear(yearlyCalendarDate.getFullYear() + 1);
+                generateYearCalendar(yearlyCalendarDate.getFullYear());
+            };
 
 
             // 設定開關事件
@@ -1177,8 +1318,11 @@
                 const lunarShiChenElement = event.target.closest('.lunar-shichen-target');
                 const jieqiMarqueeElement = event.target.closest('#jieqiHolidayMarqueeContainer');
                 const weekdayElement = event.target.closest('.weekday-target');
-                const gregorianDateElement = event.target.closest('.gregorian-date-text');
-                const lunarDateElement = event.target.closest('.lunar-date-static-text');
+                const gregorianDateElement = event.target.closest('.gregorian-date-text:not(.gregorian-year-target)');
+                const lunarDateElement = event.target.closest('.lunar-date-static-text:not(.lunar-year-target)');
+                const gregorianYearElement = event.target.closest('.gregorian-year-target');
+                const lunarYearElement = event.target.closest('.lunar-year-target');
+
 
                 // 邏輯順序：從最精確的點擊目標到最籠統的
                 if (secondsElement) {
@@ -1235,6 +1379,10 @@
 
                     document.getElementById('jieqiDetailsContent').innerHTML = detailsHtml;
                     document.getElementById('jieqiDetailsModal').classList.add('is-active');
+                } else if (gregorianYearElement || lunarYearElement) {
+                    yearlyCalendarDate = new Date();
+                    generateYearCalendar(yearlyCalendarDate.getFullYear());
+                    document.getElementById('yearlyCalendarModal').classList.add('is-active');
                 } else if (weekdayElement) {
                     weeklyCalendarDate = new Date();
                     generateWeekCalendar(weeklyCalendarDate);
