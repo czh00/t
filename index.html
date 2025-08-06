@@ -72,6 +72,8 @@
             display: block;
             white-space: nowrap;
             cursor: pointer; /* 公曆日期可點擊 */
+            position: relative; /* [修正] 提升層級 */
+            z-index: 1;      /* [修正] 確保在時間之上 */
         }
 
         /* 農曆日期和節氣節日共同的行容器 */
@@ -84,6 +86,8 @@
             width: 92vw; /* 設置一個寬度，讓內容可以溢出進行跑馬燈 */
             margin: 0 auto;
             overflow: hidden; /* 隱藏溢出內容，為跑馬燈做準備 */
+            position: relative; /* [修正] 提升層級 */
+            z-index: 1;      /* [修正] 確保在時間之上 */
         }
 
         /* 農曆日期樣式 (靜態部分) */
@@ -321,24 +325,7 @@
             color: #FFD700;
         }
 
-        /* 月曆 Modal 樣式 */
-        .calendar-content {
-            background-color: #2c2c2c;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 95%;
-            max-width: 800px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
-            color: #e0e0e0;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-height: 90vh;
-        }
-
+        /* 月曆/周曆共用 Header */
         .calendar-header {
             display: flex;
             justify-content: space-between;
@@ -358,6 +345,24 @@
             color: #00FF00;
             font-size: 2em;
             cursor: pointer;
+        }
+
+        /* 月曆 Modal 樣式 */
+        .calendar-content {
+            background-color: #2c2c2c;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 95%;
+            max-width: 800px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+            color: #e0e0e0;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 90vh;
         }
 
         .calendar-weekdays, .calendar-grid {
@@ -403,6 +408,63 @@
         .calendar-day .lunar-day {
             font-size: 0.8em;
             color: #ccc;
+        }
+
+        /* 新增：周曆 Modal 樣式 */
+        .weekly-calendar-content {
+             background-color: #2c2c2c;
+            margin: auto;
+            padding: 15px;
+            border: 1px solid #888;
+            width: 98%;
+            max-width: 1200px; /* 可以更寬以容納周曆 */
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+            color: #e0e0e0;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 90vh;
+        }
+
+        .weekly-calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .weekly-calendar-day {
+            background-color: #444;
+            border-radius: 8px;
+            padding: 10px;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid #555;
+        }
+
+        .weekly-calendar-day.is-today {
+            border-color: #00FF00;
+            box-shadow: 0 0 8px #00FF00;
+        }
+
+        .weekly-day-header {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .weekly-gregorian-day {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        
+        .weekly-lunar-day {
+            font-size: 0.9em;
+            color: #ccc;
+            margin-top: 5px;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.7.0/lunar.min.js"></script>
@@ -569,7 +631,7 @@
     <!-- 月曆 Modal -->
     <div id="calendarModal" class="modal">
         <div class="calendar-content">
-            <div id="calendarHeader" class="calendar-header">
+            <div class="calendar-header">
                 <button id="prevMonthBtn">&lt;</button>
                 <h2 id="calendarMonthYear"></h2>
                 <button id="nextMonthBtn">&gt;</button>
@@ -580,12 +642,26 @@
         </div>
     </div>
 
+    <!-- 新增：周曆 Modal -->
+    <div id="weeklyCalendarModal" class="modal">
+        <div class="weekly-calendar-content">
+            <div class="calendar-header">
+                <button id="prevWeekBtn">&lt;</button>
+                <h2 id="weeklyCalendarTitle"></h2>
+                <button id="nextWeekBtn">&gt;</button>
+            </div>
+            <div id="weeklyCalendarGrid" class="weekly-calendar-grid"></div>
+            <button id="closeWeeklyCalendarBtn" class="action-button">關閉</button>
+        </div>
+    </div>
+
     <script>
         // 全域變數
         let lastSecondTensDigit = -1;
         let currentPosition = { x: 0, y: 0 };
         let lastMarqueeContent = ''; // 用於追蹤跑馬燈內容是否變化
         let calendarDate = new Date(); // 用於月曆的日期對象
+        let weeklyCalendarDate = new Date(); // 新增：用於周曆的日期對象
 
         // 預設顯示設定
         const defaultDisplaySettings = {
@@ -727,7 +803,6 @@
 
             contentSpan.innerHTML = combinedJieqiHolidayText;
             
-            // 使用 requestAnimationFrame 確保在下一次重繪前計算寬度
             requestAnimationFrame(() => {
                 const contentWidth = contentSpan.scrollWidth;
                 const containerWidth = marqueeContainer.offsetWidth;
@@ -735,7 +810,7 @@
                 if (contentWidth > containerWidth) {
                     duplicateSpan.innerHTML = combinedJieqiHolidayText;
                     marqueeContainer.classList.add('scrolling');
-                    const speed = 50; // 每秒移動的像素
+                    const speed = 50;
                     const duration = contentWidth / speed;
                     marqueeInner.style.animationDuration = `${duration}s`;
                     marqueeInner.style.animationPlayState = 'running';
@@ -747,7 +822,7 @@
             });
         }
 
-        // [修改] 更新主畫面顯示的日期和時間 (非破壞性更新)
+        // 更新主畫面顯示的日期和時間 (非破壞性更新)
         function updateDateTime() {
             const now = new Date();
             const currentSeconds = now.getSeconds();
@@ -757,8 +832,6 @@
                 moveRandomly();
                 lastSecondTensDigit = secondTensDigit;
             }
-
-            // --- 計算所有顯示內容 ---
 
             const timeOptions = { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: displaySettings.showAmPm };
             const formatter = new Intl.DateTimeFormat('zh-Hant', timeOptions);
@@ -779,7 +852,7 @@
                 if (displaySettings.showGregorianYear) gregorianParts.push(`<span style="color: ${displaySettings.gregorianYearColor};">${year}年</span>`);
                 if (displaySettings.showGregorianMonth) gregorianParts.push(`<span style="color: ${displaySettings.gregorianMonthColor};">${month}月</span>`);
                 if (displaySettings.showGregorianDay) gregorianParts.push(`<span style="color: ${displaySettings.gregorianDayColor};">${day}日</span>`);
-                if (displaySettings.showGregorianWeekday) gregorianParts.push(`<span style="color: ${displaySettings.gregorianWeekdayColor};">周${weekday}</span>`);
+                if (displaySettings.showGregorianWeekday) gregorianParts.push(`<span class="weekday-target" style="color: ${displaySettings.gregorianWeekdayColor}; cursor: pointer;">周${weekday}</span>`);
             }
             
             let lunarParts = [];
@@ -851,7 +924,6 @@
                 combinedJieqiHolidayText = marqueeParts.join('');
             }
 
-            // --- 更新 DOM ---
             const timeTextContainer = document.getElementById('timeTextContainer');
             const hoursMinutesDisplay = document.getElementById('hoursMinutesDisplay');
             const secondsDisplay = document.getElementById('secondsDisplay');
@@ -990,6 +1062,46 @@
             }
         }
 
+        // 新增：產生周曆
+        function generateWeekCalendar(baseDate) {
+            const grid = document.getElementById('weeklyCalendarGrid');
+            const title = document.getElementById('weeklyCalendarTitle');
+            if (!grid || !title) return;
+
+            grid.innerHTML = '';
+            const today = new Date();
+            const startOfWeek = new Date(baseDate);
+            startOfWeek.setDate(baseDate.getDate() - baseDate.getDay()); // 將日期設為本周的星期日
+
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+            title.textContent = `${startOfWeek.getFullYear()}年${startOfWeek.getMonth() + 1}月${startOfWeek.getDate()}日 - ${endOfWeek.getFullYear()}年${endOfWeek.getMonth() + 1}月${endOfWeek.getDate()}日`;
+
+            const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+
+            for (let i = 0; i < 7; i++) {
+                const day = new Date(startOfWeek);
+                day.setDate(startOfWeek.getDate() + i);
+                
+                const dayCell = document.createElement('div');
+                dayCell.classList.add('weekly-calendar-day');
+
+                if (day.toDateString() === today.toDateString()) {
+                    dayCell.classList.add('is-today');
+                }
+
+                const lunar = Solar.fromDate(day).getLunar();
+                
+                dayCell.innerHTML = `
+                    <div class="weekly-day-header">${weekdays[i]}</div>
+                    <div class="weekly-gregorian-day">${day.getDate()}</div>
+                    <div class="weekly-lunar-day">${lunar.getDay() === 1 ? lunar.getMonthInChinese().replace('闰', '閏') + '月' : lunar.getDayInChinese()}</div>
+                `;
+                grid.appendChild(dayCell);
+            }
+        }
+
         // 頁面載入完成後執行的初始化
         window.onload = function () {
             loadSettings();
@@ -1019,6 +1131,17 @@
                 calendarDate.setMonth(calendarDate.getMonth() + 1);
                 generateCalendar(calendarDate.getFullYear(), calendarDate.getMonth());
             };
+            
+            // 周曆導航
+            document.getElementById('prevWeekBtn').onclick = () => {
+                weeklyCalendarDate.setDate(weeklyCalendarDate.getDate() - 7);
+                generateWeekCalendar(weeklyCalendarDate);
+            };
+            document.getElementById('nextWeekBtn').onclick = () => {
+                weeklyCalendarDate.setDate(weeklyCalendarDate.getDate() + 7);
+                generateWeekCalendar(weeklyCalendarDate);
+            };
+
 
             // 設定開關事件
             document.querySelectorAll('.switch input[type="checkbox"]').forEach(toggle => {
@@ -1053,6 +1176,7 @@
                 const lunarDayElement = event.target.closest('.lunar-day-target');
                 const lunarShiChenElement = event.target.closest('.lunar-shichen-target');
                 const jieqiMarqueeElement = event.target.closest('#jieqiHolidayMarqueeContainer');
+                const weekdayElement = event.target.closest('.weekday-target');
                 const gregorianDateElement = event.target.closest('.gregorian-date-text');
                 const lunarDateElement = event.target.closest('.lunar-date-static-text');
 
@@ -1111,6 +1235,10 @@
 
                     document.getElementById('jieqiDetailsContent').innerHTML = detailsHtml;
                     document.getElementById('jieqiDetailsModal').classList.add('is-active');
+                } else if (weekdayElement) {
+                    weeklyCalendarDate = new Date();
+                    generateWeekCalendar(weeklyCalendarDate);
+                    document.getElementById('weeklyCalendarModal').classList.add('is-active');
                 } else if (gregorianDateElement || lunarDateElement) {
                     calendarDate = new Date();
                     generateCalendar(calendarDate.getFullYear(), calendarDate.getMonth());
