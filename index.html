@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>時間</title>
     <style>
+        :root {
+            --page-background-color: #000; /* [新增] 用於同步背景色的 CSS 變數 */
+        }
+
         *, *::before, *::after {
             box-sizing: border-box;
         }
@@ -20,7 +24,7 @@
             width: 100vw;
             position: relative;
             font-family: 'Inter', sans-serif;
-            background-color: #000; /* 預設背景 */
+            background-color: var(--page-background-color);
         }
 
         #dateTimeDisplay {
@@ -34,7 +38,8 @@
             transform: translate(-50%, -50%);
             left: 50%;
             top: 50%;
-            cursor: default; /* 預設游標 */
+            cursor: default;
+            z-index: 10;
         }
 
         .time-text {
@@ -48,7 +53,7 @@
 
         .time-seconds {
             font-size: 6vw;
-            cursor: pointer; /* 秒數可點擊 */
+            cursor: pointer;
             position: absolute;
             right: 0;
             bottom: 6vw;
@@ -71,66 +76,59 @@
             margin-bottom: -3vw;
             display: block;
             white-space: nowrap;
-            cursor: pointer; /* 公曆日期可點擊 */
-            position: relative; /* [修正] 提升層級 */
-            z-index: 1;      /* [修正] 確保在時間之上 */
-        }
-
-        /* 農曆日期和節氣節日共同的行容器 */
-        .lunar-and-jieqi-line {
-            display: flex; /* 使用 Flexbox 讓內容在同一行 */
-            justify-content: center; /* 水平居中 */
-            align-items: center; /* 垂直居中 */
-            font-size: 6.4vw;
-            white-space: nowrap; /* 防止換行 */
-            width: 92vw; /* 設置一個寬度，讓內容可以溢出進行跑馬燈 */
-            margin: 0 auto;
-            overflow: hidden; /* 隱藏溢出內容，為跑馬燈做準備 */
-            position: relative; /* [修正] 提升層級 */
-            z-index: 1;      /* [修正] 確保在時間之上 */
-        }
-
-        /* 農曆日期樣式 (靜態部分) */
-        .lunar-date-static-text {
-            flex-shrink: 0; /* 防止農曆日期被壓縮 */
-            text-align: right; /* 確保內容靠右對齊 */
-            cursor: pointer; /* 整個農曆日期區域可點擊 */
-        }
-
-        /* 節氣與節日跑馬燈容器樣式 */
-        .jieqi-holiday-marquee-container {
-            flex-grow: 1; /* 讓跑馬燈容器佔據剩餘空間 */
-            overflow: hidden; /* 隱藏超出部分 */
+            cursor: pointer;
             position: relative;
-            text-align: left; /* 跑馬燈內容左對齊 */
-            min-width: 0; /* 允許 flex item 縮小 */
-            cursor: pointer; /* 跑馬燈可點擊 */
+            z-index: 1;
         }
 
-        /* 跑馬燈內部容器，實際被動畫的元素 */
+        .lunar-and-jieqi-line {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 6.4vw;
+            white-space: nowrap;
+            width: 92vw;
+            margin: 0 auto;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        .lunar-date-static-text {
+            flex-shrink: 0;
+            text-align: right;
+            cursor: pointer;
+        }
+
+        .jieqi-holiday-marquee-container {
+            flex-grow: 1;
+            overflow: hidden;
+            position: relative;
+            text-align: left;
+            min-width: 0;
+            cursor: pointer;
+        }
+
         .jieqi-holiday-marquee-inner {
-            display: flex; /* 讓內容並排顯示 */
-            flex-wrap: nowrap; /* 確保內容不換行 */
-            width: fit-content; /* 讓其寬度適應內容總寬度 */
+            display: flex;
+            flex-wrap: nowrap;
+            width: fit-content;
             will-change: transform;
         }
 
-        /* 跑馬燈內容和重複內容的樣式 */
         .jieqi-holiday-marquee-content,
         .jieqi-holiday-marquee-content-duplicate {
             display: inline-block;
             white-space: nowrap;
-            flex-shrink: 0; /* 防止內容被壓縮 */
+            flex-shrink: 0;
         }
 
-        /* 滾動時應用的動畫樣式 */
         .jieqi-holiday-marquee-container.scrolling .jieqi-holiday-marquee-inner {
             animation-name: marquee;
             animation-timing-function: linear;
             animation-iteration-count: infinite;
         }
 
-        /* 跑馬燈動畫定義 */
         @keyframes marquee {
             from {
                 transform: translateX(0);
@@ -146,7 +144,6 @@
             margin-top: 10px;
         }
 
-        /* 通用 Modal 樣式 */
         .modal {
             display: none;
             position: fixed;
@@ -317,15 +314,14 @@
         }
 
         .yiji-content p, .jieqi-content p {
-            margin-bottom: 10px; /* 增加間距 */
-            font-size: 1.5em; /* 放大字體 */
-            line-height: 1.6; /* 增加行高以提高可讀性 */
+            margin-bottom: 10px;
+            font-size: 1.5em;
+            line-height: 1.6;
         }
         .yiji-content strong, .jieqi-content strong {
             color: #FFD700;
         }
 
-        /* 月曆/周曆/年曆 共用 Header */
         .calendar-header {
             display: flex;
             justify-content: space-between;
@@ -347,7 +343,6 @@
             cursor: pointer;
         }
 
-        /* 月曆 Modal 樣式 */
         .calendar-content {
             background-color: #2c2c2c;
             margin: auto;
@@ -410,14 +405,13 @@
             color: #ccc;
         }
 
-        /* 周曆 Modal 樣式 */
         .weekly-calendar-content {
              background-color: #2c2c2c;
             margin: auto;
             padding: 15px;
             border: 1px solid #888;
             width: 98%;
-            max-width: 1200px; /* 可以更寬以容納周曆 */
+            max-width: 1200px;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
             color: #e0e0e0;
@@ -467,14 +461,13 @@
             margin-top: 5px;
         }
         
-        /* 新增：年曆 Modal 樣式 */
         .yearly-calendar-content {
             background-color: #2c2c2c;
             margin: auto;
             padding: 15px;
             border: 1px solid #888;
             width: 98%;
-            max-width: 1400px; /* 年曆需要更寬 */
+            max-width: 1400px;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
             color: #e0e0e0;
@@ -531,45 +524,84 @@
             font-weight: bold;
         }
 
-        /* [新增] 交錯掃描線特效 */
-        #scanline-overlay {
-            position: fixed; /* 使用 fixed 以覆蓋整個視窗 */
+        /* [修改] 背景掃描線特效 */
+        #background-scanline-overlay {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none; /* 讓滑鼠可以點擊穿透覆蓋層 */
-            z-index: 50; /* 確保在文字之上，但在彈出視窗之下 */
+            pointer-events: none;
+            z-index: 1;
             background-color: transparent;
+            display: none; /* 預設隱藏 */
         }
 
-        #scanline-overlay.pattern-a {
+        #background-scanline-overlay.active.pattern-a {
+            display: block;
             background-image: repeating-linear-gradient(
                 to bottom,
                 transparent,
                 transparent 2px,
-                var(--background-color, #000) 2px,
-                var(--background-color, #000) 4px
+                rgba(0,0,0,0.3) 2px,
+                rgba(0,0,0,0.3) 4px
             );
         }
 
-        #scanline-overlay.pattern-b {
+        #background-scanline-overlay.active.pattern-b {
+            display: block;
             background-image: repeating-linear-gradient(
                 to bottom,
-                var(--background-color, #000) 0,
-                var(--background-color, #000) 2px,
+                rgba(0,0,0,0.3) 0,
+                rgba(0,0,0,0.3) 2px,
                 transparent 2px,
                 transparent 4px
             );
         }
+
+        /* [修改] 文字掃描線特效 (恢復原版邏輯) */
+        #text-scanline-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50; /* 在文字之上，彈出視窗之下 */
+            background-color: transparent;
+            display: none; /* 預設隱藏 */
+        }
+
+        #text-scanline-overlay.active.pattern-a {
+            display: block;
+            background-image: repeating-linear-gradient(
+                to bottom,
+                transparent,
+                transparent 2px,
+                var(--page-background-color) 2px,
+                var(--page-background-color) 4px
+            );
+        }
+
+        #text-scanline-overlay.active.pattern-b {
+            display: block;
+            background-image: repeating-linear-gradient(
+                to bottom,
+                var(--page-background-color) 0,
+                var(--page-background-color) 2px,
+                transparent 2px,
+                transparent 4px
+            );
+        }
+
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.7.0/lunar.min.js"></script>
 </head>
 <body>
-    <!-- [新增] 用於實現掃描線特效的覆蓋層 -->
-    <div id="scanline-overlay"></div>
-    <!-- [修改] 靜態 HTML 結構，避免每秒重建 -->
+    <div id="background-scanline-overlay"></div>
+    <div id="text-scanline-overlay"></div>
+    
     <div id="dateTimeDisplay">
         <div class="time-text" id="timeTextContainer">
             <span id="hoursMinutesDisplay"></span>
@@ -697,15 +729,18 @@
             </div>
 
             <div class="setting-item">
-                <label for="backgroundColor">背景顏色</label>
+                <label for="backgroundColor">背景</label>
+                <label class="switch" title="切換背景掃描線特效">
+                    <input type="checkbox" id="enableBackgroundScanline">
+                    <span class="slider"></span>
+                </label>
                 <input type="color" id="backgroundColor" value="#000000">
             </div>
             
-            <!-- [新增] 特效開關 -->
             <div class="setting-item">
-                <label for="enableScanline">掃描線特效</label>
+                <label for="enableTextScanline">文字掃描線特效</label>
                 <label class="switch">
-                    <input type="checkbox" id="enableScanline">
+                    <input type="checkbox" id="enableTextScanline">
                     <span class="slider"></span>
                 </label>
             </div>
@@ -771,7 +806,7 @@
         </div>
     </div>
     
-    <!-- 新增：年曆 Modal -->
+    <!-- 年曆 Modal -->
     <div id="yearlyCalendarModal" class="modal">
         <div class="yearly-calendar-content">
             <div class="calendar-header">
@@ -787,12 +822,11 @@
     <script>
         // 全域變數
         let lastSecondTensDigit = -1;
-        let lastMarqueeContent = ''; // 用於追蹤跑馬燈內容是否變化
-        let calendarDate = new Date(); // 用於月曆的日期對象
-        let weeklyCalendarDate = new Date(); // 用於周曆的日期對象
-        let yearlyCalendarDate = new Date(); // 新增：用於年曆的日期對象
+        let lastMarqueeContent = ''; 
+        let calendarDate = new Date();
+        let weeklyCalendarDate = new Date();
+        let yearlyCalendarDate = new Date();
 
-        // [更新] 預設顯示設定，加入特效開關
         const defaultDisplaySettings = {
             showAmPm: true,
             showGregorianYear: true,
@@ -817,39 +851,34 @@
             lunarShiChenColor: '#00FF00',
             jieqiColor: '#00FF00',
             holidayColor: '#00FFFF',
-            enableScanline: true,
+            enableTextScanline: true,
+            enableBackgroundScanline: true,
             enableMovement: true
         };
 
-        // 目前的顯示設定
         let displaySettings = { ...defaultDisplaySettings }; 
 
-        // 儲存設定到 localStorage
         function saveSettings() {
             try {
-                const settingsJson = JSON.stringify(displaySettings);
-                localStorage.setItem('displaySettings', settingsJson);
+                localStorage.setItem('displaySettings', JSON.stringify(displaySettings));
             } catch (e) {
                 console.error("儲存設定至 localStorage 失敗:", e);
             }
         }
 
-        // 從 localStorage 載入設定
         function loadSettings() {
             try {
                 const settingsJson = localStorage.getItem('displaySettings');
                 if (settingsJson) {
                     const loadedSettings = JSON.parse(settingsJson);
-                    // 合併載入的設定與預設值，以防舊設定缺少新欄位
                     displaySettings = Object.assign({ ...defaultDisplaySettings }, loadedSettings);
                 }
             } catch (e) {
                 console.error("從 localStorage 解析設定失敗:", e);
-                displaySettings = { ...defaultDisplaySettings }; // 解析失敗時使用預設值
+                displaySettings = { ...defaultDisplaySettings };
             }
         }
 
-        // [更新] 更新設定彈窗中的 UI 狀態，加入特效開關
         function updateSettingsModalUI() {
             document.getElementById('showAmPm').checked = displaySettings.showAmPm;
             document.getElementById('showGregorianYear').checked = displaySettings.showGregorianYear;
@@ -874,23 +903,21 @@
             document.getElementById('lunarShiChenColor').value = displaySettings.lunarShiChenColor;
             document.getElementById('jieqiColor').value = displaySettings.jieqiColor;
             document.getElementById('holidayColor').value = displaySettings.holidayColor;
-            document.getElementById('enableScanline').checked = displaySettings.enableScanline;
+            document.getElementById('enableTextScanline').checked = displaySettings.enableTextScanline;
+            document.getElementById('enableBackgroundScanline').checked = displaySettings.enableBackgroundScanline;
             document.getElementById('enableMovement').checked = displaySettings.enableMovement;
         }
 
-        // 取得生肖 emoji
         function getShengXiaoEmoji(shengXiaoName) {
-            const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐅', '兔': '🐰', '龍': '🐉', '蛇': '🐍', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '🐕', '豬': '🐖' };
+            const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐅', '兔': '🐰', '龍': '🐉', '蛇': '🐍', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '�', '豬': '🐖' };
             return emojiMap[shengXiaoName] || shengXiaoName;
         }
 
-        // 取得節氣描述
         function getJieqiDescription(jieqiName) {
             const descriptions = { '立春': '春季開始，萬物復甦，氣溫回升。', '雨水': '降雨增多，草木萌動，春耕開始。', '驚蟄': '春雷響動，驚醒冬眠動物，氣溫漸升。', '春分': '晝夜等長，春意盎然，南北半球氣溫趨於平衡。', '清明': '氣候清爽明朗，萬物潔淨，是掃墓祭祖的日子。', '穀雨': '雨水滋潤，穀物生長，是播種移苗的好時節。', '立夏': '夏季開始，萬物繁茂，氣溫明顯升高。', '小滿': '麥類等夏熟作物籽粒開始飽滿，但尚未成熟。', '芒種': '有芒作物（如麥、稻）成熟，可以收穫和播種。', '夏至': '北半球白晝最長，陽氣最盛，是盛夏的開始。', '小暑': '天氣開始炎熱，但還未到最熱的時候。', '大暑': '一年中最炎熱的時期，濕熱交蒸。', '立秋': '秋季開始，氣溫逐漸下降，但仍有暑熱。', '處暑': '暑氣漸退，天氣轉涼，但仍有「秋老虎」。', '白露': '天氣轉涼，水氣凝結成露珠，天氣漸寒。', '秋分': '晝夜等長，秋高氣爽，是收穫的季節。', '寒露': '氣溫更低，露水更多，天氣轉冷。', '霜降': '天氣漸冷，露水凝結成霜，是秋季的最後一個節氣。', '立冬': '冬季開始，萬物收藏，氣溫顯著下降。', '小雪': '開始降雪，但雪量不大，氣溫持續走低。', '大雪': '降雪量增多，天氣更冷，冰凍現象常見。', '冬至': '北半球白晝最短，夜晚最長，是數九寒天的開始。', '小寒': '天氣寒冷，尚未達到最冷。', '大寒': '一年中最寒冷的時期，嚴寒冰凍。' };
             return descriptions[jieqiName] || '此節氣無詳細說明。';
         }
 
-        // 取得節日資訊
         function getHolidays(year) {
             const holidays = [
                 { name: '元旦', date: new Date(year, 0, 1) }, { name: '和平紀念日', date: new Date(year, 1, 28) }, { name: '兒童節', date: new Date(year, 3, 4) }, { name: '清明節', date: new Date(year, 3, 4) }, { name: '勞動節', date: new Date(year, 4, 1) }, { name: '國慶日', date: new Date(year, 9, 10) }, { name: '聖誕節', date: new Date(year, 11, 25) }
@@ -912,19 +939,16 @@
             return holidays;
         }
 
-        // 取得時辰名稱
         function getShiChen(h) {
             if (h >= 23 || h < 1) return '子'; if (h >= 1 && h < 3) return '丑'; if (h >= 3 && h < 5) return '寅'; if (h >= 5 && h < 7) return '卯'; if (h >= 7 && h < 9) return '辰'; if (h >= 9 && h < 11) return '巳'; if (h >= 11 && h < 13) return '午'; if (h >= 13 && h < 15) return '未'; if (h >= 15 && h < 17) return '申'; if (h >= 17 && h < 19) return '酉'; if (h >= 19 && h < 21) return '戌'; if (h >= 21 && h < 23) return '亥';
             return '';
         }
 
-        // 取得詳細時間段（凌晨、清晨等）
         function getDetailedTimePeriod(hour) {
             if (hour >= 0 && hour < 5) return '凌晨'; if (hour >= 5 && hour < 9) return '清晨'; if (hour >= 9 && hour < 12) return '上午'; if (hour === 12) return '中午'; if (hour > 12 && hour < 17) return '下午'; if (hour >= 17 && hour < 19) return '傍晚'; if (hour >= 19 && hour < 23) return '夜晚'; if (hour === 23) return '深夜';
             return '';
         }
 
-        // 更新跑馬燈內容與動畫
         function updateMarquee(combinedJieqiHolidayText) {
             const marqueeContainer = document.getElementById('jieqiHolidayMarqueeContainer');
             const marqueeInner = document.getElementById('jieqiHolidayMarqueeInner');
@@ -955,32 +979,38 @@
             });
         }
 
-        // [更新] 更新主畫面顯示的日期和時間 (非破壞性更新)
+        // [修改] 更新主畫面顯示，分離掃描線邏輯
         function updateDateTime() {
             const now = new Date();
             const currentSeconds = now.getSeconds();
-            const overlay = document.getElementById('scanline-overlay');
+            const backgroundOverlay = document.getElementById('background-scanline-overlay');
+            const textOverlay = document.getElementById('text-scanline-overlay');
             
             const secondTensDigit = Math.floor(currentSeconds / 10);
             if (secondTensDigit !== lastSecondTensDigit) {
-                // [更新] 根據設定決定是否移動
                 if(displaySettings.enableMovement) {
                     moveRandomly();
                 }
                 
-                // [更新] 根據設定決定是否切換掃描線
-                if (displaySettings.enableScanline && overlay) {
-                    overlay.classList.toggle('pattern-a');
-                    overlay.classList.toggle('pattern-b');
+                // 切換兩個掃描線的 pattern
+                if (displaySettings.enableBackgroundScanline) {
+                    backgroundOverlay.classList.toggle('pattern-a');
+                    backgroundOverlay.classList.toggle('pattern-b');
+                }
+                if (displaySettings.enableTextScanline) {
+                    textOverlay.classList.toggle('pattern-a');
+                    textOverlay.classList.toggle('pattern-b');
                 }
                 
                 lastSecondTensDigit = secondTensDigit;
             }
 
-            // [新增] 如果掃描線被禁用，確保移除樣式
-            if (!displaySettings.enableScanline && overlay) {
-                overlay.classList.remove('pattern-a', 'pattern-b');
-            }
+            // 根據設定決定是否顯示掃描線
+            backgroundOverlay.classList.toggle('active', displaySettings.enableBackgroundScanline);
+            textOverlay.classList.toggle('active', displaySettings.enableTextScanline);
+
+            // 更新背景色
+            document.documentElement.style.setProperty('--page-background-color', displaySettings.backgroundColor);
 
             const timeOptions = { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: displaySettings.showAmPm };
             const formatter = new Intl.DateTimeFormat('zh-Hant', timeOptions);
@@ -1114,66 +1144,56 @@
                     lastMarqueeContent = '';
                  }
             }
-            
-            document.body.style.backgroundColor = displaySettings.backgroundColor;
         }
 
-        // [修正] 隨機移動顯示元素
         function moveRandomly() {
             const displayElement = document.getElementById('dateTimeDisplay');
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight;
-            // 獲取元素的實際渲染尺寸
             const elementRect = displayElement.getBoundingClientRect();
-            const safeMargin = 20; // 確保不會完全貼到邊緣
+            const safeMargin = 20;
 
-            // 計算元素中心點可移動的範圍
             const maxX = (viewportWidth - elementRect.width) / 2 - safeMargin;
             const maxY = (viewportHeight - elementRect.height) / 2 - safeMargin;
 
-            // 在允許的範圍內產生一個新的隨機目標位置 (相對於畫面中心)
-            // 乘以2再減去最大值，可以得到一個從 -maxX 到 +maxX 的隨機數
             const newTargetX = Math.random() * (maxX * 2) - maxX;
             const newTargetY = Math.random() * (maxY * 2) - maxY;
 
-            // 應用新的 transform
-            // 使用 calc 將百分比中心點(-50%)與像素偏移量結合
             displayElement.style.transform = `translate(calc(-50% + ${newTargetX}px), calc(-60% + ${newTargetY}px))`;
         }
 
-        // [新增] 重置元素位置到中心
         function resetPosition() {
             const displayElement = document.getElementById('dateTimeDisplay');
             displayElement.style.transform = `translate(-50%, -60%)`;
         }
 
-
-        // 恢復預設設定
         function restoreDefaults() {
             displaySettings = { ...defaultDisplaySettings };
             saveSettings();
             updateSettingsModalUI();
-            updateDateTime();
-            // [新增] 恢復預設時，如果移動是開啟的，立即移動一次
+            
+            const textOverlay = document.getElementById('text-scanline-overlay');
+            textOverlay.classList.add('active', 'pattern-a');
+            textOverlay.classList.remove('pattern-b');
+
+            const backgroundOverlay = document.getElementById('background-scanline-overlay');
+            backgroundOverlay.classList.add('active', 'pattern-a');
+            backgroundOverlay.classList.remove('pattern-b');
+            
             if (displaySettings.enableMovement) {
                 moveRandomly();
             } else {
                 resetPosition();
             }
-            // [新增] 恢復預設時，重設掃描線樣式
-            const overlay = document.getElementById('scanline-overlay');
-            if (displaySettings.enableScanline) {
-                overlay.classList.add('pattern-a');
-                overlay.classList.remove('pattern-b');
-            }
+
+            lastMarqueeContent = '';
+            updateDateTime();
         }
 
-        // 取得隨機顏色
         function getRandomColor() {
             return '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
         }
 
-        // 設定隨機顏色
         function setRandomColors() {
             for (const key in displaySettings) {
                 if (key.toLowerCase().includes('color')) {
@@ -1185,7 +1205,6 @@
             updateDateTime();
         }
 
-        // 產生月曆
         function generateCalendar(year, month) {
             const calendarGrid = document.getElementById('calendarGrid');
             const calendarMonthYear = document.getElementById('calendarMonthYear');
@@ -1229,7 +1248,6 @@
             }
         }
 
-        // 產生周曆
         function generateWeekCalendar(baseDate) {
             const grid = document.getElementById('weeklyCalendarGrid');
             const title = document.getElementById('weeklyCalendarTitle');
@@ -1238,7 +1256,7 @@
             grid.innerHTML = '';
             const today = new Date();
             const startOfWeek = new Date(baseDate);
-            startOfWeek.setDate(baseDate.getDate() - baseDate.getDay()); // 將日期設為本周的星期日
+            startOfWeek.setDate(baseDate.getDate() - baseDate.getDay());
 
             const endOfWeek = new Date(startOfWeek);
             endOfWeek.setDate(startOfWeek.getDate() + 6);
@@ -1269,7 +1287,6 @@
             }
         }
 
-        // 新增：產生年曆
         function generateYearCalendar(year) {
             const grid = document.getElementById('yearlyCalendarGrid');
             const title = document.getElementById('yearlyCalendarTitle');
@@ -1323,14 +1340,14 @@
             }
         }
 
-        // 頁面載入完成後執行的初始化
         window.onload = function () {
             loadSettings();
             
-            // [更新] 根據載入的設定初始化特效
-            const overlay = document.getElementById('scanline-overlay');
-            if (displaySettings.enableScanline) {
-                overlay.classList.add('pattern-a');
+            if (displaySettings.enableTextScanline) {
+                document.getElementById('text-scanline-overlay').classList.add('active', 'pattern-a');
+            }
+            if (displaySettings.enableBackgroundScanline) {
+                document.getElementById('background-scanline-overlay').classList.add('active', 'pattern-a');
             }
             if (!displaySettings.enableMovement) {
                 resetPosition();
@@ -1340,7 +1357,6 @@
             updateDateTime();
             setInterval(updateDateTime, 1000);
 
-            // 為所有 Modal 關閉按鈕和背景點擊新增事件
             document.querySelectorAll('.modal').forEach(modal => {
                 const closeButton = modal.querySelector('.action-button[id^="close"], .action-button[id^="done"]');
                 if (closeButton) {
@@ -1353,7 +1369,6 @@
                 });
             });
 
-            // 月曆導航
             document.getElementById('prevMonthBtn').onclick = () => {
                 calendarDate.setMonth(calendarDate.getMonth() - 1);
                 generateCalendar(calendarDate.getFullYear(), calendarDate.getMonth());
@@ -1363,7 +1378,6 @@
                 generateCalendar(calendarDate.getFullYear(), calendarDate.getMonth());
             };
             
-            // 周曆導航
             document.getElementById('prevWeekBtn').onclick = () => {
                 weeklyCalendarDate.setDate(weeklyCalendarDate.getDate() - 7);
                 generateWeekCalendar(weeklyCalendarDate);
@@ -1373,7 +1387,6 @@
                 generateWeekCalendar(weeklyCalendarDate);
             };
             
-            // 年曆導航
             document.getElementById('prevYearBtn').onclick = () => {
                 yearlyCalendarDate.setFullYear(yearlyCalendarDate.getFullYear() - 1);
                 generateYearCalendar(yearlyCalendarDate.getFullYear());
@@ -1383,28 +1396,20 @@
                 generateYearCalendar(yearlyCalendarDate.getFullYear());
             };
 
-
-            // 設定開關事件
             document.querySelectorAll('.switch input[type="checkbox"]').forEach(toggle => {
                 toggle.onchange = (event) => {
                     displaySettings[event.target.id] = event.target.checked;
                     
-                    // [新增] 特效開關的即時反應
                     if (event.target.id === 'enableMovement' && !event.target.checked) {
                         resetPosition();
                     }
-                    if (event.target.id === 'enableScanline' && event.target.checked) {
-                        // 如果重新啟用，給它一個初始樣式
-                        document.getElementById('scanline-overlay').classList.add('pattern-a');
-                    }
-
+                    
                     saveSettings();
-                    lastMarqueeContent = ''; // 強制更新跑馬燈
-                    updateDateTime();
+                    lastMarqueeContent = '';
+                    updateDateTime(); // 立即更新一次以反映開關變化
                 };
             });
 
-            // 顏色選擇器事件
             document.querySelectorAll('input[type="color"]').forEach(colorInput => {
                 colorInput.oninput = (event) => {
                     displaySettings[event.target.id] = event.target.value;
@@ -1413,11 +1418,9 @@
                 };
             });
 
-            // 功能按鈕事件
             document.getElementById('restoreDefaultsBtn').onclick = restoreDefaults;
             document.getElementById('randomColorsBtn').onclick = setRandomColors;
 
-            // 主顯示區域的點擊事件處理
             document.getElementById('dateTimeDisplay').addEventListener('click', function(event) {
                 const now = new Date();
                 const solar = Solar.fromDate(now);
@@ -1433,8 +1436,6 @@
                 const gregorianYearElement = event.target.closest('.gregorian-year-target');
                 const lunarYearElement = event.target.closest('.lunar-year-target');
 
-
-                // 邏輯順序：從最精確的點擊目標到最籠統的
                 if (secondsElement) {
                     document.getElementById('settingsModal').classList.add('is-active');
                     updateSettingsModalUI();
@@ -1507,3 +1508,4 @@
     </script>
 </body>
 </html>
+�
