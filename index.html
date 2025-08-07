@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -565,7 +564,7 @@
         }
     </style>
 
-    <script type="text/javascript" nonce="8a11a27790dd4bfab948d499fbc" src="//local.adguard.org?ts=1754472195771&amp;type=content-script&amp;dmn=czh00.github.io&amp;url=https%3A%2F%2Fczh00.github.io%2Ft%2F&amp;app=chrome.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-push&amp;st-loc&amp;st-dnt&amp;st-1pcttl=4320"></script><script type="text/javascript" nonce="8a11a27790dd4bfab948d499fbc" src="//local.adguard.org?ts=1754472195771&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.7.0/lunar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.7.0/lunar.min.js"></script>
 </head>
 <body>
     <!-- [新增] 用於實現掃描線特效的覆蓋層 -->
@@ -701,6 +700,23 @@
                 <label for="backgroundColor">背景顏色</label>
                 <input type="color" id="backgroundColor" value="#000000">
             </div>
+            
+            <!-- [新增] 特效開關 -->
+            <div class="setting-item">
+                <label for="enableScanline">掃描線特效</label>
+                <label class="switch">
+                    <input type="checkbox" id="enableScanline">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <label for="enableMovement">隨機移動特效</label>
+                <label class="switch">
+                    <input type="checkbox" id="enableMovement">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
 
             <div class="button-group">
                 <button id="restoreDefaultsBtn" class="action-button">恢復預設</button>
@@ -769,8 +785,6 @@
     </div>
 
     <script>
-        // [新增] 用於追蹤掃描線特效切換的狀態
-        let hasToggledForThisSecond = true;
         // 全域變數
         let lastSecondTensDigit = -1;
         let lastMarqueeContent = ''; // 用於追蹤跑馬燈內容是否變化
@@ -778,7 +792,7 @@
         let weeklyCalendarDate = new Date(); // 用於周曆的日期對象
         let yearlyCalendarDate = new Date(); // 新增：用於年曆的日期對象
 
-        // 預設顯示設定
+        // [更新] 預設顯示設定，加入特效開關
         const defaultDisplaySettings = {
             showAmPm: true,
             showGregorianYear: true,
@@ -802,7 +816,9 @@
             lunarDayColor: '#00FF00',
             lunarShiChenColor: '#00FF00',
             jieqiColor: '#00FF00',
-            holidayColor: '#0000FF'
+            holidayColor: '#00FFFF',
+            enableScanline: true,
+            enableMovement: true
         };
 
         // 目前的顯示設定
@@ -833,7 +849,7 @@
             }
         }
 
-        // 更新設定彈窗中的 UI 狀態
+        // [更新] 更新設定彈窗中的 UI 狀態，加入特效開關
         function updateSettingsModalUI() {
             document.getElementById('showAmPm').checked = displaySettings.showAmPm;
             document.getElementById('showGregorianYear').checked = displaySettings.showGregorianYear;
@@ -858,11 +874,13 @@
             document.getElementById('lunarShiChenColor').value = displaySettings.lunarShiChenColor;
             document.getElementById('jieqiColor').value = displaySettings.jieqiColor;
             document.getElementById('holidayColor').value = displaySettings.holidayColor;
+            document.getElementById('enableScanline').checked = displaySettings.enableScanline;
+            document.getElementById('enableMovement').checked = displaySettings.enableMovement;
         }
 
         // 取得生肖 emoji
         function getShengXiaoEmoji(shengXiaoName) {
-            const emojiMap = { '鼠': '🐭', '牛': '�', '虎': '🐅', '兔': '🐰', '龍': '🐉', '蛇': '🐍', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '🐕', '豬': '🐖' };
+            const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐅', '兔': '🐰', '龍': '🐉', '蛇': '🐍', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '🐕', '豬': '🐖' };
             return emojiMap[shengXiaoName] || shengXiaoName;
         }
 
@@ -937,28 +955,31 @@
             });
         }
 
-        // 更新主畫面顯示的日期和時間 (非破壞性更新)
+        // [更新] 更新主畫面顯示的日期和時間 (非破壞性更新)
         function updateDateTime() {
             const now = new Date();
             const currentSeconds = now.getSeconds();
+            const overlay = document.getElementById('scanline-overlay');
+            
             const secondTensDigit = Math.floor(currentSeconds / 10);
-
-                if (currentSeconds % 10 === 0) {
-                    if (!hasToggledForThisSecond) {
-                        const overlay = document.getElementById('scanline-overlay');
-                        if (overlay) {
-                            overlay.classList.toggle('pattern-a');
-                            overlay.classList.toggle('pattern-b');
-                        }
-                        hasToggledForThisSecond = true;
-                    }
-                } else {
-                    hasToggledForThisSecond = false;
-                }
-
             if (secondTensDigit !== lastSecondTensDigit) {
-                moveRandomly();
+                // [更新] 根據設定決定是否移動
+                if(displaySettings.enableMovement) {
+                    moveRandomly();
+                }
+                
+                // [更新] 根據設定決定是否切換掃描線
+                if (displaySettings.enableScanline && overlay) {
+                    overlay.classList.toggle('pattern-a');
+                    overlay.classList.toggle('pattern-b');
+                }
+                
                 lastSecondTensDigit = secondTensDigit;
+            }
+
+            // [新增] 如果掃描線被禁用，確保移除樣式
+            if (!displaySettings.enableScanline && overlay) {
+                overlay.classList.remove('pattern-a', 'pattern-b');
             }
 
             const timeOptions = { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: displaySettings.showAmPm };
@@ -1120,6 +1141,12 @@
             displayElement.style.transform = `translate(calc(-50% + ${newTargetX}px), calc(-60% + ${newTargetY}px))`;
         }
 
+        // [新增] 重置元素位置到中心
+        function resetPosition() {
+            const displayElement = document.getElementById('dateTimeDisplay');
+            displayElement.style.transform = `translate(-50%, -60%)`;
+        }
+
 
         // 恢復預設設定
         function restoreDefaults() {
@@ -1127,6 +1154,18 @@
             saveSettings();
             updateSettingsModalUI();
             updateDateTime();
+            // [新增] 恢復預設時，如果移動是開啟的，立即移動一次
+            if (displaySettings.enableMovement) {
+                moveRandomly();
+            } else {
+                resetPosition();
+            }
+            // [新增] 恢復預設時，重設掃描線樣式
+            const overlay = document.getElementById('scanline-overlay');
+            if (displaySettings.enableScanline) {
+                overlay.classList.add('pattern-a');
+                overlay.classList.remove('pattern-b');
+            }
         }
 
         // 取得隨機顏色
@@ -1287,6 +1326,16 @@
         // 頁面載入完成後執行的初始化
         window.onload = function () {
             loadSettings();
+            
+            // [更新] 根據載入的設定初始化特效
+            const overlay = document.getElementById('scanline-overlay');
+            if (displaySettings.enableScanline) {
+                overlay.classList.add('pattern-a');
+            }
+            if (!displaySettings.enableMovement) {
+                resetPosition();
+            }
+
             updateSettingsModalUI();
             updateDateTime();
             setInterval(updateDateTime, 1000);
@@ -1339,6 +1388,16 @@
             document.querySelectorAll('.switch input[type="checkbox"]').forEach(toggle => {
                 toggle.onchange = (event) => {
                     displaySettings[event.target.id] = event.target.checked;
+                    
+                    // [新增] 特效開關的即時反應
+                    if (event.target.id === 'enableMovement' && !event.target.checked) {
+                        resetPosition();
+                    }
+                    if (event.target.id === 'enableScanline' && event.target.checked) {
+                        // 如果重新啟用，給它一個初始樣式
+                        document.getElementById('scanline-overlay').classList.add('pattern-a');
+                    }
+
                     saveSettings();
                     lastMarqueeContent = ''; // 強制更新跑馬燈
                     updateDateTime();
@@ -1409,7 +1468,7 @@
                         const date = new Date(jieqiDateStr);
                         const formattedDate = `${date.getFullYear()}年${(date.getMonth() + 1)}月${date.getDate()}日`;
                         detailsHtml += (parseInt(daysUntilJieqi) === 0)
-                            ? `<p>今日 <strong>${formattedDate} ${jieqiName}</strong></p>`
+                            ? `<p>今天 <strong>${jieqiName}</strong></p>`
                             : `<p>${formattedDate} <strong>${jieqiName}</strong> 還有${daysUntilJieqi}天</p>`;
                         detailsHtml += `<p style="margin-top: 10px; font-size: 1.2em;">${getJieqiDescription(jieqiName)}</p>`;
                     } else {
@@ -1419,13 +1478,13 @@
                     detailsHtml += `<hr style="margin: 20px 0; border-color: #555;">`;
 
                     if (currentHoliday) {
-                        detailsHtml += `<p>今日 <strong>${currentHoliday}</strong></p>`;
+                        detailsHtml += `<p>今天 <strong>${currentHoliday}</strong></p>`;
                     } else if (holidayName && holidayDateStr) {
                         const date = new Date(holidayDateStr);
                         const formattedDate = `${date.getFullYear()}年${(date.getMonth() + 1)}月${date.getDate()}日`;
                         detailsHtml += `<p>${formattedDate} <strong>${holidayName}</strong> 還有${daysUntilHoliday}天</p>`;
                     } else {
-                        detailsHtml += `<p>目前沒有即將到來的節日資訊。</p>`;
+                        detailsHtml += `<p>目前沒有節日資訊。</p>`;
                     }
 
                     document.getElementById('jieqiDetailsContent').innerHTML = detailsHtml;
@@ -1448,4 +1507,3 @@
     </script>
 </body>
 </html>
-�
