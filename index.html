@@ -851,8 +851,8 @@
             lunarShiChenColor: '#00FF00',
             jieqiColor: '#00FF00',
             holidayColor: '#00FFFF',
-            enableTextScanline: true,
-            enableBackgroundScanline: true,
+            enableTextScanline: false,
+            enableBackgroundScanline: false,
             enableMovement: true
         };
 
@@ -909,7 +909,7 @@
         }
 
         function getShengXiaoEmoji(shengXiaoName) {
-            const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐅', '兔': '🐰', '龍': '🐉', '蛇': '🐍', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '�', '豬': '🐖' };
+            const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐅', '兔': '🐰', '龍': '🐉', '蛇': '🐍', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '🐶', '豬': '🐖' };
             return emojiMap[shengXiaoName] || shengXiaoName;
         }
 
