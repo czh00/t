@@ -9,7 +9,7 @@
 		*, *::before, *::after { box-sizing: border-box; } /* 所有元素的盒模型都使用邊框盒模型 */
 		body {
 			margin: 0; /* 移除body預設外邊距 */
-			overflow: hidden; /* 隱藏超出視口的部分，防止滾動條出現 */
+			overflow: hidden; /* 隱藏超出視口の部分，防止滾動條出現 */
 			display: flex; /* 使用Flexbox佈局 */
 			flex-direction: column; /* 垂直排列子元素 */
 			justify-content: center; /* 水平居中對齊子元素 */
@@ -316,6 +316,10 @@
 			const jieqiTable = lunar.getJieQiTable(); // 從實例中獲取全年的節氣表
 			return Object.entries(jieqiTable).map(([name, dateStr]) => ({ name: jieqiNameMap[name] || name, date: new Date(dateStr) })).sort((a, b) => a.date.getTime() - b.date.getTime()); // 將節氣表轉換為物件陣列並排序
 		}
+		function convertYiJiToTraditional(yijiArray) { // 轉換宜忌為繁體中文
+			const yijiMap = { '开市': '開市', '交易': '交易', '纳财': '納財', '挂匾': '掛匾', '开光': '開光', '出行': '出行', '入宅': '入宅', '移徙': '移徙', '安床': '安床', '上梁': '上樑', '动土': '動土', '栽种': '栽種', '纳畜': '納畜', '安葬': '安葬', '破土': '破土', '启钻': '啟鑽', '祭祀': '祭祀', '祈福': '祈福', '嫁娶': '嫁娶', '纳采': '納采', '订盟': '訂盟', '求嗣': '求嗣', '解除': '解除', '修造': '修造', '竖柱': '豎柱', '伐木': '伐木', '作灶': '作灶', '安门': '安門', '词讼': '詞訟', '理发': '理髮' }; // 簡轉繁對照表
+			return yijiArray.map(item => yijiMap[item] || item); // 遍歷陣列並轉換
+		}
 		function getShiChen(h) { const shichenMap = { 23: '子', 0: '子', 1: '丑', 2: '丑', 3: '寅', 4: '寅', 5: '卯', 6: '卯', 7: '辰', 8: '辰', 9: '巳', 10: '巳', 11: '午', 12: '午', 13: '未', 14: '未', 15: '申', 16: '申', 17: '酉', 18: '酉', 19: '戌', 20: '戌', 21: '亥', 22: '亥' }; return shichenMap[h] || ''; } // 根據小時數獲取對應的時辰
 		function getDetailedTimePeriod(hour) { const periodMap = { 0: '凌晨', 1: '凌晨', 2: '凌晨', 3: '凌晨', 4: '凌晨', 5: '清晨', 6: '清晨', 7: '清晨', 8: '清晨', 9: '上午', 10: '上午', 11: '上午', 12: '中午', 13: '下午', 14: '下午', 15: '下午', 16: '下午', 17: '傍晚', 18: '傍晚', 19: '夜晚', 20: '夜晚', 21: '夜晚', 22: '夜晚', 23: '深夜' }; return periodMap[hour] || ''; } // 根據小時數獲取詳細時間段描述
 		function updateMarquee(combinedJieqiHolidayText) { // 更新節氣/節日跑馬燈顯示
@@ -522,7 +526,11 @@
 				else if (target.closest('.lunar-day-target') || target.closest('.lunar-shichen-target')) {
 					const now = new Date(), lunar = Solar.fromDate(now).getLunar();
 					const isShiChen = !!target.closest('.lunar-shichen-target');
-					const yijiHtml = isShiChen ? `<p><strong>時辰：<\/strong> ${getShiChen(now.getHours())}時<\/p><p style="margin-top: 15px;"><strong>宜：<\/strong> ${lunar.getTimeYi().join('、') || '無'}<\/p><p style="margin-top: 15px;"><strong>忌：<\/strong> ${lunar.getTimeJi().join('、') || '無'}<\/p>` : `<p><strong>農曆日期：<\/strong> ${lunar.getMonthInChinese().replace('闰', '閏')}月${lunar.getDayInChinese()}<\/p><p style="margin-top: 15px;"><strong>宜：<\/strong> ${lunar.getDayYi().join('、') || '無'}<\/p><p style="margin-top: 15px;"><strong>忌：<\/strong> ${lunar.getDayJi().join('、') || '無'}<\/p>`;
+					const dayYi = convertYiJiToTraditional(lunar.getDayYi()).join('、') || '無';
+					const dayJi = convertYiJiToTraditional(lunar.getDayJi()).join('、') || '無';
+					const timeYi = convertYiJiToTraditional(lunar.getTimeYi()).join('、') || '無';
+					const timeJi = convertYiJiToTraditional(lunar.getTimeJi()).join('、') || '無';
+					const yijiHtml = isShiChen ? `<p><strong>時辰：<\/strong> ${getShiChen(now.getHours())}時<\/p><p style="margin-top: 15px;"><strong>宜：<\/strong> ${timeYi}<\/p><p style="margin-top: 15px;"><strong>忌：<\/strong> ${timeJi}<\/p>` : `<p><strong>農曆日期：<\/strong> ${lunar.getMonthInChinese().replace('闰', '閏')}月${lunar.getDayInChinese()}<\/p><p style="margin-top: 15px;"><strong>宜：<\/strong> ${dayYi}<\/p><p style="margin-top: 15px;"><strong>忌：<\/strong> ${dayJi}<\/p>`;
 					document.getElementById('yijiDetailsContent').innerHTML = yijiHtml + `<p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">宜忌僅供參考，請勿過度迷信。<\/p>`;
 					document.getElementById('yijiDetailsModal').classList.add('is-active');
 				}
@@ -576,4 +584,3 @@
 	</script>
 </body>
 </html>
-�
