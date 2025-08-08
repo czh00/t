@@ -639,8 +639,7 @@
         </div><noscript>
         <div class="noscript-message">
             您的瀏覽器不支援或已禁用 JavaScript。
-        </div></noscript> <!-- 設定 Modal -->
-        <div class="modal" id="settingsModal">
+        </div></noscript> <div class="modal" id="settingsModal">
             <div class="modal-content">
                 <h2>顯示設定</h2>
                 <div class="calendar-settings-container">
@@ -697,20 +696,17 @@
                     <button class="action-button" id="restoreDefaultsBtn">恢復預設</button> <button class="action-button" id="randomColorsBtn">隨機顏色</button> <button class="action-button" id="doneBtn">完成</button>
                 </div>
             </div>
-        </div><!-- 節氣/節日 Modal -->
-        <div class="modal" id="jieqiDetailsModal">
+        </div><div class="modal" id="jieqiDetailsModal">
             <div class="modal-content jieqi-content">
                 <h2>節氣與節日資訊</h2>
                 <div id="jieqiDetailsContent" style="text-align: left;"></div><button class="action-button" id="closeJieqiDetailsBtn">關閉</button>
             </div>
-        </div><!-- 宜忌 Modal -->
-        <div class="modal" id="yijiDetailsModal">
+        </div><div class="modal" id="yijiDetailsModal">
             <div class="modal-content yiji-content">
                 <h2>宜忌資訊</h2>
                 <div id="yijiDetailsContent" style="text-align: left;"></div><button class="action-button" id="closeYijiDetailsBtn">關閉</button>
             </div>
-        </div><!-- 月曆 Modal -->
-        <div class="modal" id="calendarModal">
+        </div><div class="modal" id="calendarModal">
             <div class="calendar-content">
                 <div class="calendar-header">
                     <button id="prevMonthBtn">&lt;</button>
@@ -719,8 +715,7 @@
                 <div class="calendar-weekdays" id="calendarWeekdays"></div>
                 <div class="calendar-grid" id="calendarGrid"></div><button class="action-button" id="closeCalendarBtn">關閉</button>
             </div>
-        </div><!-- 周曆 Modal -->
-        <div class="modal" id="weeklyCalendarModal">
+        </div><div class="modal" id="weeklyCalendarModal">
             <div class="weekly-calendar-content">
                 <div class="calendar-header">
                     <button id="prevWeekBtn">&lt;</button>
@@ -728,8 +723,7 @@
                 </div>
                 <div class="weekly-calendar-grid" id="weeklyCalendarGrid"></div><button class="action-button" id="closeWeeklyCalendarBtn">關閉</button>
             </div>
-        </div><!-- 年曆 Modal -->
-        <div class="modal" id="yearlyCalendarModal">
+        </div><div class="modal" id="yearlyCalendarModal">
             <div class="yearly-calendar-content">
                 <div class="calendar-header">
                     <button id="prevYearBtn">&lt;</button>
@@ -739,7 +733,6 @@
             </div>
         </div>
     </div>
-    <!-- 全螢幕圖示 -->
     <div id="fullscreen-icon" title="全螢幕/退出全螢幕">
         <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"></path>
@@ -841,7 +834,7 @@
 
 	       // 根據生肖名稱返回對應的Emoji
 	       function getShengXiaoEmoji(shengXiaoName) {
-	           const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐅', '兔': '🐰', '龍': '�', '蛇': '🐍', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '🐶', '豬': '🐖' }; // 生肖名稱與Emoji的映射
+	           const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐅', '兔': '🐰', '龍': '🐉', '蛇': '🐍', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '🐶', '豬': '🐖' }; // 生肖名稱與Emoji的映射
 	           return emojiMap[shengXiaoName] || shengXiaoName; // 返回對應的Emoji，如果沒有則返回原名稱
 	       }
 
@@ -1513,6 +1506,30 @@
                document.addEventListener('mozfullscreenchange', handleFullscreenChange);
                document.addEventListener('MSFullscreenChange', handleFullscreenChange);
                // --- 全螢幕功能結束 ---
+
+               // --- 全螢幕圖示閒置隱藏功能 ---
+               let inactivityTimer; // 宣告一個變數來存放計時器ID。
+               const fullscreenIconToManage = document.getElementById('fullscreen-icon'); // 獲取全螢幕圖示元素。
+
+               function hideIconOnIdle() { // 定義閒置時隱藏圖示的函式。
+                   fullscreenIconToManage.style.opacity = '0'; // 透過將透明度設為0來隱藏圖示。
+               }
+
+               function resetIdleTimer() { // 定義重置閒置計時器的函式。
+                   if (fullscreenIconToManage.style.display !== 'none') { // 只有在圖示沒有因為進入全螢幕而隱藏時才操作。
+                       fullscreenIconToManage.style.opacity = '0.5'; // 確保圖示是可見的（恢復透明度）。
+                   }
+                   clearTimeout(inactivityTimer); // 清除先前的計時器。
+                   inactivityTimer = setTimeout(hideIconOnIdle, 10000); // 設定一個10秒後觸發隱藏功能的新計時器。
+               }
+
+               // 監聽使用者活動以重設計時器
+               document.addEventListener('mousemove', resetIdleTimer); // 當滑鼠移動時，重設計時器。
+               document.addEventListener('keydown', resetIdleTimer); // 當按下鍵盤時，重設計時器。
+               document.addEventListener('touchstart', resetIdleTimer); // 當觸控螢幕時，重設計時器。
+
+               resetIdleTimer(); // 初始呼叫函式以啟動計時器。
+               // --- 全螢幕圖示閒置隱藏功能結束 ---
 	       };
 	</script>
 </body>
