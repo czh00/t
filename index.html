@@ -524,7 +524,6 @@
             font-weight: bold;
         }
 
-        /* [修改] 背景掃描線特效 */
         #background-scanline-overlay {
             position: fixed;
             top: 0;
@@ -559,7 +558,6 @@
             );
         }
 
-        /* [修改] 文字掃描線特效 (恢復原版邏輯) */
         #text-scanline-overlay {
             position: fixed;
             top: 0;
@@ -822,6 +820,7 @@
     <script>
         // 全域變數
         let lastSecondTensDigit = -1;
+        let scanlinePatternIsA = true; // [新增] 用於追蹤當前掃描線模式
         let lastMarqueeContent = ''; 
         let calendarDate = new Date();
         let weeklyCalendarDate = new Date();
@@ -979,7 +978,7 @@
             });
         }
 
-        // [修改] 更新主畫面顯示，分離掃描線邏輯
+        // [修改] 更新主畫面顯示，處理掃描線邏輯
         function updateDateTime() {
             const now = new Date();
             const currentSeconds = now.getSeconds();
@@ -992,22 +991,26 @@
                     moveRandomly();
                 }
                 
-                // 切換兩個掃描線的 pattern
-                if (displaySettings.enableBackgroundScanline) {
-                    backgroundOverlay.classList.toggle('pattern-a');
-                    backgroundOverlay.classList.toggle('pattern-b');
-                }
-                if (displaySettings.enableTextScanline) {
-                    textOverlay.classList.toggle('pattern-a');
-                    textOverlay.classList.toggle('pattern-b');
-                }
+                // 每10秒翻轉一次掃描線模式
+                scanlinePatternIsA = !scanlinePatternIsA;
                 
                 lastSecondTensDigit = secondTensDigit;
             }
 
-            // 根據設定決定是否顯示掃描線
+            // 根據設定和當前模式更新掃描線
+            // 背景掃描線
             backgroundOverlay.classList.toggle('active', displaySettings.enableBackgroundScanline);
+            if (displaySettings.enableBackgroundScanline) {
+                backgroundOverlay.classList.toggle('pattern-a', scanlinePatternIsA);
+                backgroundOverlay.classList.toggle('pattern-b', !scanlinePatternIsA);
+            }
+
+            // 文字掃描線 (使用與背景相反的模式以產生交錯效果)
             textOverlay.classList.toggle('active', displaySettings.enableTextScanline);
+            if (displaySettings.enableTextScanline) {
+                textOverlay.classList.toggle('pattern-a', !scanlinePatternIsA);
+                textOverlay.classList.toggle('pattern-b', scanlinePatternIsA);
+            }
 
             // 更新背景色
             document.documentElement.style.setProperty('--page-background-color', displaySettings.backgroundColor);
@@ -1167,18 +1170,14 @@
             displayElement.style.transform = `translate(-50%, -60%)`;
         }
 
+        // [修改] 恢復預設功能
         function restoreDefaults() {
             displaySettings = { ...defaultDisplaySettings };
             saveSettings();
             updateSettingsModalUI();
             
-            const textOverlay = document.getElementById('text-scanline-overlay');
-            textOverlay.classList.add('active', 'pattern-a');
-            textOverlay.classList.remove('pattern-b');
-
-            const backgroundOverlay = document.getElementById('background-scanline-overlay');
-            backgroundOverlay.classList.add('active', 'pattern-a');
-            backgroundOverlay.classList.remove('pattern-b');
+            // 重設掃描線模式的狀態
+            scanlinePatternIsA = true; 
             
             if (displaySettings.enableMovement) {
                 moveRandomly();
@@ -1187,6 +1186,7 @@
             }
 
             lastMarqueeContent = '';
+            // 立即呼叫 updateDateTime 來套用所有變更
             updateDateTime();
         }
 
@@ -1343,19 +1343,13 @@
         window.onload = function () {
             loadSettings();
             
-            if (displaySettings.enableTextScanline) {
-                document.getElementById('text-scanline-overlay').classList.add('active', 'pattern-a');
-            }
-            if (displaySettings.enableBackgroundScanline) {
-                document.getElementById('background-scanline-overlay').classList.add('active', 'pattern-a');
-            }
-            if (!displaySettings.enableMovement) {
-                resetPosition();
-            }
-
             updateSettingsModalUI();
             updateDateTime();
             setInterval(updateDateTime, 1000);
+
+            if (!displaySettings.enableMovement) {
+                resetPosition();
+            }
 
             document.querySelectorAll('.modal').forEach(modal => {
                 const closeButton = modal.querySelector('.action-button[id^="close"], .action-button[id^="done"]');
