@@ -1500,6 +1500,11 @@
                    } else {
                        fullscreenIcon.style.display = 'block';
                    }
+                   
+                   // 在全螢幕切換後，強制更新跑馬燈以解決 iOS 上的動畫暫停問題
+                   if (lastMarqueeContent) {
+                       updateMarquee(lastMarqueeContent);
+                   }
                }
 
                document.addEventListener('fullscreenchange', handleFullscreenChange);
