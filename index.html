@@ -592,11 +592,41 @@
 	           );
 	       }
 
+            /* 全螢幕圖示樣式 */
+            #fullscreen-icon {
+                position: fixed; /* 固定定位 */
+                top: 20px; /* 距離頂部20px */
+                right: 20px; /* 距離右邊20px */
+                width: 32px; /* 寬度 */
+                height: 32px; /* 高度 */
+                cursor: pointer; /* 鼠標樣式為手型 */
+                z-index: 200; /* Z軸層級，確保在彈出視窗之上 */
+                opacity: 0.5; /* 透明度 */
+                transition: opacity 0.3s ease; /* 過渡動畫 */
+            }
+
+            #fullscreen-icon svg {
+                width: 100%; /* 寬度佔滿父元素 */
+                height: 100%; /* 高度佔滿父元素 */
+                fill: #fff; /* SVG填充顏色為白色 */
+            }
+
+            #fullscreen-icon:hover {
+                opacity: 1; /* 鼠標懸停時完全不透明 */
+            }
+
 	</style>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.7.0/lunar.min.js">
 	</script>
 </head>
 <body>
+    <!-- 全螢幕圖示 -->
+    <div id="fullscreen-icon" title="全螢幕/退出全螢幕">
+        <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"></path>
+        </svg>
+    </div>
+
 	<div id="background-scanline-overlay"></div>
 	<div id="text-scanline-overlay"></div>
 	<div id="dateTimeDisplay">
@@ -810,7 +840,7 @@
 
 	       // 根據生肖名稱返回對應的Emoji
 	       function getShengXiaoEmoji(shengXiaoName) {
-	           const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐅', '兔': '🐰', '龍': '🐉', '蛇': '🐍', '馬': '🐎', '羊': '�', '猴': '🐒', '雞': '🐔', '狗': '🐶', '豬': '🐖' }; // 生肖名稱與Emoji的映射
+	           const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐅', '兔': '🐰', '龍': '🐉', '蛇': '🐍', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '🐶', '豬': '🐖' }; // 生肖名稱與Emoji的映射
 	           return emojiMap[shengXiaoName] || shengXiaoName; // 返回對應的Emoji，如果沒有則返回原名稱
 	       }
 
@@ -1431,6 +1461,52 @@
 	                   document.getElementById('calendarModal').classList.add('is-active'); // 顯示月曆彈出視窗
 	               }
 	           });
+
+               // --- 全螢幕功能 ---
+               const fullscreenIcon = document.getElementById('fullscreen-icon');
+               const docElement = document.documentElement;
+
+               function toggleFullScreen() {
+                   const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+
+                   if (!isFullscreen) {
+                       // 進入全螢幕
+                       const requestMethod = docElement.requestFullscreen || docElement.webkitRequestFullscreen || docElement.mozRequestFullScreen || docElement.msRequestFullscreen;
+                       if (requestMethod) {
+                           // 呼叫 requestFullscreen 會返回一個 Promise
+                           requestMethod.call(docElement).catch(err => {
+                               // 捕捉因權限問題等導致的失敗，並在控制台顯示警告
+                               console.warn(`無法進入全螢幕模式: ${err.name} - ${err.message}`);
+                           });
+                       }
+                   } else {
+                        // 退出全螢幕
+                       const exitMethod = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+                       if (exitMethod) {
+                           // 呼叫 exitFullscreen 也會返回一個 Promise
+                           exitMethod.call(document).catch(err => {
+                               console.warn(`無法退出全螢幕模式: ${err.name} - ${err.message}`);
+                           });
+                       }
+                   }
+               }
+
+               fullscreenIcon.addEventListener('click', toggleFullScreen);
+
+               function handleFullscreenChange() {
+                   const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+                   if (isFullscreen) {
+                       fullscreenIcon.style.display = 'none';
+                   } else {
+                       fullscreenIcon.style.display = 'block';
+                   }
+               }
+
+               document.addEventListener('fullscreenchange', handleFullscreenChange);
+               document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+               document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+               document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+               // --- 全螢幕功能結束 ---
 	       };
 	</script>
 </body>
