@@ -620,130 +620,131 @@
 	</script>
 </head>
 <body>
+    <div id="content-wrapper">
+        <div id="background-scanline-overlay"></div>
+        <div id="text-scanline-overlay"></div>
+        <div id="dateTimeDisplay">
+            <div class="time-text" id="timeTextContainer">
+                <span id="hoursMinutesDisplay"></span> <span class="time-seconds" id="secondsDisplay"></span> <span class="time-ampm" id="amPmDisplay"></span>
+            </div>
+            <div class="gregorian-date-text" id="gregorianDateDisplay"></div>
+            <div class="lunar-and-jieqi-line" id="lunarAndJieqiLine">
+                <span class="lunar-date-static-text" id="lunarDateDisplay"></span>
+                <div class="jieqi-holiday-marquee-container" id="jieqiHolidayMarqueeContainer">
+                    <div class="jieqi-holiday-marquee-inner" id="jieqiHolidayMarqueeInner">
+                        <span class="jieqi-holiday-marquee-content"></span> <span class="jieqi-holiday-marquee-content-duplicate"></span>
+                    </div>
+                </div>
+            </div>
+        </div><noscript>
+        <div class="noscript-message">
+            您的瀏覽器不支援或已禁用 JavaScript。
+        </div></noscript> <!-- 設定 Modal -->
+        <div class="modal" id="settingsModal">
+            <div class="modal-content">
+                <h2>顯示設定</h2>
+                <div class="calendar-settings-container">
+                    <div class="gregorian-settings-column">
+                        <h3>公曆</h3>
+                        <div class="setting-item">
+                            <label for="textColor">時間</label> <label class="switch" title="切換上午/下午格式"><input id="showAmPm" type="checkbox"> <span class="slider"></span></label> <input id="textColor" type="color" value="#00FF00">
+                        </div>
+                        <div class="setting-item">
+                            <label for="showGregorianYear">年</label> <label class="switch"><input id="showGregorianYear" type="checkbox"> <span class="slider"></span></label> <input id="gregorianYearColor" type="color" value="#00FF00">
+                        </div>
+                        <div class="setting-item">
+                            <label for="showGregorianMonth">月</label> <label class="switch"><input id="showGregorianMonth" type="checkbox"> <span class="slider"></span></label> <input id="gregorianMonthColor" type="color" value="#00FF00">
+                        </div>
+                        <div class="setting-item">
+                            <label for="showGregorianDay">日</label> <label class="switch"><input id="showGregorianDay" type="checkbox"> <span class="slider"></span></label> <input id="gregorianDayColor" type="color" value="#00FF00">
+                        </div>
+                        <div class="setting-item">
+                            <label for="showGregorianWeekday">周</label> <label class="switch"><input id="showGregorianWeekday" type="checkbox"> <span class="slider"></span></label> <input id="gregorianWeekdayColor" type="color" value="#00FF00">
+                        </div>
+                    </div>
+                    <div class="lunar-settings-column">
+                        <h3>農曆</h3>
+                        <div class="setting-item">
+                            <label for="showMinguoYear">年</label> <label class="switch"><input id="showMinguoYear" type="checkbox"> <span class="slider"></span></label> <input id="minguoYearColor" type="color" value="#00FF00">
+                        </div>
+                        <div class="setting-item">
+                            <label for="showLunarMonth">月</label> <label class="switch"><input id="showLunarMonth" type="checkbox"> <span class="slider"></span></label> <input id="lunarMonthColor" type="color" value="#00FF00">
+                        </div>
+                        <div class="setting-item">
+                            <label for="showLunarDay">日</label> <label class="switch"><input id="showLunarDay" type="checkbox"> <span class="slider"></span></label> <input id="lunarDayColor" type="color" value="#00FF00">
+                        </div>
+                        <div class="setting-item">
+                            <label for="showLunarShiChen">時</label> <label class="switch"><input id="showLunarShiChen" type="checkbox"> <span class="slider"></span></label> <input id="lunarShiChenColor" type="color" value="#00FF00">
+                        </div>
+                        <div class="setting-item">
+                            <label for="showJieqi">節氣</label> <label class="switch"><input id="showJieqi" type="checkbox"> <span class="slider"></span></label> <input id="jieqiColor" type="color" value="#00FF00">
+                        </div>
+                        <div class="setting-item">
+                            <label for="showHolidays">節日</label> <label class="switch"><input id="showHolidays" type="checkbox"> <span class="slider"></span></label> <input id="holidayColor" type="color" value="#0000FF">
+                        </div>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <label for="backgroundColor">背景特效與顏色</label> <label class="switch" title="切換背景掃描線特效"><input id="enableBackgroundScanline" type="checkbox"> <span class="slider"></span></label> <input id="backgroundColor" type="color" value="#000000">
+                </div>
+                <div class="setting-item">
+                    <label for="enableTextScanline">文字掃描線特效</label> <label class="switch"><input id="enableTextScanline" type="checkbox"> <span class="slider"></span></label>
+                </div>
+                <div class="setting-item">
+                    <label for="enableMovement">隨機移動特效</label> <label class="switch"><input id="enableMovement" type="checkbox"> <span class="slider"></span></label>
+                </div>
+                <div class="button-group">
+                    <button class="action-button" id="restoreDefaultsBtn">恢復預設</button> <button class="action-button" id="randomColorsBtn">隨機顏色</button> <button class="action-button" id="doneBtn">完成</button>
+                </div>
+            </div>
+        </div><!-- 節氣/節日 Modal -->
+        <div class="modal" id="jieqiDetailsModal">
+            <div class="modal-content jieqi-content">
+                <h2>節氣與節日資訊</h2>
+                <div id="jieqiDetailsContent" style="text-align: left;"></div><button class="action-button" id="closeJieqiDetailsBtn">關閉</button>
+            </div>
+        </div><!-- 宜忌 Modal -->
+        <div class="modal" id="yijiDetailsModal">
+            <div class="modal-content yiji-content">
+                <h2>宜忌資訊</h2>
+                <div id="yijiDetailsContent" style="text-align: left;"></div><button class="action-button" id="closeYijiDetailsBtn">關閉</button>
+            </div>
+        </div><!-- 月曆 Modal -->
+        <div class="modal" id="calendarModal">
+            <div class="calendar-content">
+                <div class="calendar-header">
+                    <button id="prevMonthBtn">&lt;</button>
+                    <h2 id="calendarMonthYear"></h2><button id="nextMonthBtn">&gt;</button>
+                </div>
+                <div class="calendar-weekdays" id="calendarWeekdays"></div>
+                <div class="calendar-grid" id="calendarGrid"></div><button class="action-button" id="closeCalendarBtn">關閉</button>
+            </div>
+        </div><!-- 周曆 Modal -->
+        <div class="modal" id="weeklyCalendarModal">
+            <div class="weekly-calendar-content">
+                <div class="calendar-header">
+                    <button id="prevWeekBtn">&lt;</button>
+                    <h2 id="weeklyCalendarTitle"></h2><button id="nextWeekBtn">&gt;</button>
+                </div>
+                <div class="weekly-calendar-grid" id="weeklyCalendarGrid"></div><button class="action-button" id="closeWeeklyCalendarBtn">關閉</button>
+            </div>
+        </div><!-- 年曆 Modal -->
+        <div class="modal" id="yearlyCalendarModal">
+            <div class="yearly-calendar-content">
+                <div class="calendar-header">
+                    <button id="prevYearBtn">&lt;</button>
+                    <h2 id="yearlyCalendarTitle"></h2><button id="nextYearBtn">&gt;</button>
+                </div>
+                <div class="yearly-calendar-grid" id="yearlyCalendarGrid"></div><button class="action-button" id="closeYearlyCalendarBtn">關閉</button>
+            </div>
+        </div>
+    </div>
     <!-- 全螢幕圖示 -->
     <div id="fullscreen-icon" title="全螢幕/退出全螢幕">
         <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"></path>
         </svg>
     </div>
-
-	<div id="background-scanline-overlay"></div>
-	<div id="text-scanline-overlay"></div>
-	<div id="dateTimeDisplay">
-		<div class="time-text" id="timeTextContainer">
-			<span id="hoursMinutesDisplay"></span> <span class="time-seconds" id="secondsDisplay"></span> <span class="time-ampm" id="amPmDisplay"></span>
-		</div>
-		<div class="gregorian-date-text" id="gregorianDateDisplay"></div>
-		<div class="lunar-and-jieqi-line" id="lunarAndJieqiLine">
-			<span class="lunar-date-static-text" id="lunarDateDisplay"></span>
-			<div class="jieqi-holiday-marquee-container" id="jieqiHolidayMarqueeContainer">
-				<div class="jieqi-holiday-marquee-inner" id="jieqiHolidayMarqueeInner">
-					<span class="jieqi-holiday-marquee-content"></span> <span class="jieqi-holiday-marquee-content-duplicate"></span>
-				</div>
-			</div>
-		</div>
-	</div><noscript>
-	<div class="noscript-message">
-		您的瀏覽器不支援或已禁用 JavaScript。
-	</div></noscript> <!-- 設定 Modal -->
-	<div class="modal" id="settingsModal">
-		<div class="modal-content">
-			<h2>顯示設定</h2>
-			<div class="calendar-settings-container">
-				<div class="gregorian-settings-column">
-					<h3>公曆</h3>
-					<div class="setting-item">
-						<label for="textColor">時間</label> <label class="switch" title="切換上午/下午格式"><input id="showAmPm" type="checkbox"> <span class="slider"></span></label> <input id="textColor" type="color" value="#00FF00">
-					</div>
-					<div class="setting-item">
-						<label for="showGregorianYear">年</label> <label class="switch"><input id="showGregorianYear" type="checkbox"> <span class="slider"></span></label> <input id="gregorianYearColor" type="color" value="#00FF00">
-					</div>
-					<div class="setting-item">
-						<label for="showGregorianMonth">月</label> <label class="switch"><input id="showGregorianMonth" type="checkbox"> <span class="slider"></span></label> <input id="gregorianMonthColor" type="color" value="#00FF00">
-					</div>
-					<div class="setting-item">
-						<label for="showGregorianDay">日</label> <label class="switch"><input id="showGregorianDay" type="checkbox"> <span class="slider"></span></label> <input id="gregorianDayColor" type="color" value="#00FF00">
-					</div>
-					<div class="setting-item">
-						<label for="showGregorianWeekday">周</label> <label class="switch"><input id="showGregorianWeekday" type="checkbox"> <span class="slider"></span></label> <input id="gregorianWeekdayColor" type="color" value="#00FF00">
-					</div>
-				</div>
-				<div class="lunar-settings-column">
-					<h3>農曆</h3>
-					<div class="setting-item">
-						<label for="showMinguoYear">年</label> <label class="switch"><input id="showMinguoYear" type="checkbox"> <span class="slider"></span></label> <input id="minguoYearColor" type="color" value="#00FF00">
-					</div>
-					<div class="setting-item">
-						<label for="showLunarMonth">月</label> <label class="switch"><input id="showLunarMonth" type="checkbox"> <span class="slider"></span></label> <input id="lunarMonthColor" type="color" value="#00FF00">
-					</div>
-					<div class="setting-item">
-						<label for="showLunarDay">日</label> <label class="switch"><input id="showLunarDay" type="checkbox"> <span class="slider"></span></label> <input id="lunarDayColor" type="color" value="#00FF00">
-					</div>
-					<div class="setting-item">
-						<label for="showLunarShiChen">時</label> <label class="switch"><input id="showLunarShiChen" type="checkbox"> <span class="slider"></span></label> <input id="lunarShiChenColor" type="color" value="#00FF00">
-					</div>
-					<div class="setting-item">
-						<label for="showJieqi">節氣</label> <label class="switch"><input id="showJieqi" type="checkbox"> <span class="slider"></span></label> <input id="jieqiColor" type="color" value="#00FF00">
-					</div>
-					<div class="setting-item">
-						<label for="showHolidays">節日</label> <label class="switch"><input id="showHolidays" type="checkbox"> <span class="slider"></span></label> <input id="holidayColor" type="color" value="#0000FF">
-					</div>
-				</div>
-			</div>
-			<div class="setting-item">
-				<label for="backgroundColor">背景特效與顏色</label> <label class="switch" title="切換背景掃描線特效"><input id="enableBackgroundScanline" type="checkbox"> <span class="slider"></span></label> <input id="backgroundColor" type="color" value="#000000">
-			</div>
-			<div class="setting-item">
-				<label for="enableTextScanline">文字掃描線特效</label> <label class="switch"><input id="enableTextScanline" type="checkbox"> <span class="slider"></span></label>
-			</div>
-			<div class="setting-item">
-				<label for="enableMovement">隨機移動特效</label> <label class="switch"><input id="enableMovement" type="checkbox"> <span class="slider"></span></label>
-			</div>
-			<div class="button-group">
-				<button class="action-button" id="restoreDefaultsBtn">恢復預設</button> <button class="action-button" id="randomColorsBtn">隨機顏色</button> <button class="action-button" id="doneBtn">完成</button>
-			</div>
-		</div>
-	</div><!-- 節氣/節日 Modal -->
-	<div class="modal" id="jieqiDetailsModal">
-		<div class="modal-content jieqi-content">
-			<h2>節氣與節日資訊</h2>
-			<div id="jieqiDetailsContent" style="text-align: left;"></div><button class="action-button" id="closeJieqiDetailsBtn">關閉</button>
-		</div>
-	</div><!-- 宜忌 Modal -->
-	<div class="modal" id="yijiDetailsModal">
-		<div class="modal-content yiji-content">
-			<h2>宜忌資訊</h2>
-			<div id="yijiDetailsContent" style="text-align: left;"></div><button class="action-button" id="closeYijiDetailsBtn">關閉</button>
-		</div>
-	</div><!-- 月曆 Modal -->
-	<div class="modal" id="calendarModal">
-		<div class="calendar-content">
-			<div class="calendar-header">
-				<button id="prevMonthBtn">&lt;</button>
-				<h2 id="calendarMonthYear"></h2><button id="nextMonthBtn">&gt;</button>
-			</div>
-			<div class="calendar-weekdays" id="calendarWeekdays"></div>
-			<div class="calendar-grid" id="calendarGrid"></div><button class="action-button" id="closeCalendarBtn">關閉</button>
-		</div>
-	</div><!-- 周曆 Modal -->
-	<div class="modal" id="weeklyCalendarModal">
-		<div class="weekly-calendar-content">
-			<div class="calendar-header">
-				<button id="prevWeekBtn">&lt;</button>
-				<h2 id="weeklyCalendarTitle"></h2><button id="nextWeekBtn">&gt;</button>
-			</div>
-			<div class="weekly-calendar-grid" id="weeklyCalendarGrid"></div><button class="action-button" id="closeWeeklyCalendarBtn">關閉</button>
-		</div>
-	</div><!-- 年曆 Modal -->
-	<div class="modal" id="yearlyCalendarModal">
-		<div class="yearly-calendar-content">
-			<div class="calendar-header">
-				<button id="prevYearBtn">&lt;</button>
-				<h2 id="yearlyCalendarTitle"></h2><button id="nextYearBtn">&gt;</button>
-			</div>
-			<div class="yearly-calendar-grid" id="yearlyCalendarGrid"></div><button class="action-button" id="closeYearlyCalendarBtn">關閉</button>
-		</div>
-	</div>
 	<script>
 	       // 全域變數
 	       let lastSecondTensDigit = -1; // 用於追蹤秒數的十位數變化，觸發隨機移動和掃描線模式切換
@@ -840,7 +841,7 @@
 
 	       // 根據生肖名稱返回對應的Emoji
 	       function getShengXiaoEmoji(shengXiaoName) {
-	           const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐅', '兔': '🐰', '龍': '🐉', '蛇': '🐍', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '🐶', '豬': '🐖' }; // 生肖名稱與Emoji的映射
+	           const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐅', '兔': '🐰', '龍': '�', '蛇': '🐍', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '🐶', '豬': '🐖' }; // 生肖名稱與Emoji的映射
 	           return emojiMap[shengXiaoName] || shengXiaoName; // 返回對應的Emoji，如果沒有則返回原名稱
 	       }
 
