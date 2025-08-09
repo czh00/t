@@ -388,7 +388,7 @@
                 // --- FIX START: 確保所有農曆文字都轉為繁體 ---
 				if (displaySettings.showMinguoYear) {
                     const traditionalShengXiao = s2t(lunar.getYearShengXiao());
-                    lunarParts.push(`<span class="lunar-year-target" style="color: ${displaySettings.minguoYearColor}; cursor: pointer;">${now.getFullYear() - 1911}年${traditionalShengXiao}${getShengXiaoEmoji(traditionalShengXiao)}</span>`);
+                    lunarParts.push(`<span class="lunar-year-target" style="color: ${displaySettings.minguoYearColor}; cursor: pointer;">${now.getFullYear() - 1911}年${getShengXiaoEmoji(traditionalShengXiao)}</span>`);
                 }
 				if (displaySettings.showLunarMonth) lunarParts.push(`<span style="color: ${displaySettings.lunarMonthColor};">${s2t(lunar.getMonthInChinese())}月</span>`);
 				if (displaySettings.showLunarDay) lunarParts.push(`<span class="lunar-day-target lunar-date-clickable" style="color: ${displaySettings.lunarDayColor};">${s2t(lunar.getDayInChinese())}</span>`);
@@ -680,4 +680,3 @@
 	</script>
 </body>
 </html>
-�
