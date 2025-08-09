@@ -243,7 +243,7 @@
 
     <!-- 設定圖示 (SVG) -->
     <div id="settings-icon" class="control-icon" title="設定">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69-.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
     </div>
     <!-- 全螢幕圖示 (SVG) -->
     <div id="fullscreen-icon" class="control-icon" title="全螢幕/退出全螢幕">
@@ -289,7 +289,7 @@
 				}
 			}
 		}
-		function getShengXiaoEmoji(shengXiaoName) { const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐅', '兔': '🐇', '龍': '🐉', '蛇': '🐍', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '🐶', '豬': '🐖' }; return emojiMap[shengXiaoName] || shengXiaoName; } // 根據生肖中文名返回對應的Emoji
+		function getShengXiaoEmoji(shengXiaoName) { const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐅', '兔': '🐇', '龍': '🐉', '蛇': '🐍', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '🐶', '豬': '🐖' }; return emojiMap[shengXiaoName] || ''; } // 根據生肖中文名返回對應的Emoji
 		function getJieqiDescription(jieqiName) { const descriptions = { '立春': '春季開始，萬物復甦。', '雨水': '降雨增多，春耕開始。', '驚蟄': '春雷響動，驚醒冬眠動物。', '春分': '晝夜等長，春意盎然。', '清明': '氣候清爽明朗，掃墓祭祖。', '穀雨': '雨水滋潤，穀物生長。', '立夏': '夏季開始，萬物繁茂。', '小滿': '夏熟作物籽粒開始飽滿。', '芒種': '收穫與播種的時節。', '夏至': '北半球白晝最長，盛夏開始。', '小暑': '天氣開始炎熱。', '大暑': '一年中最炎熱的時期。', '立秋': '秋季開始，氣溫漸降。', '處暑': '暑氣漸退，天氣轉涼。', '白露': '水氣凝結成露，天氣漸寒。', '秋分': '晝夜等長，秋高氣爽。', '寒露': '氣溫更低，天氣轉冷。', '霜降': '天氣漸冷，露水凝結成霜。', '立冬': '冬季開始，萬物收藏。', '小雪': '開始降雪，但雪量不大。', '大雪': '降雪量增多，天氣更冷。', '冬至': '北半球白晝最短，數九寒天開始。', '小寒': '天氣寒冷，尚未達到最冷。', '大寒': '一年中最寒冷的時期。' }; return descriptions[jieqiName] || '此節氣無詳細說明。'; } // 根據節氣名稱返回簡短描述
 		function getHolidaysForYear(year) { // 計算指定年份的所有主要節日
 			const holidays = []; // 初始化節日陣列
@@ -309,10 +309,14 @@
 			const jieqiTable = lunar.getJieQiTable(); // 獲取節氣表
 			return Object.entries(jieqiTable).map(([name, dateStr]) => ({ name: jieqiNameMap[name] || name, date: new Date(dateStr) })).sort((a, b) => a.date.getTime() - b.date.getTime()); // 轉換為物件陣列並排序
 		}
-		function convertYiJiToTraditional(yijiArray) { // 將簡體的宜忌文字陣列轉換為繁體
-			const s2tMap = { '见': '見', '贵': '貴', '无': '無', '开': '開', '纳': '納', '财': '財', '挂': '掛', '梁': '樑', '动': '動', '种': '種', '启': '啟', '钻': '鑽', '订': '訂', '竖': '豎', '门': '門', '词': '詞', '讼': '訟', '发': '髮', '养': '養', '马': '馬', '经': '經', '络': '絡', '盖': '蓋', '会': '會', '学': '學', '艺': '藝', '医': '醫', '装': '裝', '结': '結', '网': '網', '渔': '漁', '猎': '獵', '亲': '親', '进': '進', '扫': '掃', '绘': '繪', '齐': '齊', '斋': '齋', '庙': '廟', '灶': '竈', '谢': '謝', '问': '問', '婿': '壻', '归': '歸', '宁': '寧', '坟': '墳', '寿': '壽', '坏': '壞', '补': '補', '厕': '廁', '仓': '倉', '涂': '塗', '桥': '橋', '筑': '築', '饰': '飾', '墙': '牆', '买': '買', '车': '車', '产': '產', '雇': '僱', '佣': '傭', '货': '貨', '机': '機', '械': '械', '酝': '醞', '酿': '釀', '铸': '鑄', '针': '針', '库': '庫', '疗': '療', '诸': '諸', '馀': '餘', '丧': '喪', '断': '斷', '蚁': '蟻', '户': '戶', '炉': '爐', '栖': '棲', '厨': '廚', '胜': '勝', '负': '負', '灭': '滅', '龙': '龍', '鸡': '雞', '猪': '豬', '乌': '烏', '双': '雙', '宫': '宮', '惊': '驚', '蛰': '蟄', '满': '滿', '处': '處', '时': '時', '气': '氣', '后': '後', '灾': '災', '复': '復', '虚': '虛', '贼': '賊', '败': '敗', '仪': '儀', '祸': '禍', '临': '臨', '阴': '陰', '阳': '陽', '圣': '聖', '冲': '沖', '绝': '絕', '岁': '歲', '伤': '傷', '杀': '殺', '黄': '黃', '节': '節', '树': '樹', '国': '國', '万': '萬', '长': '長', '华': '華', '为': '為', '电': '電', '声': '聲', '冻': '凍', '虫': '蟲', '鱼': '魚', '鹰': '鷹', '来': '來', '润': '潤', '凉': '涼', '麦': '麥', '温': '溫', '收': '收', '闭': '閉', };
-			return yijiArray.map(item => item.split('').map(char => s2tMap[char] || char).join('')); // 遍歷陣列中的每個字串，逐字轉換
-		}
+        function s2t(input) { // --- FIX START: 擴充簡轉繁功能 ---
+            if (typeof input !== 'string' && !Array.isArray(input)) return input;
+            const s2tMap = { '见': '見', '贵': '貴', '无': '無', '开': '開', '纳': '納', '财': '財', '挂': '掛', '梁': '樑', '动': '動', '种': '種', '启': '啟', '钻': '鑽', '订': '訂', '竖': '豎', '门': '門', '词': '詞', '讼': '訟', '发': '髮', '养': '養', '马': '馬', '经': '經', '络': '絡', '盖': '蓋', '会': '會', '学': '學', '艺': '藝', '医': '醫', '装': '裝', '结': '結', '网': '網', '渔': '漁', '猎': '獵', '亲': '親', '进': '進', '扫': '掃', '绘': '繪', '齐': '齊', '斋': '齋', '庙': '廟', '灶': '竈', '谢': '謝', '问': '問', '婿': '壻', '归': '歸', '宁': '寧', '坟': '墳', '寿': '壽', '坏': '壞', '补': '補', '厕': '廁', '仓': '倉', '涂': '塗', '桥': '橋', '筑': '築', '饰': '飾', '墙': '牆', '买': '買', '车': '車', '产': '產', '雇': '僱', '佣': '傭', '货': '貨', '机': '機', '械': '械', '酝': '醞', '酿': '釀', '铸': '鑄', '针': '針', '库': '庫', '疗': '療', '诸': '諸', '馀': '餘', '丧': '喪', '断': '斷', '蚁': '蟻', '户': '戶', '炉': '爐', '栖': '棲', '厨': '廚', '胜': '勝', '负': '負', '灭': '滅', '龙': '龍', '鸡': '雞', '猪': '豬', '乌': '烏', '双': '雙', '宫': '宮', '惊': '驚', '蛰': '蟄', '满': '滿', '处': '處', '时': '時', '气': '氣', '后': '後', '灾': '災', '复': '復', '虚': '虛', '贼': '賊', '败': '敗', '仪': '儀', '祸': '禍', '临': '臨', '阴': '陰', '阳': '陽', '圣': '聖', '冲': '沖', '绝': '絕', '岁': '歲', '伤': '傷', '杀': '殺', '黄': '黃', '节': '節', '树': '樹', '国': '國', '万': '萬', '长': '長', '华': '華', '为': '為', '电': '電', '声': '聲', '冻': '凍', '虫': '蟲', '鱼': '魚', '鹰': '鷹', '来': '來', '润': '潤', '凉': '涼', '麦': '麥', '温': '溫', '收': '收', '闭': '閉', '闰': '閏' };
+            if (Array.isArray(input)) {
+                return input.map(item => item.split('').map(char => s2tMap[char] || char).join(''));
+            }
+            return input.split('').map(char => s2tMap[char] || char).join('');
+        } // --- FIX END ---
 		function getShiChen(h) { const shichenMap = { 23: '子', 0: '子', 1: '丑', 2: '丑', 3: '寅', 4: '寅', 5: '卯', 6: '卯', 7: '辰', 8: '辰', 9: '巳', 10: '巳', 11: '午', 12: '午', 13: '未', 14: '未', 15: '申', 16: '申', 17: '酉', 18: '酉', 19: '戌', 20: '戌', 21: '亥', 22: '亥' }; return shichenMap[h] || ''; } // 根據24小時制的小時返回對應的時辰
         function getShiChenTimeRange(shichenName) { const timeRanges = { '子': '23:00 - 00:59', '丑': '01:00 - 02:59', '寅': '03:00 - 04:59', '卯': '05:00 - 06:59', '辰': '07:00 - 08:59', '巳': '09:00 - 10:59', '午': '11:00 - 12:59', '未': '13:00 - 14:59', '申': '15:00 - 16:59', '酉': '17:00 - 18:59', '戌': '19:00 - 20:59', '亥': '21:00 - 22:59' }; return timeRanges[shichenName] || ''; } // 根據時辰名稱返回其對應的時間範圍
 		function getDetailedTimePeriod(hour) { const periodMap = { 0: '凌晨', 1: '凌晨', 2: '凌晨', 3: '凌晨', 4: '凌晨', 5: '清晨', 6: '清晨', 7: '清晨', 8: '清晨', 9: '上午', 10: '上午', 11: '上午', 12: '中午', 13: '下午', 14: '下午', 15: '下午', 16: '下午', 17: '傍晚', 18: '傍晚', 19: '夜晚', 20: '夜晚', 21: '夜晚', 22: '夜晚', 23: '深夜' }; return periodMap[hour] || ''; } // 根據小時返回更詳細的時段描述 (如凌晨、上午)
@@ -363,10 +367,16 @@
 				const currentYear = now.getFullYear(); // 獲取當前年份
 				if (yearlyDataCache.year !== currentYear) { yearlyDataCache = { year: currentYear, holidays: getHolidaysForYear(currentYear), jieqi: getJieqiForYear(currentYear) }; } // 如果年份變更，則重新快取資料
 				const solar = Solar.fromDate(now), lunar = solar.getLunar(); // 獲取農曆物件
-				if (displaySettings.showMinguoYear) lunarParts.push(`<span class="lunar-year-target" style="color: ${displaySettings.minguoYearColor}; cursor: pointer;">${now.getFullYear() - 1911}年${getShengXiaoEmoji(lunar.getYearShengXiao())}</span>`); // 添加民國年與生肖
-				if (displaySettings.showLunarMonth) lunarParts.push(`<span style="color: ${displaySettings.lunarMonthColor};">${lunar.getMonthInChinese().replace('闰', '閏')}月</span>`); // 添加農曆月份 (簡轉繁)
-				if (displaySettings.showLunarDay) lunarParts.push(`<span class="lunar-day-target lunar-date-clickable" style="color: ${displaySettings.lunarDayColor};">${lunar.getDayInChinese()}</span>`); // 添加農曆日
-				if (displaySettings.showLunarShiChen) lunarParts.push(`<span class="lunar-shichen-target lunar-shichen-clickable" style="color: ${displaySettings.lunarShiChenColor};">${getShiChen(now.getHours())}時</span>`); // 添加時辰
+                
+                // --- FIX START: 確保所有農曆文字都轉為繁體 ---
+				if (displaySettings.showMinguoYear) {
+                    const traditionalShengXiao = s2t(lunar.getYearShengXiao());
+                    lunarParts.push(`<span class="lunar-year-target" style="color: ${displaySettings.minguoYearColor}; cursor: pointer;">${now.getFullYear() - 1911}年${traditionalShengXiao}${getShengXiaoEmoji(traditionalShengXiao)}</span>`);
+                }
+				if (displaySettings.showLunarMonth) lunarParts.push(`<span style="color: ${displaySettings.lunarMonthColor};">${s2t(lunar.getMonthInChinese())}月</span>`);
+				if (displaySettings.showLunarDay) lunarParts.push(`<span class="lunar-day-target lunar-date-clickable" style="color: ${displaySettings.lunarDayColor};">${s2t(lunar.getDayInChinese())}</span>`);
+				if (displaySettings.showLunarShiChen) lunarParts.push(`<span class="lunar-shichen-target lunar-shichen-clickable" style="color: ${displaySettings.lunarShiChenColor};">${getShiChen(now.getHours())}時</span>`);
+                // --- FIX END ---
 				
 				let jieQiText = '', holidayText = ''; // 初始化節氣與節日文字
 				if (displaySettings.showJieqi) { // 如果設定要顯示節氣
@@ -401,44 +411,56 @@
 		function setRandomColors() { for (const key in displaySettings) { if (key.toLowerCase().includes('color')) { displaySettings[key] = getRandomColor(); } } saveSettings(); updateSettingsModalUI(); updateDateTime(); } // 將所有顏色設定為隨機顏色
         function showDateDetails(date) { // 顯示指定日期的詳細資訊彈窗
             date.setHours(12, 0, 0, 0); // 將時間標準化到中午，避免時區問題
-            const isToday = date.toDateString() === new Date().toDateString(); // 判斷是否為今天
-            const lunar = Solar.fromDate(date).getLunar(); // 獲取農曆物件
-            const dayYi = convertYiJiToTraditional(lunar.getDayYi()).join('、') || '無'; // 獲取當日所宜並轉為繁體
-            const dayJi = convertYiJiToTraditional(lunar.getDayJi()).join('、') || '無'; // 獲取當日所忌並轉為繁體
-            const currentJieqi = yearlyDataCache.jieqi.find(jq => jq.date.toDateString() === date.toDateString()); // 尋找當天的節氣
-            const currentHoliday = yearlyDataCache.holidays.find(h => h.date.toDateString() === date.toDateString()); // 尋找當天的節日
-            const nextJieqi = yearlyDataCache.jieqi.find(jq => jq.date > date); // 尋找下一個節氣
-            const nextHoliday = yearlyDataCache.holidays.find(h => h.date > date); // 尋找下一個節日
-
-            let eventHtml = ''; // 初始化事件HTML
-            if (currentJieqi) { eventHtml += `<p>${isToday ? '今天是' : '這天是'} <strong>${currentJieqi.name}</strong>！ ${getJieqiDescription(currentJieqi.name)}</p>`; } // 添加節氣資訊
-            if (currentHoliday) { eventHtml += `<p>${isToday ? '今天是' : '這天是'} <strong>${currentHoliday.name}</strong>！</p>`; } // 添加節日資訊
+            const year = date.getFullYear();
+            const holidaysForYear = getHolidaysForYear(year);
+            const jieqiForYear = getJieqiForYear(year);
+            const isToday = date.toDateString() === new Date().toDateString();
+            const lunar = Solar.fromDate(date).getLunar();
             
-            let countdownHtml = ''; // 初始化倒數計時HTML
-            if (nextJieqi) { const daysUntil = Math.ceil((nextJieqi.date - date) / 86400000); countdownHtml += `<p>距離下個節氣 <strong>${nextJieqi.name}</strong> 還有 ${daysUntil} 天。<br><span style="font-size:0.9em; color:#ccc;">${getJieqiDescription(nextJieqi.name)}</span></p>`; } // 添加下個節氣倒數
-            if (nextHoliday) { const daysUntil = Math.ceil((nextHoliday.date - date) / 86400000); countdownHtml += `<p>距離下個節日 <strong>${nextHoliday.name}</strong> 還有 ${daysUntil} 天</p>`; } // 添加下個節日倒數
-            if (countdownHtml) { eventHtml += `<div class="countdown-section">${countdownHtml}</div>`; } // 如果有倒數資訊，則添加到事件HTML中
+            // --- FIX START: 確保所有農曆文字都轉為繁體 ---
+            const dayYi = s2t(lunar.getDayYi()).join('、') || '無';
+            const dayJi = s2t(lunar.getDayJi()).join('、') || '無';
+            const traditionalShengXiao = s2t(lunar.getYearShengXiao());
+            const lunarYearText = `${s2t(lunar.getYearInGanZhi())}${traditionalShengXiao}${getShengXiaoEmoji(traditionalShengXiao)}年`;
+            const lunarDateText = `${s2t(lunar.getMonthInChinese())}月${s2t(lunar.getDayInChinese())}`;
+            // --- FIX END ---
 
-            const detailsHtml = `<p><strong>公曆：</strong>${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日</p><p><strong>農曆：</strong>${lunar.getYearInGanZhi()}(${lunar.getYearShengXiao()})年 ${lunar.getMonthInChinese().replace('闰','閏')}月${lunar.getDayInChinese()}</p><div class="yi-ji-grid"><strong>宜：</strong><span>${dayYi}</span><strong>忌：</strong><span>${dayJi}</span></div>${eventHtml}<p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">宜忌僅供參考，請順心而為。</p>`; // 組合所有詳情HTML
-            document.getElementById('dateDetailsModalContent').innerHTML = detailsHtml; // 更新彈窗內容
-            document.getElementById('dateDetailsModal').classList.add('is-active'); // 顯示彈窗
+            const currentJieqi = jieqiForYear.find(jq => jq.date.toDateString() === date.toDateString());
+            const currentHoliday = holidaysForYear.find(h => h.date.toDateString() === date.toDateString());
+            const nextJieqi = jieqiForYear.find(jq => jq.date > date);
+            const nextHoliday = holidaysForYear.find(h => h.date > date);
+
+            let eventHtml = '';
+            if (currentJieqi) { eventHtml += `<p>${isToday ? '今天是' : '這天是'} <strong>${currentJieqi.name}</strong>！ ${getJieqiDescription(currentJieqi.name)}</p>`; }
+            if (currentHoliday) { eventHtml += `<p>${isToday ? '今天是' : '這天是'} <strong>${currentHoliday.name}</strong>！</p>`; }
+            
+            let countdownHtml = '';
+            if (nextJieqi) { const daysUntil = Math.ceil((nextJieqi.date - date) / 86400000); countdownHtml += `<p>距離下個節氣 <strong>${nextJieqi.name}</strong> 還有 ${daysUntil} 天。<br><span style="font-size:0.9em; color:#ccc;">${getJieqiDescription(nextJieqi.name)}</span></p>`; }
+            if (nextHoliday) { const daysUntil = Math.ceil((nextHoliday.date - date) / 86400000); countdownHtml += `<p>距離下個節日 <strong>${nextHoliday.name}</strong> 還有 ${daysUntil} 天</p>`; }
+            if (countdownHtml) { eventHtml += `<div class="countdown-section">${countdownHtml}</div>`; }
+
+            const detailsHtml = `<p><strong>公曆：</strong>${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日</p><p><strong>農曆：</strong>${lunarYearText} ${lunarDateText}</p><div class="yi-ji-grid"><strong>宜：</strong><span>${dayYi}</span><strong>忌：</strong><span>${dayJi}</span></div>${eventHtml}<p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">宜忌僅供參考，請順心而為。</p>`;
+            document.getElementById('dateDetailsModalContent').innerHTML = detailsHtml;
+            document.getElementById('dateDetailsModal').classList.add('is-active');
         }
         function updateShiChenDetailsView(date) { // 更新並顯示指定時間的時辰詳情
-            shichenDetailDate = new Date(date); // 更新全域的時辰詳情日期
-            const lunar = Solar.fromDate(shichenDetailDate).getLunar(); // 獲取農曆物件
-            const currentHour = shichenDetailDate.getHours(); // 獲取當前小時
-            const shiChenName = getShiChen(currentHour); // 獲取時辰名稱
-            const shiChenTimeRange = getShiChenTimeRange(shiChenName); // 獲取時辰時間範圍
-            document.getElementById('shichenDetailsModalTitle').textContent = `${shichenDetailDate.getMonth() + 1}月${shichenDetailDate.getDate()}日 ${shiChenName}時`; // 更新彈窗標題
-            const currentLunarTime = lunar.getTimes().find(lt => lt.getZhi() === shiChenName); // 找到對應的農曆時辰物件
-            if (currentLunarTime) { // 如果找到
-                const shiChenGanZhi = currentLunarTime.getGan() + currentLunarTime.getZhi(); // 獲取時辰干支
-                const yi = convertYiJiToTraditional(currentLunarTime.getYi()).join('、') || '無'; // 獲取時辰所宜
-                const ji = convertYiJiToTraditional(currentLunarTime.getJi()).join('、') || '無'; // 獲取時辰所忌
-                const detailsHtml = `<p><strong>時辰：</strong>${shiChenName}時 (${shiChenGanZhi}) <span style="font-size: 0.9em; color: #ccc;">${shiChenTimeRange}</span></p><div class="yi-ji-grid"><strong>宜：</strong><span>${yi}</span><strong>忌：</strong><span>${ji}</span></div><p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">時辰宜忌僅供參考。</p>`; // 組合HTML
-                document.getElementById('shichenDetailsModalContent').innerHTML = detailsHtml; // 更新內容
-            } else { document.getElementById('shichenDetailsModalContent').innerHTML = `<p>找不到 ${shiChenName}時 的詳細資訊。</p>`; } // 未找到則顯示錯誤訊息
-            document.getElementById('shichenDetailsModal').classList.add('is-active'); // 顯示彈窗
+            shichenDetailDate = new Date(date);
+            const lunar = Solar.fromDate(shichenDetailDate).getLunar();
+            const currentHour = shichenDetailDate.getHours();
+            const shiChenName = getShiChen(currentHour);
+            const shiChenTimeRange = getShiChenTimeRange(shiChenName);
+            document.getElementById('shichenDetailsModalTitle').textContent = `${shichenDetailDate.getMonth() + 1}月${shichenDetailDate.getDate()}日 ${shiChenName}時`;
+            const currentLunarTime = lunar.getTimes().find(lt => lt.getZhi() === shiChenName);
+            if (currentLunarTime) {
+                // --- FIX START: 確保所有農曆文字都轉為繁體 ---
+                const shiChenGanZhi = s2t(currentLunarTime.getGan() + currentLunarTime.getZhi());
+                const yi = s2t(currentLunarTime.getYi()).join('、') || '無';
+                const ji = s2t(currentLunarTime.getJi()).join('、') || '無';
+                // --- FIX END ---
+                const detailsHtml = `<p><strong>時辰：</strong>${shiChenName}時 (${shiChenGanZhi}) <span style="font-size: 0.9em; color: #ccc;">${shiChenTimeRange}</span></p><div class="yi-ji-grid"><strong>宜：</strong><span>${yi}</span><strong>忌：</strong><span>${ji}</span></div><p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">時辰宜忌僅供參考。</p>`;
+                document.getElementById('shichenDetailsModalContent').innerHTML = detailsHtml;
+            } else { document.getElementById('shichenDetailsModalContent').innerHTML = `<p>找不到 ${shiChenName}時 的詳細資訊。</p>`; }
+            document.getElementById('shichenDetailsModal').classList.add('is-active');
         }
         function setupEffectTimers() { // 設定或重置所有特效的計時器
             clearInterval(movementTimer); clearInterval(scanlineTimer); // 清除舊的計時器
@@ -469,7 +491,9 @@
                 const date = new Date(year, month, dayNum); cell.dataset.date = date.toISOString(); // 儲存日期資訊
                 cell.onclick = () => showDateDetails(new Date(cell.dataset.date)); // 綁定點擊事件
 				const lunar = Solar.fromDate(date).getLunar(); // 獲取農曆資訊
-				cell.innerHTML = `<div class="gregorian-day">${dayNum}</div><div class="lunar-day">${lunar.getDay() === 1 ? lunar.getMonthInChinese().replace('闰', '閏') + '月' : lunar.getDayInChinese()}</div>`; // 填入公曆與農曆日期
+                // --- FIX START: 確保所有農曆文字都轉為繁體 ---
+				cell.innerHTML = `<div class="gregorian-day">${dayNum}</div><div class="lunar-day">${lunar.getDay() === 1 ? s2t(lunar.getMonthInChinese()) + '月' : s2t(lunar.getDayInChinese())}</div>`; // 填入公曆與農曆日期
+                // --- FIX END ---
 				if (today.getFullYear() === year && today.getMonth() === month && dayNum === today.getDate()) { cell.classList.add('is-today'); } // 標記今天
                 const holiday = holidays.find(h => h.date.toDateString() === date.toDateString()); if (holiday) cell.innerHTML += `<span class="event-indicator holiday">${holiday.name}</span>`; // 標記節日
                 const jq = jieqi.find(j => j.date.toDateString() === date.toDateString()); if (jq) cell.innerHTML += `<span class="event-indicator jieqi">${jq.name}</span>`; // 標記節氣
@@ -491,7 +515,9 @@
                 cell.dataset.date = day.toISOString(); cell.onclick = () => showDateDetails(new Date(cell.dataset.date)); // 儲存日期並綁定點擊
 				if (day.toDateString() === today.toDateString()) { cell.classList.add('is-today'); } // 標記今天
 				const lunar = Solar.fromDate(day).getLunar(); // 獲取農曆資訊
-				cell.innerHTML = `<div class="weekly-day-header">${weekdays[i]}</div><div class="weekly-gregorian-day">${day.getDate()}</div><div class="weekly-lunar-day">${lunar.getDay() === 1 ? lunar.getMonthInChinese().replace('闰', '閏') + '月' : lunar.getDayInChinese()}</div>`; // 填入內容
+                // --- FIX START: 確保所有農曆文字都轉為繁體 ---
+				cell.innerHTML = `<div class="weekly-day-header">${weekdays[i]}</div><div class="weekly-gregorian-day">${day.getDate()}</div><div class="weekly-lunar-day">${lunar.getDay() === 1 ? s2t(lunar.getMonthInChinese()) + '月' : s2t(lunar.getDayInChinese())}</div>`; // 填入內容
+                // --- FIX END ---
                 const holiday = holidays.find(h => h.date.toDateString() === day.toDateString()); if (holiday) cell.innerHTML += `<span class="event-indicator holiday">${holiday.name}</span>`; // 標記節日
                 const jq = jieqi.find(j => j.date.toDateString() === day.toDateString()); if (jq) cell.innerHTML += `<span class="event-indicator jieqi">${jq.name}</span>`; // 標記節氣
 				grid.appendChild(cell); // 添加到網格
@@ -504,7 +530,18 @@
             const holidays = getHolidaysForYear(year), jieqi = getJieqiForYear(year); // 獲取當年節日節氣
 			for (let month = 0; month < 12; month++) { // 遍歷12個月
 				const monthContainer = document.createElement('div'); monthContainer.classList.add('yearly-month-container'); // 建立月份容器
-				monthContainer.innerHTML = `<div class="yearly-month-header">${month + 1}月</div>`; // 添加月份標頭
+                const monthHeader = document.createElement('div');
+                monthHeader.className = 'yearly-month-header';
+                monthHeader.textContent = `${month + 1}月`;
+                monthHeader.style.cursor = 'pointer';
+                monthHeader.title = `查看 ${month + 1}月 月曆`; // 添加提示文字
+                monthHeader.onclick = () => {
+                    document.getElementById('yearlyCalendarModal').classList.remove('is-active'); // 關閉年曆
+                    calendarDate.setFullYear(year, month, 1); // 設定月曆的日期
+                    generateCalendar(calendarDate.getFullYear(), calendarDate.getMonth()); // 產生月曆
+                    document.getElementById('calendarModal').classList.add('is-active'); // 顯示月曆
+                };
+                monthContainer.appendChild(monthHeader);
 				const weekdaysDiv = document.createElement('div'); weekdaysDiv.classList.add('yearly-weekdays'); // 建立星期容器
 				weekdays.forEach(day => { const el = document.createElement('div'); el.textContent = day; weekdaysDiv.appendChild(el); }); // 添加星期
 				monthContainer.appendChild(weekdaysDiv); // 將星期容器添加到月份容器
