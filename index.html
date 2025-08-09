@@ -108,11 +108,12 @@
 			overflow: auto; /* 內容溢出時顯示滾動條 */
 			background-color: rgba(0, 0, 0, 0.7); /* 半透明黑色背景 */
 		}
+        #dateDetailsModal, #shichenDetailsModal { z-index: 101; } /* 提高詳情彈窗的層級 */
 		.modal.is-active { display: flex; justify-content: center; align-items: center; } /* 顯示為Flexbox佈局 | 水平居中對齊子元素 | 垂直居中對齊子元素 */
 		.modal-content {
 			background-color: #333; /* 背景色 */
 			margin: auto; /* 自動外邊距，實現水平垂直居中 */
-			padding: 10px; /* 內邊距 */
+			padding: 20px; /* 內邊距 */
 			border: 1px solid #888; /* 邊框 */
 			width: 90%; /* 寬度 */
 			max-width: 600px; /* 最大寬度 */
@@ -143,34 +144,52 @@
 		.gregorian-settings-column, .lunar-settings-column { flex: 1; min-width: 80px; padding: 10px; border: 1px solid #555; border-radius: 8px; background-color: #444; text-align: left; } /* 佔滿剩餘空間 | 最小寬度 | 內邊距 | 邊框 | 圓角邊框 | 背景色 | 文字左對齊 */
 		.gregorian-settings-column h3, .lunar-settings-column h3 { text-align: center; margin-top: 0; } /* 文字居中對齊 | 移除上外邊距 */
 		.lunar-date-clickable, .lunar-shichen-clickable { cursor: pointer; } /* 鼠標樣式為手型 */
-		.yiji-content p, .jieqi-content p { margin-bottom: 10px; font-size: 1.5em; line-height: 1.6; } /* 下外邊距 | 字體大小 | 行高 */
-		.yiji-content strong, .jieqi-content strong { color: #FFD700; } /* 文字顏色 */
+		.details-content p { margin-bottom: 10px; font-size: 1.2em; line-height: 1.6; } /* 下外邊距 | 字體大小 | 行高 */
+		.details-content strong { color: #FFD700; } /* 文字顏色 */
+        .details-content .yi-ji-grid { display: grid; grid-template-columns: 40px 1fr; gap: 5px 10px; text-align: left;} /* 宜忌網格布局 */
+        .details-content .yi-ji-grid strong { grid-column: 1; color: #FFD700; } /* 宜忌標題樣式 */
+        .details-content .yi-ji-grid span { grid-column: 2; } /* 宜忌內容樣式 */
+        .details-content .countdown-section { border-top: 1px solid #555; margin-top: 15px; padding-top: 15px; font-size: 1em; } /* 倒數計時區塊樣式 */
 		.calendar-header { display: flex; justify-content: space-between; align-items: center; padding: 0 10px; } /* 使用Flexbox佈局 | 子元素兩端對齊 | 垂直居中對齊子元素 | 水平內邊距 */
 		.calendar-header h2 { margin: 0; font-size: 1.5em; color: #00FF00; } /* 移除外邊距 | 字體大小 | 文字顏色 */
 		.calendar-header button { background: none; border: none; color: #00FF00; font-size: 2em; cursor: pointer; } /* 無背景 | 無邊框 | 文字顏色 | 字體大小 | 鼠標樣式為手型 */
+        .calendar-footer { display: flex; justify-content: center; gap: 10px; width: 100%; margin-top: 10px; } /* 日曆底部按鈕容器樣式 */
 		.calendar-content { background-color: #2c2c2c; margin: auto; padding: 20px; border: 1px solid #888; width: 95%; max-width: 800px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6); color: #e0e0e0; text-align: center; display: flex; flex-direction: column; gap: 15px; max-height: 90vh; } /* 背景色 | 居中 | 內邊距 | 邊框 | 尺寸 | 圓角 | 陰影 | 文字顏色 | 文字居中 | Flexbox佈局 | 垂直排列 | 間距 | 最大高度 */
 		.calendar-weekdays, .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; } /* 使用Grid佈局 | 7列等寬 | 網格間距 */
 		.calendar-weekdays div { font-weight: bold; color: #aaa; padding-bottom: 5px; } /* 字體加粗 | 文字顏色 | 底部內邊距 */
-		.calendar-day { background-color: #444; border-radius: 5px; padding: 5px; min-height: 60px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; font-size: 0.9em; border: 1px solid #555; } /* 背景色 | 圓角 | 內邊距 | 最小高度 | Flexbox佈局 | 垂直排列 | 兩端對齊 | 垂直居中 | 字體大小 | 邊框 */
-		.calendar-day.other-month { color: #777; background-color: #3a3a3a; } /* 其他月份的日期文字顏色 | 其他月份的日期背景色 */
+		.calendar-day { background-color: #444; border-radius: 5px; padding: 5px; min-height: 80px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; font-size: 0.9em; border: 1px solid #555; cursor: pointer; transition: background-color 0.3s; } /* 日期格子樣式 */
+        .calendar-day:hover { background-color: #5e5e5e; } /* 日期格子懸停效果 */
+		.calendar-day.other-month { color: #777; background-color: #3a3a3a; cursor: default; } /* 其他月份的日期樣式 */
 		.calendar-day.is-today { border-color: #00FF00; box-shadow: 0 0 5px #00FF00; } /* 今天日期的邊框顏色 | 今天日期的陰影效果 */
 		.calendar-day .gregorian-day { font-size: 1.2em; font-weight: bold; } /* 公曆日期文字大小 | 字體加粗 */
 		.calendar-day .lunar-day { font-size: 0.8em; color: #ccc; } /* 農曆日期文字大小 | 文字顏色 */
+        .calendar-day .event-indicator { font-size: 0.75em; padding: 1px 4px; border-radius: 3px; margin-top: 3px; display: block; text-align: center; width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } /* 事件標記樣式 */
+        .calendar-day .event-indicator.holiday { background-color: #007bff; color: white; } /* 節日標記顏色 */
+        .calendar-day .event-indicator.jieqi { background-color: #28a745; color: white; } /* 節氣標記顏色 */
 		.weekly-calendar-content { background-color: #2c2c2c; margin: auto; padding: 15px; border: 1px solid #888; width: 98%; max-width: 1200px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6); color: #e0e0e0; text-align: center; display: flex; flex-direction: column; gap: 10px; max-height: 90vh; } /* 背景色 | 居中 | 內邊距 | 邊框 | 尺寸 | 圓角 | 陰影 | 文字顏色 | 文字居中 | Flexbox佈局 | 垂直排列 | 間距 | 最大高度 */
 		.weekly-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; } /* 使用Grid佈局 | 7列等寬 | 網格間距 */
-		.weekly-calendar-day { background-color: #444; border-radius: 8px; padding: 10px; min-height: 100px; display: flex; flex-direction: column; align-items: center; border: 1px solid #555; } /* 背景色 | 圓角 | 內邊距 | 最小高度 | Flexbox佈局 | 垂直排列 | 垂直居中 | 邊框 */
-		.weekly-calendar-day.is-today { border-color: #00FF00; box-shadow: 0 0 8px #00FF00; } /* 今天日期的邊框顏色 | 今天日期的陰影效果 */
+		.weekly-calendar-day { background-color: #444; border-radius: 8px; padding: 10px; min-height: 100px; display: flex; flex-direction: column; align-items: center; border: 1px solid #555; cursor: pointer; transition: background-color 0.3s; } /* 周曆日期格子樣式 */
+        .weekly-calendar-day:hover { background-color: #5e5e5e; } /* 周曆日期格子懸停效果 */
+		.weekly-calendar-day.is-today { border-color: #00FF00; box-shadow: 0 0 5px #00FF00; } /* 今天日期的邊框顏色 | 今天日期的陰影效果 (與月曆統一) */
 		.weekly-day-header { font-weight: bold; font-size: 1.1em; margin-bottom: 5px; } /* 字體加粗 | 字體大小 | 下外邊距 */
 		.weekly-gregorian-day { font-size: 1.5em; font-weight: bold; } /* 公曆日期文字大小 | 字體加粗 */
 		.weekly-lunar-day { font-size: 0.9em; color: #ccc; margin-top: 5px; } /* 農曆日期文字大小 | 文字顏色 | 上外邊距 */
+        .weekly-calendar-day .event-indicator { font-size: 0.8em; padding: 2px 5px; border-radius: 4px; margin-top: 5px; display: block; text-align: center; width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;} /* 周曆事件標記樣式 */
+        .weekly-calendar-day .event-indicator.holiday { background-color: #007bff; color: white; } /* 周曆節日標記顏色 (與月曆統一) */
+        .weekly-calendar-day .event-indicator.jieqi { background-color: #28a745; color: white; } /* 周曆節氣標記顏色 (與月曆統一) */
 		.yearly-calendar-content { background-color: #2c2c2c; margin: auto; padding: 15px; border: 1px solid #888; width: 98%; max-width: 1400px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6); color: #e0e0e0; display: flex; flex-direction: column; gap: 10px; max-height: 95vh; } /* 背景色 | 居中 | 內邊距 | 邊框 | 尺寸 | 圓角 | 陰影 | 文字顏色 | Flexbox佈局 | 垂直排列 | 間距 | 最大高度 */
 		.yearly-calendar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; overflow-y: auto; padding: 10px; } /* Grid佈局 | 自動調整列數 | 間距 | 垂直滾動 | 內邊距 */
 		.yearly-month-container { background-color: #3a3a3a; border-radius: 8px; padding: 10px; border: 1px solid #555; } /* 背景色 | 圓角 | 內邊距 | 邊框 */
 		.yearly-month-header { font-size: 1.2em; font-weight: bold; text-align: center; margin-bottom: 10px; color: #00FF00; } /* 字體大小 | 字體加粗 | 文字居中 | 下外邊距 | 文字顏色 */
 		.yearly-weekdays, .yearly-day-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; text-align: center; } /* Grid佈局 | 7列等寬 | 間距 | 文字居中 */
 		.yearly-weekdays div { font-size: 0.8em; color: #aaa; } /* 字體大小 | 文字顏色 */
-		.yearly-day { font-size: 0.9em; padding: 2px; border-radius: 3px; } /* 字體大小 | 內邊距 | 圓角 */
+		.yearly-day { font-size: 0.9em; padding: 2px; border-radius: 3px; position: relative; cursor: pointer; transition: background-color 0.3s; min-height: 24px; } /* 年曆日期格子樣式 */
+        .yearly-day:hover { background-color: #555; } /* 年曆日期格子懸停效果 */
 		.yearly-day.is-today { background-color: #00FF00; color: #000; font-weight: bold; } /* 今天日期的背景色 | 文字顏色 | 字體加粗 */
+        .yearly-indicators { position: absolute; bottom: 1px; left: 50%; transform: translateX(-50%); display: flex; gap: 2px; } /* 年曆事件標記點容器 */
+        .yearly-indicators .dot { width: 4px; height: 4px; border-radius: 50%; } /* 標記點樣式 */
+        .yearly-indicators .holiday { background-color: #007bff; } /* 節日標記點顏色 */
+        .yearly-indicators .jieqi { background-color: #28a745; } /* 節氣標記點顏色 */
 		#background-scanline-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; background-color: transparent; display: none; } /* 固定定位 | 位置 | 尺寸 | 禁用鼠標事件 | Z軸層級 | 透明背景 | 預設隱藏 */
 		#background-scanline-overlay.active.pattern-a { display: block; background-image: repeating-linear-gradient(to bottom, transparent, transparent 2px, rgba(0,0,0,0.3) 2px, rgba(0,0,0,0.3) 4px); } /* 顯示 | 背景圖 */
 		#background-scanline-overlay.active.pattern-b { display: block; background-image: repeating-linear-gradient(to bottom, rgba(0,0,0,0.3) 0, rgba(0,0,0,0.3) 2px, transparent 2px, transparent 4px); } /* 顯示 | 背景圖 */
@@ -230,35 +249,53 @@
                 <div class="button-group"><button class="action-button" id="restoreDefaultsBtn">恢復預設</button> <button class="action-button" id="randomColorsBtn">隨機顏色</button> <button class="action-button" id="doneBtn">完成</button></div>
             </div>
         </div>
-        <div class="modal" id="jieqiDetailsModal"> <!-- 節氣/節日 Modal -->
-            <div class="modal-content jieqi-content">
-                <h2>節氣與節日資訊</h2>
-                <div id="jieqiDetailsContent" style="text-align: left;"></div><button class="action-button" id="closeJieqiDetailsBtn">關閉</button>
+        
+        <div class="modal" id="dateDetailsModal">
+            <div class="modal-content details-content">
+                <h2 id="dateDetailsModalTitle">當日詳情</h2>
+                <div id="dateDetailsModalContent" style="text-align: left;"></div>
+                <button class="action-button" id="closeDateDetailsModalBtn">關閉</button>
             </div>
         </div>
-        <div class="modal" id="yijiDetailsModal"> <!-- 宜忌 Modal -->
-            <div class="modal-content yiji-content">
-                <h2>宜忌資訊</h2>
-                <div id="yijiDetailsContent" style="text-align: left;"></div><button class="action-button" id="closeYijiDetailsBtn">關閉</button>
+
+        <!-- 【功能更新】時辰詳情彈出視窗 -->
+        <div class="modal" id="shichenDetailsModal">
+            <div class="modal-content details-content">
+                <!-- 新增：左右箭頭和標題 -->
+                <div class="calendar-header">
+                    <button id="prevShichenBtn">&lt;</button>
+                    <h2 id="shichenDetailsModalTitle">時辰詳情</h2>
+                    <button id="nextShichenBtn">&gt;</button>
+                </div>
+                <div id="shichenDetailsModalContent" style="text-align: left;"></div>
+                <!-- 新增：包含「現在」和「關閉」的按鈕組 -->
+                <div class="button-group">
+                    <button class="action-button" id="nowShichenBtn">現在</button>
+                    <button class="action-button" id="closeShichenDetailsModalBtn">關閉</button>
+                </div>
             </div>
         </div>
+
         <div class="modal" id="calendarModal"> <!-- 月曆 Modal -->
             <div class="calendar-content">
                 <div class="calendar-header"><button id="prevMonthBtn">&lt;</button><h2 id="calendarMonthYear"></h2><button id="nextMonthBtn">&gt;</button></div>
                 <div class="calendar-weekdays" id="calendarWeekdays"></div>
-                <div class="calendar-grid" id="calendarGrid"></div><button class="action-button" id="closeCalendarBtn">關閉</button>
+                <div class="calendar-grid" id="calendarGrid"></div>
+                <div class="calendar-footer"><button class="action-button" id="todayCalendarBtn">今天</button><button class="action-button" id="closeCalendarBtn">關閉</button></div>
             </div>
         </div>
         <div class="modal" id="weeklyCalendarModal"> <!-- 周曆 Modal -->
             <div class="weekly-calendar-content">
                 <div class="calendar-header"><button id="prevWeekBtn">&lt;</button><h2 id="weeklyCalendarTitle"></h2><button id="nextWeekBtn">&gt;</button></div>
-                <div class="weekly-calendar-grid" id="weeklyCalendarGrid"></div><button class="action-button" id="closeWeeklyCalendarBtn">關閉</button>
+                <div class="weekly-calendar-grid" id="weeklyCalendarGrid"></div>
+                <div class="calendar-footer"><button class="action-button" id="todayWeeklyBtn">今天</button><button class="action-button" id="closeWeeklyCalendarBtn">關閉</button></div>
             </div>
         </div>
         <div class="modal" id="yearlyCalendarModal"> <!-- 年曆 Modal -->
             <div class="yearly-calendar-content">
                 <div class="calendar-header"><button id="prevYearBtn">&lt;</button><h2 id="yearlyCalendarTitle"></h2><button id="nextYearBtn">&gt;</button></div>
-                <div class="yearly-calendar-grid" id="yearlyCalendarGrid"></div><button class="action-button" id="closeYearlyCalendarBtn">關閉</button>
+                <div class="yearly-calendar-grid" id="yearlyCalendarGrid"></div>
+                <div class="calendar-footer"><button class="action-button" id="todayYearlyBtn">今年</button><button class="action-button" id="closeYearlyCalendarBtn">關閉</button></div>
             </div>
         </div>
     </div>
@@ -272,22 +309,23 @@
 		let calendarDate = new Date(); // 月曆顯示的當前日期
 		let weeklyCalendarDate = new Date(); // 周曆顯示的當前日期
 		let yearlyCalendarDate = new Date(); // 年曆顯示的當前日期
+        let shichenDetailDate = new Date(); // 【新增】用於追蹤時辰詳情視窗中顯示的日期和時間
 		let yearlyDataCache = { year: -1, holidays: [], jieqi: [] }; // 用於快取年度節日和節氣資料
 		const defaultDisplaySettings = { // 預設顯示設定物件
-			showAmPm: true, showGregorianYear: true, showGregorianMonth: true, showGregorianDay: true, showGregorianWeekday: true,
-			showMinguoYear: true, showLunarMonth: true, showLunarDay: true, showLunarShiChen: true, showJieqi: true, showHolidays: true,
-			textColor: '#00FF00', backgroundColor: '#000000', gregorianYearColor: '#00FF00', gregorianMonthColor: '#00FF00',
-			gregorianDayColor: '#00FF00', gregorianWeekdayColor: '#00FF00', minguoYearColor: '#00FF00', lunarMonthColor: '#00FF00',
-			lunarDayColor: '#00FF00', lunarShiChenColor: '#00FF00', jieqiColor: '#00FF00', holidayColor: '#00FFFF',
-			enableTextScanline: false, enableBackgroundScanline: false, enableMovement: true
+			showAmPm: true, showGregorianYear: true, showGregorianMonth: true, showGregorianDay: true, showGregorianWeekday: true, // 公曆顯示設定
+			showMinguoYear: true, showLunarMonth: true, showLunarDay: true, showLunarShiChen: true, showJieqi: true, showHolidays: true, // 農曆顯示設定
+			textColor: '#00FF00', backgroundColor: '#000000', gregorianYearColor: '#00FF00', gregorianMonthColor: '#00FF00', // 顏色設定
+			gregorianDayColor: '#00FF00', gregorianWeekdayColor: '#00FF00', minguoYearColor: '#00FF00', lunarMonthColor: '#00FF00', // 顏色設定
+			lunarDayColor: '#00FF00', lunarShiChenColor: '#00FF00', jieqiColor: '#00FF00', holidayColor: '#00FFFF', // 顏色設定
+			enableTextScanline: false, enableBackgroundScanline: false, enableMovement: true // 特效設定
 		};
 		let displaySettings = { ...defaultDisplaySettings }; // 當前顯示設定，初始化為預設值
 
 		function saveSettings() { try { localStorage.setItem('displaySettings', JSON.stringify(displaySettings)); } catch (e) { console.error("儲存設定至 localStorage 失敗:", e); } } // 將當前設定儲存到 localStorage
 		function loadSettings() { // 從 localStorage 載入設定
-			try {
+			try { // 嘗試從localStorage讀取設定
 				const settingsJson = localStorage.getItem('displaySettings'); // 從 localStorage 獲取設定字串
-				if (settingsJson) { displaySettings = Object.assign({ ...defaultDisplaySettings }, JSON.parse(settingsJson)); } // 合併載入的設定與預設設定
+				if (settingsJson) { displaySettings = Object.assign({ ...defaultDisplaySettings }, JSON.parse(settingsJson)); } // 如果有儲存的設定，則與預設值合併
 			} catch (e) { console.error("從 localStorage 解析設定失敗:", e); displaySettings = { ...defaultDisplaySettings }; } // 載入失敗時使用預設設定
 		}
 		function updateSettingsModalUI() { // 更新設定彈出視窗的UI元素狀態
@@ -301,12 +339,26 @@
 		}
 		function getShengXiaoEmoji(shengXiaoName) { const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐅', '兔': '🐰', '龍': '🐉', '蛇': '🐍', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '🐶', '豬': '🐖' }; return emojiMap[shengXiaoName] || shengXiaoName; } // 根據生肖名稱返回對應的Emoji
 		function getJieqiDescription(jieqiName) { const descriptions = { '立春': '春季開始，萬物復甦，氣溫回升。', '雨水': '降雨增多，草木萌動，春耕開始。', '驚蟄': '春雷響動，驚醒冬眠動物，氣溫漸升。', '春分': '晝夜等長，春意盎然，南北半球氣溫趨於平衡。', '清明': '氣候清爽明朗，萬物潔淨，是掃墓祭祖的日子。', '穀雨': '雨水滋潤，穀物生長，是播種移苗的好時節。', '立夏': '夏季開始，萬物繁茂，氣溫明顯升高。', '小滿': '麥類等夏熟作物籽粒開始飽滿，但尚未成熟。', '芒種': '有芒作物（如麥、稻）成熟，可以收穫和播種。', '夏至': '北半球白晝最長，陽氣最盛，是盛夏的開始。', '小暑': '天氣開始炎熱，但還未到最熱的時候。', '大暑': '一年中最炎熱的時期，濕熱交蒸。', '立秋': '秋季開始，氣溫逐漸下降，但仍有暑熱。', '處暑': '暑氣漸退，天氣轉涼，但仍有「秋老虎」。', '白露': '天氣轉涼，水氣凝結成露珠，天氣漸寒。', '秋分': '晝夜等長，秋高氣爽，是收穫的季節。', '寒露': '氣溫更低，露水更多，天氣轉冷。', '霜降': '天氣漸冷，露水凝結成霜，是秋季的最後一個節氣。', '立冬': '冬季開始，萬物收藏，氣溫顯著下降。', '小雪': '開始降雪，但雪量不大，氣溫持續走低。', '大雪': '降雪量增多，天氣更冷，冰凍現象常見。', '冬至': '北半球白晝最短，夜晚最長，是數九寒天的開始。', '小寒': '天氣寒冷，尚未達到最冷。', '大寒': '一年中最寒冷的時期，嚴寒冰凍。' }; return descriptions[jieqiName] || '此節氣無詳細說明。'; } // 根據節氣名稱返回詳細描述
-		function getHolidays(year) { // 獲取指定年份的節日列表
-			const holidays = [ { name: '元旦', date: new Date(year, 0, 1) }, { name: '和平紀念日', date: new Date(year, 1, 28) }, { name: '兒童節', date: new Date(year, 3, 4) }, { name: '清明節', date: new Date(year, 3, 4) }, { name: '勞動節', date: new Date(year, 4, 1) }, { name: '國慶日', date: new Date(year, 9, 10) }, { name: '聖誕節', date: new Date(year, 11, 25) } ]; // 公曆節日
-			const lunarHolidays = [{m:1,d:1,n:'農曆新年'}, {m:5,d:5,n:'端午節'}, {m:7,d:15,n:'中元節'}, {m:8,d:15,n:'中秋節'}, {m:9,d:9,n:'重陽節'}]; // 農曆節日
-			lunarHolidays.forEach(lh => { const solarDate = Lunar.fromYmd(year, lh.m, lh.d).getSolar(); holidays.push({ name: lh.n, date: new Date(solarDate.getYear(), solarDate.getMonth() - 1, solarDate.getDay()) }); }); // 計算農曆節日的公曆日期
-			const nextLunarNewYearSolar = Lunar.fromYmd(year + 1, 1, 1).getSolar(); // 下一年農曆新年
-			holidays.push({ name: '除夕', date: new Date(nextLunarNewYearSolar.getYear(), nextLunarNewYearSolar.getMonth() - 1, nextLunarNewYearSolar.getDay() - 1) }); // 計算除夕
+		function getHolidaysForYear(year) { // 獲取指定年份的台灣節日列表
+			const holidays = []; // 初始化節日陣列
+			// 固定公曆節日
+			const fixedHolidays = [ { name: '元旦', m: 0, d: 1 }, { name: '和平紀念日', m: 1, d: 28 }, { name: '兒童節', m: 3, d: 4 }, { name: '勞動節', m: 4, d: 1 }, { name: '國慶日', m: 9, d: 10 }, { name: '聖誕節', m: 11, d: 25 } ]; // 定義公曆假日
+			fixedHolidays.forEach(h => holidays.push({ name: h.name, date: new Date(year, h.m, h.d) })); // 將公曆假日加入列表
+			// 農曆節日
+			const lunarHolidays = [{m:1,d:1,n:'農曆新年'}, {m:1,d:15,n:'元宵節'}, {m:5,d:5,n:'端午節'}, {m:7,d:7,n:'七夕'}, {m:7,d:15,n:'中元節'}, {m:8,d:15,n:'中秋節'}, {m:9,d:9,n:'重陽節'}, {m:12,d:8,n:'臘八節'}]; // 定義農曆假日
+			lunarHolidays.forEach(lh => { // 遍歷農曆假日
+				const solarDate = Lunar.fromYmd(year, lh.m, lh.d).getSolar(); // 計算農曆對應的公曆日期
+				holidays.push({ name: lh.n, date: new Date(solarDate.getYear(), solarDate.getMonth() - 1, solarDate.getDay()) }); // 加入列表
+			});
+			// 特殊計算的節日
+			const lunarNewYearSolar = Lunar.fromYmd(year, 1, 1).getSolar(); // 當年農曆新年
+			holidays.push({ name: '除夕', date: new Date(lunarNewYearSolar.getYear(), lunarNewYearSolar.getMonth() - 1, lunarNewYearSolar.getDay() - 1) }); // 計算除夕
+			const qingmingJieqi = getJieqiForYear(year).find(jq => jq.name === '清明'); // 找到清明節氣
+			if(qingmingJieqi) holidays.push({ name: '清明節', date: qingmingJieqi.date }); // 清明節通常與節氣同一天
+			// 母親節 (五月第二個星期日)
+			const mayFirst = new Date(year, 4, 1); // 五月一日
+			const mothersDay = new Date(year, 4, 1 + (7 - mayFirst.getDay() + 7) % 7 + 7); // 計算母親節日期
+			holidays.push({ name: '母親節', date: mothersDay }); // 加入母親節
 			holidays.sort((a, b) => a.date.getTime() - b.date.getTime()); // 根據日期排序
 			return holidays; // 返回節日列表
 		}
@@ -317,292 +369,407 @@
 			return Object.entries(jieqiTable).map(([name, dateStr]) => ({ name: jieqiNameMap[name] || name, date: new Date(dateStr) })).sort((a, b) => a.date.getTime() - b.date.getTime()); // 將節氣表轉換為物件陣列並排序
 		}
 		function convertYiJiToTraditional(yijiArray) { // 轉換宜忌為繁體中文
-			// 常用簡轉繁單字對照表，確保轉換的覆蓋範圍和準確性
-			const s2tMap = {
-				'见': '見', '贵': '貴', '无': '無', '开': '開', '纳': '納', '财': '財', '挂': '掛', '梁': '樑', '动': '動', '种': '種', '启': '啟', '钻': '鑽', '订': '訂', '竖': '豎', '门': '門', '词': '詞', '讼': '訟', '发': '髮', '养': '養', '马': '馬', '经': '經', '络': '絡', '盖': '蓋', '会': '會', '学': '學', '习': '習', '艺': '藝', '医': '醫', '装': '裝', '帐': '帳', '殓': '殮', '结': '結', '网': '網', '渔': '漁', '猎': '獵', '亲': '親', '进': '進', '扫': '掃', '绘': '繪', '齐': '齊', '斋': '齋', '庙': '廟', '灶': '竈', '谢': '謝', '问': '問', '婿': '壻', '归': '歸', '宁': '寧', '坟': '墳', '寿': '壽', '坏': '壞', '补': '補', '厕': '廁', '仓': '倉', '涂': '塗', '桥': '橋', '筑': '築', '饰': '飾', '墙': '牆', '买': '買', '车': '車', '产': '產', '雇': '僱', '佣': '傭', '货': '貨', '机': '機', '械': '械', '酝': '醞', '酿': '釀', '铸': '鑄', '针': '針', '头': '頭', '库': '庫', '疗': '療', '诸': '諸', '馀': '餘', '丧': '喪', '断': '斷', '蚁': '蟻', '户': '戶', '炉': '爐', '栖': '棲', '厨': '廚', '胜': '勝', '负': '負', '灭': '滅', '龙': '龍', '鸡': '雞', '猪': '豬', '乌': '烏', '双': '雙', '宫': '宮', '惊': '驚', '蛰': '蟄', '满': '滿', '处': '處', '匮': '匱', '时': '時', '气': '氣', '后': '後', '灾': '災', '复': '復', '续': '續', '虚': '虛', '贼': '賊', '将': '將', '鸣': '鳴', '对': '對', '鸟': '鳥', '败': '敗', '仪': '儀', '厌': '厭', '摇': '搖', '宝': '寶', '祸': '禍', '临': '臨', '护': '護', '离': '離', '阴': '陰', '阳': '陽', '击': '擊', '愿': '願', '圣': '聖', '穷': '窮', '触': '觸', '风': '風', '专': '專', '错': '錯', '废': '廢', '冲': '沖', '单': '單', '绝': '絕', '纯': '純', '岁': '歲', '阵': '陣', '伤': '傷', '杀': '殺', '黄': '黃', '绿': '綠', '节': '節', '腊': '臘', '妇': '婦', '树': '樹', '费': '費', '权': '權', '劳': '勞', '儿': '兒', '党': '黨', '军': '軍', '师': '師', '国': '國', '万': '萬', '诞': '誕', '长': '長', '带': '帶', '华': '華', '为': '為', '电': '電', '声': '聲', '泽': '澤', '冻': '凍', '虫': '蟲', '鱼': '魚', '负': '負', '獭': '獺', '鸿': '鴻', '来': '來', '润': '潤', '凉': '涼', '蝉': '蟬', '鹰': '鷹', '肃': '肅', '宾': '賓', '兽': '獸', '鹊': '鵲', '厉': '厲', '坚': '堅', '鸠': '鳩', '发': '發', '于': '於', '蝼': '螻', '麦': '麥', '螳': '螳', '螂': '螂', '蜩': '蜩', '温': '溫', '蟋': '蟋', '蟀': '蟀', '挚': '摯', '萤': '螢', '群': '羣', '收': '收', '坯': '坯', '涸': '涸', '蛤': '蛤', '豺': '豺', '咸': '咸', '俯': '俯', '雉': '雉', '蜃': '蜃', '藏': '藏', '闭': '閉', '鹖': '鶡',
-			};
-
-			// 遍歷宜忌陣列中的每一個詞
-			return yijiArray.map(item => {
-				// 使用 trim() 移除詞彙前後可能存在的空白字元
-				const trimmedItem = item.trim();
-				let traditionalItem = '';
-				// 遍歷詞中的每一個字元
-				for (let i = 0; i < trimmedItem.length; i++) {
-					// 如果在對照表裡找到對應的繁體字，就用繁體字，否則用原來的字
-					traditionalItem += s2tMap[trimmedItem[i]] || trimmedItem[i];
+			const s2tMap = { '见': '見', '贵': '貴', '无': '無', '开': '開', '纳': '納', '财': '財', '挂': '掛', '梁': '樑', '动': '動', '种': '種', '启': '啟', '钻': '鑽', '订': '訂', '竖': '豎', '门': '門', '词': '詞', '讼': '訟', '发': '髮', '养': '養', '马': '馬', '经': '經', '络': '絡', '盖': '蓋', '会': '會', '学': '學', '习': '習', '艺': '藝', '医': '醫', '装': '裝', '帐': '帳', '殓': '殮', '结': '結', '网': '網', '渔': '漁', '猎': '獵', '亲': '親', '进': '進', '扫': '掃', '绘': '繪', '齐': '齊', '斋': '齋', '庙': '廟', '灶': '竈', '谢': '謝', '问': '問', '婿': '壻', '归': '歸', '宁': '寧', '坟': '墳', '寿': '壽', '坏': '壞', '补': '補', '厕': '廁', '仓': '倉', '涂': '塗', '桥': '橋', '筑': '築', '饰': '飾', '墙': '牆', '买': '買', '车': '車', '产': '產', '雇': '僱', '佣': '傭', '货': '貨', '机': '機', '械': '械', '酝': '醞', '酿': '釀', '铸': '鑄', '针': '針', '头': '頭', '库': '庫', '疗': '療', '诸': '諸', '馀': '餘', '丧': '喪', '断': '斷', '蚁': '蟻', '户': '戶', '炉': '爐', '栖': '棲', '厨': '廚', '胜': '勝', '负': '負', '灭': '滅', '龙': '龍', '鸡': '雞', '猪': '豬', '乌': '烏', '双': '雙', '宫': '宮', '惊': '驚', '蛰': '蟄', '满': '滿', '处': '處', '匮': '匱', '时': '時', '气': '氣', '后': '後', '灾': '災', '复': '復', '续': '續', '虚': '虛', '贼': '賊', '将': '將', '鸣': '鳴', '对': '對', '鸟': '鳥', '败': '敗', '仪': '儀', '厌': '厭', '摇': '搖', '宝': '寶', '祸': '禍', '临': '臨', '护': '護', '离': '離', '阴': '陰', '阳': '陽', '击': '擊', '愿': '願', '圣': '聖', '穷': '窮', '触': '觸', '风': '風', '专': '專', '错': '錯', '废': '廢', '冲': '沖', '单': '單', '绝': '絕', '纯': '純', '岁': '歲', '阵': '陣', '伤': '傷', '杀': '殺', '黄': '黃', '绿': '綠', '节': '節', '腊': '臘', '妇': '婦', '树': '樹', '费': '費', '权': '權', '劳': '勞', '儿': '兒', '党': '黨', '军': '軍', '师': '師', '国': '國', '万': '萬', '诞': '誕', '长': '長', '带': '帶', '华': '華', '为': '為', '电': '電', '声': '聲', '泽': '澤', '冻': '凍', '虫': '蟲', '鱼': '魚', '负': '負', '獭': '獺', '鸿': '鴻', '来': '來', '润': '潤', '凉': '涼', '蝉': '蟬', '鹰': '鷹', '肃': '肅', '宾': '賓', '兽': '獸', '鹊': '鵲', '厉': '厲', '坚': '堅', '鸠': '鳩', '发': '發', '于': '於', '蝼': '螻', '麦': '麥', '螳': '螳', '螂': '螂', '蜩': '蜩', '温': '溫', '蟋': '蟋', '蟀': '蟀', '挚': '摯', '萤': '螢', '群': '羣', '收': '收', '坯': '坯', '涸': '涸', '蛤': '蛤', '豺': '豺', '咸': '咸', '俯': '俯', '雉': '雉', '蜃': '蜃', '藏': '藏', '闭': '閉', '鹖': '鶡', }; // 簡轉繁對照表
+			return yijiArray.map(item => { // 遍歷宜忌陣列中的每一個詞
+				const trimmedItem = item.trim(); // 移除詞彙前後可能存在的空白字元
+				let traditionalItem = ''; // 初始化繁體中文詞彙
+				for (let i = 0; i < trimmedItem.length; i++) { // 遍歷詞中的每一個字元
+					traditionalItem += s2tMap[trimmedItem[i]] || trimmedItem[i]; // 如果在對照表裡找到對應的繁體字，就用繁體字，否則用原來的字
 				}
-				return traditionalItem;
+				return traditionalItem; // 返回轉換後的詞彙
 			});
 		}
 		function getShiChen(h) { const shichenMap = { 23: '子', 0: '子', 1: '丑', 2: '丑', 3: '寅', 4: '寅', 5: '卯', 6: '卯', 7: '辰', 8: '辰', 9: '巳', 10: '巳', 11: '午', 12: '午', 13: '未', 14: '未', 15: '申', 16: '申', 17: '酉', 18: '酉', 19: '戌', 20: '戌', 21: '亥', 22: '亥' }; return shichenMap[h] || ''; } // 根據小時數獲取對應的時辰
+        
+        // 【新增】根據時辰名稱獲取對應的時間範圍
+        function getShiChenTimeRange(shichenName) {
+            const timeRanges = {
+                '子': '23:00 - 00:59', '丑': '01:00 - 02:59', '寅': '03:00 - 04:59', '卯': '05:00 - 06:59',
+                '辰': '07:00 - 08:59', '巳': '09:00 - 10:59', '午': '11:00 - 12:59', '未': '13:00 - 14:59',
+                '申': '15:00 - 16:59', '酉': '17:00 - 18:59', '戌': '19:00 - 20:59', '亥': '21:00 - 22:59'
+            };
+            return timeRanges[shichenName] || '';
+        }
+
 		function getDetailedTimePeriod(hour) { const periodMap = { 0: '凌晨', 1: '凌晨', 2: '凌晨', 3: '凌晨', 4: '凌晨', 5: '清晨', 6: '清晨', 7: '清晨', 8: '清晨', 9: '上午', 10: '上午', 11: '上午', 12: '中午', 13: '下午', 14: '下午', 15: '下午', 16: '下午', 17: '傍晚', 18: '傍晚', 19: '夜晚', 20: '夜晚', 21: '夜晚', 22: '夜晚', 23: '深夜' }; return periodMap[hour] || ''; } // 根據小時數獲取詳細時間段描述
 		function updateMarquee(combinedJieqiHolidayText) { // 更新節氣/節日跑馬燈顯示
-			const marqueeContainer = document.getElementById('jieqiHolidayMarqueeContainer'), marqueeInner = document.getElementById('jieqiHolidayMarqueeInner');
-			if (!marqueeContainer || !marqueeInner) return;
-			const contentSpan = marqueeInner.querySelector('.jieqi-holiday-marquee-content'), duplicateSpan = marqueeInner.querySelector('.jieqi-holiday-marquee-content-duplicate');
-			if (!contentSpan || !duplicateSpan) return;
-			contentSpan.innerHTML = combinedJieqiHolidayText;
+			const marqueeContainer = document.getElementById('jieqiHolidayMarqueeContainer'), marqueeInner = document.getElementById('jieqiHolidayMarqueeInner'); // 獲取跑馬燈容器和內部元素
+			if (!marqueeContainer || !marqueeInner) return; // 如果元素不存在，則返回
+			const contentSpan = marqueeInner.querySelector('.jieqi-holiday-marquee-content'), duplicateSpan = marqueeInner.querySelector('.jieqi-holiday-marquee-content-duplicate'); // 獲取內容和複製內容的span
+			if (!contentSpan || !duplicateSpan) return; // 如果span不存在，則返回
+			contentSpan.innerHTML = combinedJieqiHolidayText; // 設定內容
 			requestAnimationFrame(() => { // 在下一幀動畫中執行
-				const contentWidth = contentSpan.scrollWidth, containerWidth = marqueeContainer.offsetWidth;
+				const contentWidth = contentSpan.scrollWidth, containerWidth = marqueeContainer.offsetWidth; // 獲取內容寬度和容器寬度
 				if (contentWidth > containerWidth) { // 如果內容寬度大於容器寬度，則滾動
-					duplicateSpan.innerHTML = combinedJieqiHolidayText;
-					marqueeContainer.classList.add('scrolling');
-					marqueeInner.style.animationDuration = `${contentWidth / 50}s`;
-					marqueeInner.style.animationPlayState = 'running';
+					duplicateSpan.innerHTML = combinedJieqiHolidayText; // 設定複製內容
+					marqueeContainer.classList.add('scrolling'); // 添加滾動class
+					marqueeInner.style.animationDuration = `${contentWidth / 50}s`; // 設定動畫時長
+					marqueeInner.style.animationPlayState = 'running'; // 播放動畫
 				} else { // 否則停止滾動
-					duplicateSpan.innerHTML = '';
-					marqueeContainer.classList.remove('scrolling');
-					marqueeInner.style.animationPlayState = 'paused';
+					duplicateSpan.innerHTML = ''; // 清空複製內容
+					marqueeContainer.classList.remove('scrolling'); // 移除滾動class
+					marqueeInner.style.animationPlayState = 'paused'; // 暫停動畫
 				}
 			});
 		}
 		function updateDateTime() { // 更新主畫面日期時間顯示
-			const now = new Date();
-			const backgroundOverlay = document.getElementById('background-scanline-overlay'), textOverlay = document.getElementById('text-scanline-overlay');
-			const secondTensDigit = Math.floor(now.getSeconds() / 10);
+			const now = new Date(); // 獲取當前時間
+			const backgroundOverlay = document.getElementById('background-scanline-overlay'), textOverlay = document.getElementById('text-scanline-overlay'); // 獲取掃描線覆蓋層
+			const secondTensDigit = Math.floor(now.getSeconds() / 10); // 獲取秒數的十位數
 			if (secondTensDigit !== lastSecondTensDigit) { // 每10秒觸發一次
-				if(displaySettings.enableMovement) { moveRandomly(); }
-				scanlinePatternIsA = !scanlinePatternIsA;
-				lastSecondTensDigit = secondTensDigit;
+				if(displaySettings.enableMovement) { moveRandomly(); } // 如果啟用移動，則隨機移動
+				scanlinePatternIsA = !scanlinePatternIsA; // 切換掃描線模式
+				lastSecondTensDigit = secondTensDigit; // 更新上一次的秒數十位數
 			}
 			backgroundOverlay.classList.toggle('active', displaySettings.enableBackgroundScanline); // 更新背景掃描線
-			if (displaySettings.enableBackgroundScanline) { backgroundOverlay.classList.toggle('pattern-a', scanlinePatternIsA); backgroundOverlay.classList.toggle('pattern-b', !scanlinePatternIsA); }
+			if (displaySettings.enableBackgroundScanline) { backgroundOverlay.classList.toggle('pattern-a', scanlinePatternIsA); backgroundOverlay.classList.toggle('pattern-b', !scanlinePatternIsA); } // 切換背景掃描線模式
 			textOverlay.classList.toggle('active', displaySettings.enableTextScanline); // 更新文字掃描線
-			if (displaySettings.enableTextScanline) { textOverlay.classList.toggle('pattern-a', !scanlinePatternIsA); textOverlay.classList.toggle('pattern-b', scanlinePatternIsA); }
-			document.documentElement.style.setProperty('--page-background-color', displaySettings.backgroundColor);
-			const parts = new Intl.DateTimeFormat('zh-Hant', { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: displaySettings.showAmPm }).formatToParts(now);
-			const hourPart = parts.find(p => p.type === 'hour')?.value.padStart(2, '0') || '00', minutePart = parts.find(p => p.type === 'minute')?.value || '00', secondPart = parts.find(p => p.type === 'second')?.value || '00';
-			document.getElementById('hoursMinutesDisplay').textContent = `${hourPart}:${minutePart}`;
-			document.getElementById('secondsDisplay').textContent = secondPart;
-			const amPmText = displaySettings.showAmPm ? getDetailedTimePeriod(now.getHours()) : '';
-			document.getElementById('amPmDisplay').textContent = amPmText;
-			document.getElementById('amPmDisplay').style.display = amPmText ? 'block' : 'none';
-			document.getElementById('timeTextContainer').style.color = displaySettings.textColor;
+			if (displaySettings.enableTextScanline) { textOverlay.classList.toggle('pattern-a', !scanlinePatternIsA); textOverlay.classList.toggle('pattern-b', scanlinePatternIsA); } // 切換文字掃描線模式
+			document.documentElement.style.setProperty('--page-background-color', displaySettings.backgroundColor); // 設定頁面背景色
+			const parts = new Intl.DateTimeFormat('zh-Hant', { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: displaySettings.showAmPm }).formatToParts(now); // 格式化時間
+			const hourPart = parts.find(p => p.type === 'hour')?.value.padStart(2, '0') || '00', minutePart = parts.find(p => p.type === 'minute')?.value || '00', secondPart = parts.find(p => p.type === 'second')?.value || '00'; // 獲取時、分、秒
+			document.getElementById('hoursMinutesDisplay').textContent = `${hourPart}:${minutePart}`; // 顯示時分
+			document.getElementById('secondsDisplay').textContent = secondPart; // 顯示秒
+			const amPmText = displaySettings.showAmPm ? getDetailedTimePeriod(now.getHours()) : ''; // 獲取上午/下午文字
+			document.getElementById('amPmDisplay').textContent = amPmText; // 顯示上午/下午
+			document.getElementById('amPmDisplay').style.display = amPmText ? 'block' : 'none'; // 根據是否有上午/下午文字來顯示或隱藏
+			document.getElementById('timeTextContainer').style.color = displaySettings.textColor; // 設定時間文字顏色
 			let gregorianParts = []; // 組合公曆日期
-			if (displaySettings.showGregorianYear) gregorianParts.push(`<span class="gregorian-year-target" style="color: ${displaySettings.gregorianYearColor}; cursor: pointer;">${now.getFullYear()}年<\/span>`);
-			if (displaySettings.showGregorianMonth) gregorianParts.push(`<span style="color: ${displaySettings.gregorianMonthColor};">${(now.getMonth() + 1).toString().padStart(2, '0')}月<\/span>`);
-			if (displaySettings.showGregorianDay) gregorianParts.push(`<span style="color: ${displaySettings.gregorianDayColor};">${now.getDate().toString().padStart(2, '0')}日<\/span>`);
-			if (displaySettings.showGregorianWeekday) gregorianParts.push(`<span class="weekday-target" style="color: ${displaySettings.gregorianWeekdayColor}; cursor: pointer;">周${['日', '一', '二', '三', '四', '五', '六'][now.getDay()]}<\/span>`);
-			document.getElementById('gregorianDateDisplay').innerHTML = gregorianParts.join('');
-			document.getElementById('gregorianDateDisplay').style.display = gregorianParts.length > 0 ? 'block' : 'none';
+			if (displaySettings.showGregorianYear) gregorianParts.push(`<span class="gregorian-year-target" style="color: ${displaySettings.gregorianYearColor}; cursor: pointer;">${now.getFullYear()}年<\/span>`); // 顯示年
+			if (displaySettings.showGregorianMonth) gregorianParts.push(`<span style="color: ${displaySettings.gregorianMonthColor};">${(now.getMonth() + 1).toString().padStart(2, '0')}月<\/span>`); // 顯示月
+			if (displaySettings.showGregorianDay) gregorianParts.push(`<span style="color: ${displaySettings.gregorianDayColor};">${now.getDate().toString().padStart(2, '0')}日<\/span>`); // 顯示日
+			if (displaySettings.showGregorianWeekday) gregorianParts.push(`<span class="weekday-target" style="color: ${displaySettings.gregorianWeekdayColor}; cursor: pointer;">周${['日', '一', '二', '三', '四', '五', '六'][now.getDay()]}<\/span>`); // 顯示星期
+			document.getElementById('gregorianDateDisplay').innerHTML = gregorianParts.join(''); // 設定公曆日期顯示
+			document.getElementById('gregorianDateDisplay').style.display = gregorianParts.length > 0 ? 'block' : 'none'; // 根據是否有公曆日期來顯示或隱藏
 			let lunarParts = [], combinedJieqiHolidayText = ''; // 處理農曆、節氣、節日
-			if (typeof Lunar !== 'undefined') {
+			if (typeof Lunar !== 'undefined') { // 如果lunar-javascript庫已載入
 				const currentYear = now.getFullYear(); // 獲取當前年份
 				if (yearlyDataCache.year !== currentYear) { // 如果快取的年份不是今年，則更新快取
-					yearlyDataCache = { year: currentYear, holidays: getHolidays(currentYear), jieqi: getJieqiForYear(currentYear) };
+					yearlyDataCache = { year: currentYear, holidays: getHolidaysForYear(currentYear), jieqi: getJieqiForYear(currentYear) }; // 更新快取
 				}
-				const solar = Solar.fromDate(now), lunar = solar.getLunar();
-				if (displaySettings.showMinguoYear) lunarParts.push(`<span class="lunar-year-target" style="color: ${displaySettings.minguoYearColor}; cursor: pointer;">${now.getFullYear() - 1911}年${getShengXiaoEmoji(lunar.getYearShengXiao())}<\/span>`);
-				if (displaySettings.showLunarMonth) lunarParts.push(`<span style="color: ${displaySettings.lunarMonthColor};">${lunar.getMonthInChinese().replace('闰', '閏')}月<\/span>`);
-				if (displaySettings.showLunarDay) lunarParts.push(`<span class="lunar-day-target lunar-date-clickable" style="color: ${displaySettings.lunarDayColor};">${lunar.getDayInChinese()}<\/span>`);
-				if (displaySettings.showLunarShiChen) lunarParts.push(`<span class="lunar-shichen-target lunar-shichen-clickable" style="color: ${displaySettings.lunarShiChenColor};">${getShiChen(now.getHours())}時<\/span>`);
-				
+				const solar = Solar.fromDate(now), lunar = solar.getLunar(); // 獲取公曆和農曆物件
+				if (displaySettings.showMinguoYear) lunarParts.push(`<span class="lunar-year-target" style="color: ${displaySettings.minguoYearColor}; cursor: pointer;">${now.getFullYear() - 1911}年${getShengXiaoEmoji(lunar.getYearShengXiao())}<\/span>`); // 顯示民國年和生肖
+				if (displaySettings.showLunarMonth) lunarParts.push(`<span style="color: ${displaySettings.lunarMonthColor};">${lunar.getMonthInChinese().replace('闰', '閏')}月<\/span>`); // 顯示農曆月
+				if (displaySettings.showLunarDay) lunarParts.push(`<span class="lunar-day-target lunar-date-clickable" style="color: ${displaySettings.lunarDayColor};">${lunar.getDayInChinese()}<\/span>`); // 顯示農曆日
+				if (displaySettings.showLunarShiChen) lunarParts.push(`<span class="lunar-shichen-target lunar-shichen-clickable" style="color: ${displaySettings.lunarShiChenColor};">${getShiChen(now.getHours())}時<\/span>`); // 顯示時辰
 				const allJieqis = yearlyDataCache.jieqi; // 從快取中獲取節氣
-				let jieQiText = '', currentJieqiInfo = allJieqis.find(jq => jq.date.toDateString() === now.toDateString());
-				if (!currentJieqiInfo) { currentJieqiInfo = allJieqis.find(jq => jq.date > now); }
-				if (displaySettings.showJieqi && currentJieqiInfo) {
-					const diffTime = currentJieqiInfo.date.getTime() - now.getTime();
-					const daysUntil = Math.ceil(diffTime / 86400000);
-					jieQiText = (daysUntil === 0) ? `${currentJieqiInfo.name}` : `${daysUntil}➡${currentJieqiInfo.name}`;
+				let jieQiText = '', currentJieqiInfo = allJieqis.find(jq => jq.date.toDateString() === now.toDateString()); // 尋找當天的節氣
+				if (!currentJieqiInfo) { currentJieqiInfo = allJieqis.find(jq => jq.date > now); } // 如果今天不是節氣，則尋找下一個節氣
+				if (displaySettings.showJieqi && currentJieqiInfo) { // 如果顯示節氣且有節氣資訊
+					const diffTime = currentJieqiInfo.date.getTime() - now.getTime(); // 計算時間差
+					const daysUntil = Math.ceil(diffTime / 86400000); // 計算天數
+					jieQiText = (daysUntil === 0) ? `${currentJieqiInfo.name}` : `${daysUntil}➡${currentJieqiInfo.name}`; // 組合節氣文字
 				}
 				const holidays = yearlyDataCache.holidays; // 從快取中獲取節日
-				let holidayText = '', currentHolidayInfo = holidays.find(h => h.date.toDateString() === now.toDateString());
-				if (!currentHolidayInfo) { currentHolidayInfo = holidays.find(h => h.date > now); }
-				if (displaySettings.showHolidays && currentHolidayInfo) {
-					const diffTime = currentHolidayInfo.date.getTime() - now.getTime();
-					const daysUntil = Math.ceil(diffTime / 86400000);
-					holidayText = (daysUntil === 0) ? `${currentHolidayInfo.name}` : `${daysUntil}➡${currentHolidayInfo.name}`;
+				let holidayText = '', currentHolidayInfo = holidays.find(h => h.date.toDateString() === now.toDateString()); // 尋找當天的節日
+				if (!currentHolidayInfo) { currentHolidayInfo = holidays.find(h => h.date > now); } // 如果今天不是節日，則尋找下一個節日
+				if (displaySettings.showHolidays && currentHolidayInfo) { // 如果顯示節日且有節日資訊
+					const diffTime = currentHolidayInfo.date.getTime() - now.getTime(); // 計算時間差
+					const daysUntil = Math.ceil(diffTime / 86400000); // 計算天數
+					holidayText = (daysUntil === 0) ? `${currentHolidayInfo.name}` : `${daysUntil}➡${currentHolidayInfo.name}`; // 組合節日文字
 				}
-				let marqueeParts = [];
-				if(jieQiText) marqueeParts.push(`<span style="color: ${displaySettings.jieqiColor};">${jieQiText}<\/span>`);
-				if(holidayText) marqueeParts.push(`<span style="color: ${displaySettings.holidayColor};">${holidayText}<\/span>`);
-				combinedJieqiHolidayText = marqueeParts.join(' ');
-				
-				const marqueeContainer = document.getElementById('jieqiHolidayMarqueeContainer'); // 將詳細資訊存儲到data屬性中
-				marqueeContainer.dataset.jieqiName = currentJieqiInfo ? currentJieqiInfo.name : '';
-				marqueeContainer.dataset.jieqiDate = currentJieqiInfo ? currentJieqiInfo.date.toISOString() : '';
-				marqueeContainer.dataset.daysUntilNextJieqi = currentJieqiInfo ? Math.ceil((currentJieqiInfo.date.getTime() - now.getTime()) / 86400000) : '';
-				marqueeContainer.dataset.currentHolidayName = holidays.find(h => h.date.toDateString() === now.toDateString())?.name || '';
-				const nextHolidayInfo = holidays.find(h => h.date > now);
-				marqueeContainer.dataset.nextHolidayName = nextHolidayInfo ? nextHolidayInfo.name : '';
-				marqueeContainer.dataset.nextHolidayDate = nextHolidayInfo ? nextHolidayInfo.date.toISOString() : '';
-				marqueeContainer.dataset.nextHolidayDaysUntil = nextHolidayInfo ? Math.ceil((nextHolidayInfo.date.getTime() - now.getTime()) / 86400000) : '';
+				let marqueeParts = []; // 初始化跑馬燈內容陣列
+				if(jieQiText) marqueeParts.push(`<span style="color: ${displaySettings.jieqiColor};">${jieQiText}<\/span>`); // 加入節氣文字
+				if(holidayText) marqueeParts.push(`<span style="color: ${displaySettings.holidayColor};">${holidayText}<\/span>`); // 加入節日文字
+				combinedJieqiHolidayText = marqueeParts.join(' '); // 組合跑馬燈內容
 			}
-			document.getElementById('lunarDateDisplay').innerHTML = lunarParts.join('');
-			document.getElementById('lunarDateDisplay').style.display = lunarParts.length > 0 ? 'inline-block' : 'none';
-			const marqueeIsVisible = displaySettings.showJieqi || displaySettings.showHolidays;
-			document.getElementById('jieqiHolidayMarqueeContainer').style.display = marqueeIsVisible ? 'block' : 'none';
-			if (marqueeIsVisible && lastMarqueeContent !== combinedJieqiHolidayText) { updateMarquee(combinedJieqiHolidayText); lastMarqueeContent = combinedJieqiHolidayText; }
-			else if (!marqueeIsVisible && lastMarqueeContent !== '') { updateMarquee(''); lastMarqueeContent = ''; }
+			document.getElementById('lunarDateDisplay').innerHTML = lunarParts.join(''); // 設定農曆日期顯示
+			document.getElementById('lunarDateDisplay').style.display = lunarParts.length > 0 ? 'inline-block' : 'none'; // 根據是否有農曆日期來顯示或隱藏
+			const marqueeIsVisible = displaySettings.showJieqi || displaySettings.showHolidays; // 判斷跑馬燈是否可見
+			document.getElementById('jieqiHolidayMarqueeContainer').style.display = marqueeIsVisible ? 'block' : 'none'; // 設定跑馬燈顯示或隱藏
+			if (marqueeIsVisible && lastMarqueeContent !== combinedJieqiHolidayText) { updateMarquee(combinedJieqiHolidayText); lastMarqueeContent = combinedJieqiHolidayText; } // 如果跑馬燈可見且內容有變化，則更新
+			else if (!marqueeIsVisible && lastMarqueeContent !== '') { updateMarquee(''); lastMarqueeContent = ''; } // 如果跑馬燈不可見且內容不為空，則清空
 		}
 		function moveRandomly() { // 隨機移動日期時間顯示元素
-			const displayElement = document.getElementById('dateTimeDisplay'), viewportWidth = window.innerWidth, viewportHeight = window.innerHeight;
-			const elementRect = displayElement.getBoundingClientRect(), safeMargin = 20;
-			const maxX = (viewportWidth - elementRect.width) / 2 - safeMargin, maxY = (viewportHeight - elementRect.height) / 2 - safeMargin;
-			const newTargetX = Math.random() * (maxX * 2) - maxX, newTargetY = Math.random() * (maxY * 2) - maxY;
-			displayElement.style.transform = `translate(calc(-50% + ${newTargetX}px), calc(-60% + ${newTargetY}px))`;
+			const displayElement = document.getElementById('dateTimeDisplay'), viewportWidth = window.innerWidth, viewportHeight = window.innerHeight; // 獲取顯示元素和視口尺寸
+			const elementRect = displayElement.getBoundingClientRect(), safeMargin = 20; // 獲取元素尺寸和安全邊距
+			const maxX = (viewportWidth - elementRect.width) / 2 - safeMargin, maxY = (viewportHeight - elementRect.height) / 2 - safeMargin; // 計算最大移動範圍
+			const newTargetX = Math.random() * (maxX * 2) - maxX, newTargetY = Math.random() * (maxY * 2) - maxY; // 計算新的目標位置
+			displayElement.style.transform = `translate(calc(-50% + ${newTargetX}px), calc(-50% + ${newTargetY}px))`; // 設定新的位置
 		}
-		function resetPosition() { document.getElementById('dateTimeDisplay').style.transform = `translate(-50%, -60%)`; } // 重設日期時間顯示元素的位置
+		function resetPosition() { document.getElementById('dateTimeDisplay').style.transform = `translate(-50%, -50%)`; } // 重設日期時間顯示元素的位置
 		function restoreDefaults() { displaySettings = { ...defaultDisplaySettings }; saveSettings(); updateSettingsModalUI(); scanlinePatternIsA = true; if (displaySettings.enableMovement) { moveRandomly(); } else { resetPosition(); } lastMarqueeContent = ''; updateDateTime(); } // 恢復所有設定為預設值
 		function getRandomColor() { return '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0'); } // 獲取一個隨機的十六進制顏色碼
 		function setRandomColors() { for (const key in displaySettings) { if (key.toLowerCase().includes('color')) { displaySettings[key] = getRandomColor(); } } saveSettings(); updateSettingsModalUI(); updateDateTime(); } // 設定所有顏色相關的設定為隨機顏色
+        
+        // 顯示指定日期的詳細資訊
+        function showDateDetails(date) {
+            date.setHours(12, 0, 0, 0); // 將時間設為中午，避免時區問題導致日期判斷錯誤
+            const isToday = date.toDateString() === new Date().toDateString(); // 判斷點擊的日期是否為今天
+            const lunar = Solar.fromDate(date).getLunar(); // 獲取農曆物件
+            const dayYi = convertYiJiToTraditional(lunar.getDayYi()).join('、') || '無'; // 獲取當天宜事
+            const dayJi = convertYiJiToTraditional(lunar.getDayJi()).join('、') || '無'; // 獲取當天忌事
+            const allJieqis = yearlyDataCache.jieqi; // 獲取所有節氣
+            const allHolidays = yearlyDataCache.holidays; // 獲取所有節日
+            
+            const currentJieqi = allJieqis.find(jq => jq.date.toDateString() === date.toDateString()); // 查找點擊當天的節氣
+            const currentHoliday = allHolidays.find(h => h.date.toDateString() === date.toDateString()); // 查找點擊當天的節日
+            
+            const nextJieqi = allJieqis.find(jq => jq.date > date); // 查找點擊日期之後的下一個節氣
+            const nextHoliday = allHolidays.find(h => h.date > date); // 查找點擊日期之後的下一個節日
+
+            let eventHtml = ''; // 初始化事件HTML
+            if (currentJieqi) { eventHtml += `<p>${isToday ? '今天是' : '這天是'} <strong>${currentJieqi.name}</strong>！</p>`; } // 如果當天是節氣，顯示資訊
+            if (currentHoliday) { eventHtml += `<p>${isToday ? '今天是' : '這天是'} <strong>${currentHoliday.name}</strong>！</p>`; } // 如果當天是節日，顯示資訊
+            
+            let countdownHtml = ''; // 初始化倒數計時HTML
+            if (nextJieqi) { // 如果有下一個節氣
+                const daysUntil = Math.ceil((nextJieqi.date.getTime() - date.getTime()) / 86400000); // 計算天數
+                countdownHtml += `<p>距離下個節氣 <strong>${nextJieqi.name}</strong> 還有 ${daysUntil} 天</p>`; // 加入節氣倒數
+            }
+            if (nextHoliday) { // 如果有下一個節日
+                const daysUntil = Math.ceil((nextHoliday.date.getTime() - date.getTime()) / 86400000); // 計算天數
+                countdownHtml += `<p>距離下個節日 <strong>${nextHoliday.name}</strong> 還有 ${daysUntil} 天</p>`; // 加入節日倒數
+            }
+            if (countdownHtml) { eventHtml += `<div class="countdown-section">${countdownHtml}</div>`; } // 如果有倒數內容，則加入區塊
+
+            const detailsHtml = `
+                <p><strong>公曆：</strong>${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日</p>
+                <p><strong>農曆：</strong>${lunar.getYearInGanZhi()}(${lunar.getYearShengXiao()})年 ${lunar.getMonthInChinese().replace('闰','閏')}月${lunar.getDayInChinese()}</p>
+                <div class="yi-ji-grid">
+                    <strong>宜：</strong><span>${dayYi}</span>
+                    <strong>忌：</strong><span>${dayJi}</span>
+                </div>
+                ${eventHtml}
+                <p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">宜忌僅供參考，請順心而為。</p>
+            `;
+            document.getElementById('dateDetailsModalContent').innerHTML = detailsHtml;
+            document.getElementById('dateDetailsModal').classList.add('is-active');
+        }
+
+        // 【功能更新】顯示指定日期的時辰詳情，並更新視窗內容
+        function updateShiChenDetailsView(date) {
+            shichenDetailDate = new Date(date); // 更新全域變數，追蹤當前顯示的日期時間
+            const lunar = Solar.fromDate(shichenDetailDate).getLunar();
+            const currentHour = shichenDetailDate.getHours();
+            const shiChenName = getShiChen(currentHour);
+            const shiChenTimeRange = getShiChenTimeRange(shiChenName); // 【新增】獲取時間範圍
+
+            // 動態更新標題，顯示日期與時辰
+            document.getElementById('shichenDetailsModalTitle').textContent = `${shichenDetailDate.getMonth() + 1}月${shichenDetailDate.getDate()}日 ${shiChenName}時`;
+
+            const lunarTimes = lunar.getTimes();
+            const currentLunarTime = lunarTimes.find(lt => lt.getZhi() === shiChenName);
+
+            if (currentLunarTime) {
+                const shiChenGanZhi = currentLunarTime.getGan() + currentLunarTime.getZhi();
+                const yi = convertYiJiToTraditional(currentLunarTime.getYi()).join('、') || '無';
+                const ji = convertYiJiToTraditional(currentLunarTime.getJi()).join('、') || '無';
+
+                // 【更新】在HTML中加入時間範圍
+                const detailsHtml = `
+                    <p><strong>時辰：</strong>${shiChenName}時 (${shiChenGanZhi}) <span style="font-size: 0.9em; color: #ccc;">${shiChenTimeRange}</span></p>
+                    <div class="yi-ji-grid">
+                        <strong>宜：</strong><span>${yi}</span>
+                        <strong>忌：</strong><span>${ji}</span>
+                    </div>
+                    <p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">時辰宜忌僅供參考。</p>
+                `;
+                document.getElementById('shichenDetailsModalContent').innerHTML = detailsHtml;
+            } else {
+                document.getElementById('shichenDetailsModalContent').innerHTML = `<p>找不到 ${shiChenName}時 的詳細資訊。</p>`;
+                console.error("找不到對應的時辰資訊:", shiChenName);
+            }
+            // 確保視窗是可見的
+            document.getElementById('shichenDetailsModal').classList.add('is-active');
+        }
+
 		function generateCalendar(year, month) { // 生成月曆
-			const grid = document.getElementById('calendarGrid'), monthYear = document.getElementById('calendarMonthYear'), weekdays = document.getElementById('calendarWeekdays');
-			if(!grid || !monthYear || !weekdays) return;
-			grid.innerHTML = ''; weekdays.innerHTML = '';
-			['日', '一', '二', '三', '四', '五', '六'].forEach(day => { const el = document.createElement('div'); el.textContent = day; weekdays.appendChild(el); });
-			monthYear.textContent = `${year}年 ${month + 1}月`;
-			const firstDay = new Date(year, month, 1).getDay(), daysInMonth = new Date(year, month + 1, 0).getDate(), today = new Date();
-			for (let i = 0; i < 42; i++) {
-				const cell = document.createElement('div'); cell.classList.add('calendar-day');
-				const dayNum = i - firstDay + 1;
-				if (dayNum > 0 && dayNum <= daysInMonth) {
-					const date = new Date(year, month, dayNum), lunar = Solar.fromDate(date).getLunar();
-					cell.innerHTML = `<div class="gregorian-day">${dayNum}<\/div><div class="lunar-day">${lunar.getDay() === 1 ? lunar.getMonthInChinese().replace('闰', '閏') + '月' : lunar.getDayInChinese()}<\/div>`;
-					if (today.getFullYear() === year && today.getMonth() === month && dayNum === today.getDate()) { cell.classList.add('is-today'); }
-				} else { cell.classList.add('other-month'); }
-				grid.appendChild(cell);
+			const grid = document.getElementById('calendarGrid'), monthYear = document.getElementById('calendarMonthYear'), weekdaysEl = document.getElementById('calendarWeekdays'); // 獲取月曆元素
+			if(!grid || !monthYear || !weekdaysEl) return; // 如果元素不存在，則返回
+			grid.innerHTML = ''; weekdaysEl.innerHTML = ''; // 清空內容
+			['日', '一', '二', '三', '四', '五', '六'].forEach(day => { const el = document.createElement('div'); el.textContent = day; weekdaysEl.appendChild(el); }); // 生成星期標頭
+			monthYear.textContent = `${year}年 ${month + 1}月`; // 設定年月標題
+			const firstDay = new Date(year, month, 1).getDay(), daysInMonth = new Date(year, month + 1, 0).getDate(), today = new Date(); // 獲取月份資訊
+            const holidays = getHolidaysForYear(year); // 獲取當年節日
+            const jieqi = getJieqiForYear(year); // 獲取當年節氣
+			for (let i = 0; i < firstDay; i++) { grid.appendChild(document.createElement('div')).classList.add('other-month'); } // 填充上個月的空白
+			for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) { // 遍歷當月每一天
+				const cell = document.createElement('div'); cell.classList.add('calendar-day'); // 創建日期格子
+                const date = new Date(year, month, dayNum); // 創建日期物件
+                cell.dataset.date = date.toISOString(); // 將日期存儲到data屬性
+                cell.onclick = () => showDateDetails(new Date(cell.dataset.date)); // 綁定點擊事件
+				const lunar = Solar.fromDate(date).getLunar(); // 獲取農曆物件
+				cell.innerHTML = `<div class="gregorian-day">${dayNum}</div><div class="lunar-day">${lunar.getDay() === 1 ? lunar.getMonthInChinese().replace('闰', '閏') + '月' : lunar.getDayInChinese()}</div>`; // 顯示公曆和農曆日期
+				if (today.getFullYear() === year && today.getMonth() === month && dayNum === today.getDate()) { cell.classList.add('is-today'); } // 標記今天
+                const holiday = holidays.find(h => h.date.toDateString() === date.toDateString()); // 尋找當天節日
+                if (holiday) cell.innerHTML += `<span class="event-indicator holiday">${holiday.name}</span>`; // 顯示節日
+                const jq = jieqi.find(j => j.date.toDateString() === date.toDateString()); // 尋找當天節氣
+                if (jq) cell.innerHTML += `<span class="event-indicator jieqi">${jq.name}</span>`; // 顯示節氣
+				grid.appendChild(cell); // 將格子加入月曆
 			}
+            const remainingCells = 42 - firstDay - daysInMonth; // 計算剩餘格子
+            for (let i = 0; i < remainingCells; i++) { grid.appendChild(document.createElement('div')).classList.add('other-month'); } // 填充下個月的空白
 		}
 		function generateWeekCalendar(baseDate) { // 生成周曆
-			const grid = document.getElementById('weeklyCalendarGrid'), title = document.getElementById('weeklyCalendarTitle');
-			if (!grid || !title) return;
-			grid.innerHTML = '';
-			const today = new Date(), startOfWeek = new Date(baseDate);
-			startOfWeek.setDate(baseDate.getDate() - baseDate.getDay());
-			const endOfWeek = new Date(startOfWeek); endOfWeek.setDate(startOfWeek.getDate() + 6);
-			title.textContent = `${startOfWeek.getFullYear()}年${startOfWeek.getMonth() + 1}月${startOfWeek.getDate()}日 - ${endOfWeek.getFullYear()}年${endOfWeek.getMonth() + 1}月${endOfWeek.getDate()}日`;
-			const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-			for (let i = 0; i < 7; i++) {
-				const day = new Date(startOfWeek); day.setDate(startOfWeek.getDate() + i);
-				const cell = document.createElement('div'); cell.classList.add('weekly-calendar-day');
-				if (day.toDateString() === today.toDateString()) { cell.classList.add('is-today'); }
-				const lunar = Solar.fromDate(day).getLunar();
-				cell.innerHTML = `<div class="weekly-day-header">${weekdays[i]}<\/div><div class="weekly-gregorian-day">${day.getDate()}<\/div><div class="weekly-lunar-day">${lunar.getDay() === 1 ? lunar.getMonthInChinese().replace('闰', '閏') + '月' : lunar.getDayInChinese()}<\/div>`;
-				grid.appendChild(cell);
+			const grid = document.getElementById('weeklyCalendarGrid'), title = document.getElementById('weeklyCalendarTitle'); // 獲取周曆元素
+			if (!grid || !title) return; // 如果元素不存在，則返回
+			grid.innerHTML = ''; // 清空內容
+			const today = new Date(), startOfWeek = new Date(baseDate); // 獲取今天和本周開始日期
+			startOfWeek.setDate(baseDate.getDate() - baseDate.getDay()); // 計算本周第一天
+			const endOfWeek = new Date(startOfWeek); endOfWeek.setDate(startOfWeek.getDate() + 6); // 計算本周最後一天
+			title.textContent = `${startOfWeek.getFullYear()}年${startOfWeek.getMonth() + 1}月${startOfWeek.getDate()}日 - ${endOfWeek.getFullYear()}年${endOfWeek.getMonth() + 1}月${endOfWeek.getDate()}日`; // 設定標題
+			const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']; // 星期名稱
+            const holidays = getHolidaysForYear(baseDate.getFullYear()); // 獲取當年節日
+            const jieqi = getJieqiForYear(baseDate.getFullYear()); // 獲取當年節氣
+			for (let i = 0; i < 7; i++) { // 遍歷一周七天
+				const day = new Date(startOfWeek); day.setDate(startOfWeek.getDate() + i); // 獲取當天日期
+				const cell = document.createElement('div'); cell.classList.add('weekly-calendar-day'); // 創建日期格子
+                cell.dataset.date = day.toISOString(); // 將日期存儲到data屬性
+                cell.onclick = () => showDateDetails(new Date(cell.dataset.date)); // 綁定點擊事件
+				if (day.toDateString() === today.toDateString()) { cell.classList.add('is-today'); } // 標記今天
+				const lunar = Solar.fromDate(day).getLunar(); // 獲取農曆物件
+				cell.innerHTML = `<div class="weekly-day-header">${weekdays[i]}</div><div class="weekly-gregorian-day">${day.getDate()}</div><div class="weekly-lunar-day">${lunar.getDay() === 1 ? lunar.getMonthInChinese().replace('闰', '閏') + '月' : lunar.getDayInChinese()}</div>`; // 顯示日期資訊
+                const holiday = holidays.find(h => h.date.toDateString() === day.toDateString()); // 尋找當天節日
+                if (holiday) cell.innerHTML += `<span class="event-indicator holiday">${holiday.name}</span>`; // 顯示節日
+                const jq = jieqi.find(j => j.date.toDateString() === day.toDateString()); // 尋找當天節氣
+                if (jq) cell.innerHTML += `<span class="event-indicator jieqi">${jq.name}</span>`; // 顯示節氣
+				grid.appendChild(cell); // 將格子加入周曆
 			}
 		}
 		function generateYearCalendar(year) { // 生成年曆
-			const grid = document.getElementById('yearlyCalendarGrid'), title = document.getElementById('yearlyCalendarTitle');
-			if (!grid || !title) return;
-			grid.innerHTML = ''; title.textContent = `${year}年`;
-			const today = new Date(), weekdays = ['日', '一', '二', '三', '四', '五', '六'];
-			for (let month = 0; month < 12; month++) {
-				const monthContainer = document.createElement('div'); monthContainer.classList.add('yearly-month-container');
-				const monthHeader = document.createElement('div'); monthHeader.classList.add('yearly-month-header'); monthHeader.textContent = `${month + 1}月`; monthContainer.appendChild(monthHeader);
-				const weekdaysDiv = document.createElement('div'); weekdaysDiv.classList.add('yearly-weekdays');
-				weekdays.forEach(day => { const el = document.createElement('div'); el.textContent = day; weekdaysDiv.appendChild(el); });
-				monthContainer.appendChild(weekdaysDiv);
-				const dayGrid = document.createElement('div'); dayGrid.classList.add('yearly-day-grid');
-				const firstDay = new Date(year, month, 1).getDay(), daysInMonth = new Date(year, month + 1, 0).getDate();
-				for (let i = 0; i < firstDay; i++) { dayGrid.appendChild(document.createElement('div')); }
-				for (let day = 1; day <= daysInMonth; day++) {
-					const cell = document.createElement('div'); cell.classList.add('yearly-day'); cell.textContent = day;
-					if (today.getFullYear() === year && today.getMonth() === month && day === today.getDate()) { cell.classList.add('is-today'); }
-					dayGrid.appendChild(cell);
+			const grid = document.getElementById('yearlyCalendarGrid'), title = document.getElementById('yearlyCalendarTitle'); // 獲取年曆元素
+			if (!grid || !title) return; // 如果元素不存在，則返回
+			grid.innerHTML = ''; title.textContent = `${year}年`; // 清空內容並設定標題
+			const today = new Date(), weekdays = ['日', '一', '二', '三', '四', '五', '六']; // 獲取今天和星期名稱
+            const holidays = getHolidaysForYear(year); // 獲取當年節日
+            const jieqi = getJieqiForYear(year); // 獲取當年節氣
+			for (let month = 0; month < 12; month++) { // 遍歷12個月
+				const monthContainer = document.createElement('div'); monthContainer.classList.add('yearly-month-container'); // 創建月份容器
+				const monthHeader = document.createElement('div'); monthHeader.classList.add('yearly-month-header'); monthHeader.textContent = `${month + 1}月`; monthContainer.appendChild(monthHeader); // 創建月份標題
+				const weekdaysDiv = document.createElement('div'); weekdaysDiv.classList.add('yearly-weekdays'); // 創建星期容器
+				weekdays.forEach(day => { const el = document.createElement('div'); el.textContent = day; weekdaysDiv.appendChild(el); }); // 生成星期標頭
+				monthContainer.appendChild(weekdaysDiv); // 加入星期標頭
+				const dayGrid = document.createElement('div'); dayGrid.classList.add('yearly-day-grid'); // 創建日期網格
+				const firstDay = new Date(year, month, 1).getDay(), daysInMonth = new Date(year, month + 1, 0).getDate(); // 獲取月份資訊
+				for (let i = 0; i < firstDay; i++) { dayGrid.appendChild(document.createElement('div')); } // 填充上個月的空白
+				for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) { // 遍歷當月每一天
+					const cell = document.createElement('div'); cell.classList.add('yearly-day'); // 創建日期格子
+                    const date = new Date(year, month, dayNum); // 創建日期物件
+                    cell.dataset.date = date.toISOString(); // 將日期存儲到data屬性
+                    cell.onclick = () => showDateDetails(new Date(cell.dataset.date)); // 綁定點擊事件
+                    cell.textContent = dayNum; // 顯示日期數字
+					if (today.getFullYear() === year && today.getMonth() === month && dayNum === today.getDate()) { cell.classList.add('is-today'); } // 標記今天
+                    
+                    const holiday = holidays.find(h => h.date.toDateString() === date.toDateString()); // 尋找當天節日
+                    const jq = jieqi.find(j => j.date.toDateString() === date.toDateString()); // 尋找當天節氣
+                    if(holiday || jq) { // 如果是節日或節氣
+                        const indicators = document.createElement('div'); indicators.className = 'yearly-indicators'; // 創建標記點容器
+                        if(holiday) indicators.innerHTML += '<span class="dot holiday"></span>'; // 加入節日標記點
+                        if(jq) indicators.innerHTML += '<span class="dot jieqi"></span>'; // 加入節氣標記點
+                        cell.appendChild(indicators); // 加入容器
+                    }
+					dayGrid.appendChild(cell); // 將格子加入網格
 				}
-				monthContainer.appendChild(dayGrid);
-				grid.appendChild(monthContainer);
+				monthContainer.appendChild(dayGrid); // 加入日期網格
+				grid.appendChild(monthContainer); // 加入月份容器
 			}
 		}
 		window.onload = function () { // 頁面載入完成後執行
-			loadSettings();
-			updateSettingsModalUI();
-			updateDateTime();
-			setInterval(updateDateTime, 1000);
-			if (!displaySettings.enableMovement) { resetPosition(); }
-			document.querySelectorAll('.modal').forEach(modal => { // 處理所有彈出視窗的關閉邏輯
+			loadSettings(); // 載入設定
+			updateSettingsModalUI(); // 更新設定UI
+			updateDateTime(); // 更新時間顯示
+			setInterval(updateDateTime, 1000); // 每秒更新時間
+			if (!displaySettings.enableMovement) { resetPosition(); } // 如果禁用移動，則重設位置
+			
+            // 處理所有彈出視窗的關閉邏輯
+            document.querySelectorAll('.modal').forEach(modal => {
 				const closeButton = modal.querySelector('.action-button[id^="close"], .action-button[id^="done"]');
 				if (closeButton) { closeButton.onclick = () => modal.classList.remove('is-active'); }
 				modal.addEventListener('click', (event) => { if (event.target === modal) { modal.classList.remove('is-active'); } });
 			});
-			document.getElementById('prevMonthBtn').onclick = () => { calendarDate.setMonth(calendarDate.getMonth() - 1); generateCalendar(calendarDate.getFullYear(), calendarDate.getMonth()); };
-			document.getElementById('nextMonthBtn').onclick = () => { calendarDate.setMonth(calendarDate.getMonth() + 1); generateCalendar(calendarDate.getFullYear(), calendarDate.getMonth()); };
-			document.getElementById('prevWeekBtn').onclick = () => { weeklyCalendarDate.setDate(weeklyCalendarDate.getDate() - 7); generateWeekCalendar(weeklyCalendarDate); };
-			document.getElementById('nextWeekBtn').onclick = () => { weeklyCalendarDate.setDate(weeklyCalendarDate.getDate() + 7); generateWeekCalendar(weeklyCalendarDate); };
-			document.getElementById('prevYearBtn').onclick = () => { yearlyCalendarDate.setFullYear(yearlyCalendarDate.getFullYear() - 1); generateYearCalendar(yearlyCalendarDate.getFullYear()); };
-			document.getElementById('nextYearBtn').onclick = () => { yearlyCalendarDate.setFullYear(yearlyCalendarDate.getFullYear() + 1); generateYearCalendar(yearlyCalendarDate.getFullYear()); };
-			document.querySelectorAll('.switch input[type="checkbox"]').forEach(toggle => { // 處理所有開關
-				toggle.onchange = (event) => {
-					displaySettings[event.target.id] = event.target.checked;
-					if (event.target.id === 'enableMovement' && !event.target.checked) { resetPosition(); }
-					saveSettings(); lastMarqueeContent = ''; updateDateTime();
+
+            // "回到今天/今年" 按鈕功能
+            document.getElementById('todayCalendarBtn').onclick = () => { calendarDate = new Date(); generateCalendar(calendarDate.getFullYear(), calendarDate.getMonth()); };
+            document.getElementById('todayWeeklyBtn').onclick = () => { weeklyCalendarDate = new Date(); generateWeekCalendar(weeklyCalendarDate); };
+            document.getElementById('todayYearlyBtn').onclick = () => { yearlyCalendarDate = new Date(); generateYearCalendar(yearlyCalendarDate.getFullYear()); };
+            // 日曆導航按鈕
+			document.getElementById('prevMonthBtn').onclick = () => { calendarDate.setMonth(calendarDate.getMonth() - 1); generateCalendar(calendarDate.getFullYear(), calendarDate.getMonth()); }; // 上個月
+			document.getElementById('nextMonthBtn').onclick = () => { calendarDate.setMonth(calendarDate.getMonth() + 1); generateCalendar(calendarDate.getFullYear(), calendarDate.getMonth()); }; // 下個月
+			document.getElementById('prevWeekBtn').onclick = () => { weeklyCalendarDate.setDate(weeklyCalendarDate.getDate() - 7); generateWeekCalendar(weeklyCalendarDate); }; // 上一周
+			document.getElementById('nextWeekBtn').onclick = () => { weeklyCalendarDate.setDate(weeklyCalendarDate.getDate() + 7); generateWeekCalendar(weeklyCalendarDate); }; // 下一周
+			document.getElementById('prevYearBtn').onclick = () => { yearlyCalendarDate.setFullYear(yearlyCalendarDate.getFullYear() - 1); generateYearCalendar(yearlyCalendarDate.getFullYear()); }; // 上一年
+			document.getElementById('nextYearBtn').onclick = () => { yearlyCalendarDate.setFullYear(yearlyCalendarDate.getFullYear() + 1); generateYearCalendar(yearlyCalendarDate.getFullYear()); }; // 下一年
+			
+            // 【新增】時辰詳情導航按鈕
+            document.getElementById('prevShichenBtn').onclick = () => {
+                shichenDetailDate.setHours(shichenDetailDate.getHours() - 2);
+                updateShiChenDetailsView(shichenDetailDate);
+            };
+            document.getElementById('nextShichenBtn').onclick = () => {
+                shichenDetailDate.setHours(shichenDetailDate.getHours() + 2);
+                updateShiChenDetailsView(shichenDetailDate);
+            };
+            document.getElementById('nowShichenBtn').onclick = () => {
+                updateShiChenDetailsView(new Date());
+            };
+
+            document.querySelectorAll('.switch input[type="checkbox"]').forEach(toggle => { // 處理所有開關
+				toggle.onchange = (event) => { // 綁定變更事件
+					displaySettings[event.target.id] = event.target.checked; // 更新設定
+					if (event.target.id === 'enableMovement' && !event.target.checked) { resetPosition(); } // 如果禁用移動，則重設位置
+					saveSettings(); lastMarqueeContent = ''; updateDateTime(); // 儲存設定並更新顯示
 				};
 			});
 			document.querySelectorAll('input[type="color"]').forEach(colorInput => { // 處理所有顏色選擇器
-				colorInput.oninput = (event) => { displaySettings[event.target.id] = event.target.value; saveSettings(); updateDateTime(); };
+				colorInput.oninput = (event) => { displaySettings[event.target.id] = event.target.value; saveSettings(); updateDateTime(); }; // 綁定輸入事件
 			});
-			document.getElementById('restoreDefaultsBtn').onclick = restoreDefaults;
-			document.getElementById('randomColorsBtn').onclick = setRandomColors;
-			document.getElementById('dateTimeDisplay').addEventListener('click', function(event) { // 主顯示區域的點擊事件委派
+			document.getElementById('restoreDefaultsBtn').onclick = restoreDefaults; // 恢復預設按鈕
+			document.getElementById('randomColorsBtn').onclick = setRandomColors; // 隨機顏色按鈕
+			
+            // 主顯示區域的點擊事件委派
+            document.getElementById('dateTimeDisplay').addEventListener('click', function(event) {
 				const target = event.target;
-				if (target.closest('#secondsDisplay')) { document.getElementById('settingsModal').classList.add('is-active'); updateSettingsModalUI(); }
-				else if (target.closest('.lunar-day-target') || target.closest('.lunar-shichen-target')) {
-					const now = new Date();
-					const lunar = Solar.fromDate(now).getLunar();
-					const isShiChen = !!target.closest('.lunar-shichen-target');
-					let yijiHtml = '';
-
-					if (isShiChen) {
-						const timeYi = convertYiJiToTraditional(lunar.getTimeYi()).join('、') || '無';
-						const timeJi = convertYiJiToTraditional(lunar.getTimeJi()).join('、') || '無';
-						yijiHtml = `<p><strong>時辰：<\/strong> ${getShiChen(now.getHours())}時<\/p><p style="margin-top: 15px;"><strong>宜：<\/strong> ${timeYi}<\/p><p style="margin-top: 15px;"><strong>忌：<\/strong> ${timeJi}<\/p>`;
-					} else {
-						const dayYi = convertYiJiToTraditional(lunar.getDayYi()).join('、') || '無';
-						const dayJi = convertYiJiToTraditional(lunar.getDayJi()).join('、') || '無';
-						yijiHtml = `<p><strong>農曆日期：<\/strong> ${lunar.getMonthInChinese().replace('闰', '閏')}月${lunar.getDayInChinese()}<\/p><p style="margin-top: 15px;"><strong>宜：<\/strong> ${dayYi}<\/p><p style="margin-top: 15px;"><strong>忌：<\/strong> ${dayJi}<\/p>`;
-					}
-					
-					document.getElementById('yijiDetailsContent').innerHTML = yijiHtml + `<p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">宜忌僅供參考，請勿過度迷信。<\/p>`;
-					document.getElementById('yijiDetailsModal').classList.add('is-active');
-				}
-				else if (target.closest('#jieqiHolidayMarqueeContainer')) {
-					const marqueeEl = target.closest('#jieqiHolidayMarqueeContainer');
-					const jieqiName = marqueeEl.dataset.jieqiName, jieqiDateStr = marqueeEl.dataset.jieqiDate, daysUntilJieqi = marqueeEl.dataset.daysUntilNextJieqi;
-					const currentHoliday = marqueeEl.dataset.currentHolidayName, nextHolidayName = marqueeEl.dataset.nextHolidayName, nextHolidayDateStr = marqueeEl.dataset.nextHolidayDate, daysUntilHoliday = marqueeEl.dataset.nextHolidayDaysUntil;
-					let detailsHtml = '';
-					if (jieqiName && jieqiDateStr) {
-						const date = new Date(jieqiDateStr), formattedDate = `${date.getFullYear()}年${(date.getMonth() + 1)}月${date.getDate()}日`;
-						detailsHtml += (parseInt(daysUntilJieqi) === 0) ? `<p>今天 <strong>${jieqiName}<\/strong><\/p>` : `<p>${formattedDate} <strong>${jieqiName}<\/strong> 還有${daysUntilJieqi}天<\/p>`;
-						detailsHtml += `<p style="margin-top: 10px; font-size: 1.2em;">${getJieqiDescription(jieqiName)}<\/p>`;
-					} else { detailsHtml += `<p>目前沒有節氣資訊。<\/p>`; }
-					detailsHtml += `<hr style="margin: 20px 0; border-color: #555;">`;
-					if (currentHoliday) { detailsHtml += `<p>今天 <strong>${currentHoliday}<\/strong><\/p>`; } 
-					else if (nextHolidayName && nextHolidayDateStr) {
-						const date = new Date(nextHolidayDateStr), formattedDate = `${date.getFullYear()}年${(date.getMonth() + 1)}月${date.getDate()}日`;
-						detailsHtml += `<p>${formattedDate} <strong>${nextHolidayName}<\/strong> 還有${daysUntilHoliday}天<\/p>`;
-					} else { detailsHtml += `<p>目前沒有節日資訊。<\/p>`; }
-					document.getElementById('jieqiDetailsContent').innerHTML = detailsHtml;
-					document.getElementById('jieqiDetailsModal').classList.add('is-active');
-				}
-				else if (target.closest('.gregorian-year-target') || target.closest('.lunar-year-target')) { yearlyCalendarDate = new Date(); generateYearCalendar(yearlyCalendarDate.getFullYear()); document.getElementById('yearlyCalendarModal').classList.add('is-active'); }
-				else if (target.closest('.weekday-target')) { weeklyCalendarDate = new Date(); generateWeekCalendar(weeklyCalendarDate); document.getElementById('weeklyCalendarModal').classList.add('is-active'); }
-				else if (target.closest('.gregorian-date-text') || target.closest('.lunar-date-static-text')) { calendarDate = new Date(); generateCalendar(calendarDate.getFullYear(), calendarDate.getMonth()); document.getElementById('calendarModal').classList.add('is-active'); }
+				if (target.closest('#secondsDisplay')) {
+                    document.getElementById('settingsModal').classList.add('is-active'); 
+                    updateSettingsModalUI(); 
+                } 
+				else if (target.closest('.lunar-shichen-clickable')) {
+                    updateShiChenDetailsView(new Date()); // 【更新】呼叫新的函式
+                }
+                else if (target.closest('.lunar-date-clickable') || target.closest('#jieqiHolidayMarqueeContainer')) {
+                    showDateDetails(new Date()); 
+                }
+				else if (target.closest('.gregorian-year-target') || target.closest('.lunar-year-target')) {
+                    yearlyCalendarDate = new Date(); 
+                    generateYearCalendar(yearlyCalendarDate.getFullYear()); 
+                    document.getElementById('yearlyCalendarModal').classList.add('is-active'); 
+                } 
+				else if (target.closest('.weekday-target')) {
+                    weeklyCalendarDate = new Date(); 
+                    generateWeekCalendar(weeklyCalendarDate); 
+                    document.getElementById('weeklyCalendarModal').classList.add('is-active'); 
+                } 
+				else if (target.closest('.gregorian-date-text') || target.closest('.lunar-date-static-text')) {
+                    calendarDate = new Date(); 
+                    generateCalendar(calendarDate.getFullYear(), calendarDate.getMonth()); 
+                    document.getElementById('calendarModal').classList.add('is-active'); 
+                }
 			});
+
 			const fullscreenIcon = document.getElementById('fullscreen-icon'), docElement = document.documentElement; // --- 全螢幕功能 ---
-			function toggleFullScreen() {
-				const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
-				if (!isFullscreen) { const req = docElement.requestFullscreen || docElement.webkitRequestFullscreen; if (req) { req.call(docElement).catch(err => console.warn(`無法進入全螢幕模式: ${err.message}`)); } }
-				else { const exit = document.exitFullscreen || document.webkitExitFullscreen; if (exit) { exit.call(document).catch(err => console.warn(`無法退出全螢幕模式: ${err.message}`)); } }
+			function toggleFullScreen() { // 切換全螢幕
+				const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement; // 判斷是否為全螢幕
+				if (!isFullscreen) { const req = docElement.requestFullscreen || docElement.webkitRequestFullscreen; if (req) { req.call(docElement).catch(err => console.warn(`無法進入全螢幕模式: ${err.message}`)); } } // 進入全螢幕
+				else { const exit = document.exitFullscreen || document.webkitExitFullscreen; if (exit) { exit.call(document).catch(err => console.warn(`無法退出全螢幕模式: ${err.message}`)); } } // 退出全螢幕
 			}
-			fullscreenIcon.addEventListener('click', toggleFullScreen);
-			function handleFullscreenChange() {
-				const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
-				fullscreenIcon.style.display = isFullscreen ? 'none' : 'block';
-				if (lastMarqueeContent) { updateMarquee(lastMarqueeContent); }
+			fullscreenIcon.addEventListener('click', toggleFullScreen); // 綁定點擊事件
+			function handleFullscreenChange() { // 處理全螢幕變化
+				const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement; // 判斷是否為全螢幕
+				fullscreenIcon.style.display = isFullscreen ? 'none' : 'block'; // 顯示或隱藏圖示
+				if (lastMarqueeContent) { updateMarquee(lastMarqueeContent); } // 更新跑馬燈
 			}
-			document.addEventListener('fullscreenchange', handleFullscreenChange);
-			document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+			document.addEventListener('fullscreenchange', handleFullscreenChange); // 監聽全螢幕變化
+			document.addEventListener('webkitfullscreenchange', handleFullscreenChange); // 監聽webkit全螢幕變化
 			let inactivityTimer; // --- 全螢幕圖示閒置隱藏功能 ---
-			function hideIconOnIdle() { fullscreenIcon.style.opacity = '0'; }
-			function resetIdleTimer() {
-				if (fullscreenIcon.style.display !== 'none') { fullscreenIcon.style.opacity = '0.5'; }
-				clearTimeout(inactivityTimer);
-				inactivityTimer = setTimeout(hideIconOnIdle, 10000);
+			function hideIconOnIdle() { fullscreenIcon.style.opacity = '0'; } // 隱藏圖示
+			function resetIdleTimer() { // 重設閒置計時器
+				if (fullscreenIcon.style.display !== 'none') { fullscreenIcon.style.opacity = '0.5'; } // 顯示圖示
+				clearTimeout(inactivityTimer); // 清除計時器
+				inactivityTimer = setTimeout(hideIconOnIdle, 10000); // 10秒後隱藏
 			}
-			['mousemove', 'keydown', 'touchstart'].forEach(evt => document.addEventListener(evt, resetIdleTimer));
-			resetIdleTimer();
+			['mousemove', 'keydown', 'touchstart'].forEach(evt => document.addEventListener(evt, resetIdleTimer)); // 監聽用戶活動
+			resetIdleTimer(); // 初始化閒置計時器
 		};
 	</script>
 </body>
