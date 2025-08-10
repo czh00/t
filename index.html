@@ -23,7 +23,7 @@
 		}
 		#dateTimeDisplay {
 			font-family: 'Digital Dismay', 'Segoe UI'; sans-serif; /* 將字型更改為 'Digital Dismay' 來實現數位時鐘效果 */
-			font-weight: normal; /* 數位字型通常不需要加粗 */
+			font-weight: bold; /* 字體加粗 */
 			text-align: center; /* 文字居中 */
 			padding: 10px; /* 內邊距 */
 			text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* 文字陰影效果 */
@@ -35,8 +35,8 @@
 			cursor: default; /* 預設鼠標樣式 */
 			z-index: 10; /* 堆疊順序，確保在前景 */
 		}
-		.time-text { font-size: 32vw; margin-bottom: -10vw; position: relative; display: inline-block; white-space: nowrap; padding-right: 8vw; } /* 主要時間(時:分)的樣式 */
-		.time-seconds { font-size: 6vw; position: absolute; right: 0; bottom: 8vw; text-align: right; width: 6vw; } /* 秒數的樣式 */
+		.time-text { font-size: 36vw; font-weight: normal; margin-bottom: -10vw; position: relative; display: inline-block; white-space: nowrap; padding-right: 8vw; } /* 主要時間(時:分)的樣式 */
+		.time-seconds { font-size: 6vw; font-weight: normal; position: absolute; right: 0; bottom: 8vw; text-align: right; width: 6vw; } /* 秒數的樣式 */
 		.time-ampm { font-size: 5vw; position: absolute; top: 8vw; right: 0; text-align: right; width: 8vw; } /* 上午/下午/時段的樣式 */
 		.gregorian-date-text { font-family: 'Inter', sans-serif; font-size: 10vw; margin-top: -2vw; margin-bottom: -3vw; display: block; white-space: nowrap; cursor: pointer; position: relative; z-index: 1; } /* 公曆日期的樣式 (恢復預設字體) */
 		.lunar-and-jieqi-line { font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; font-size: 6.4vw; white-space: nowrap; width: 92vw; margin: 0 auto; overflow: hidden; position: relative; z-index: 1; } /* 農曆與節氣行的容器樣式 (恢復預設字體) */
