@@ -425,7 +425,7 @@
 			const elementRect = displayElement.getBoundingClientRect(), safeMargin = 20; // 獲取元素尺寸與安全邊界
 			const maxX = (viewportWidth - elementRect.width) / 2 - safeMargin, maxY = (viewportHeight - elementRect.height) / 2 - safeMargin; // 計算最大可移動範圍
 			const newTargetX = Math.random() * (maxX * 2) - maxX, newTargetY = Math.random() * (maxY * 2) - maxY; // 計算新的隨機目標位置
-			displayElement.style.transform = `translate(calc(-50% + ${newTargetX}px), calc(-50% + ${newTargetY}px))`; // 應用新的位移
+			displayElement.style.transform = `translate(calc(-50% + ${newTargetX}px), calc(-60% + ${newTargetY}px))`; // 應用新的位移
 		}
 		function resetPosition() { document.getElementById('dateTimeDisplay').style.transform = `translate(-50%, -50%)`; } // 將時間顯示區塊重置到中心位置
 		function restoreDefaults() { displaySettings = { ...defaultDisplaySettings }; saveSettings(); updateSettingsModalUI(); if (displaySettings.enableMovement) { moveRandomly(); } else { resetPosition(); } lastMarqueeContent = ''; updateDateTime(); setupEffectTimers(); } // 恢復所有設定為預設值
