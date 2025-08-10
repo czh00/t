@@ -5,6 +5,7 @@
 	<meta content="width=device-width, initial-scale=1.0" name="viewport"> <!-- 設定視口，讓網頁在不同裝置上正確顯示 -->
 	<title>時間</title> <!-- 網頁標題 -->
 	<script src="https://unpkg.com/lunar-javascript@1.7.3/lunar.js"></script> <!-- 引入農曆轉換的外部JavaScript函式庫 -->
+	<link href="https://fonts.cdnfonts.com/css/digital-dismay" rel="stylesheet"> <!-- 引入數位時鐘字型 -->
 	<style>
 		:root { --page-background-color: #000; } /* 定義CSS變數，用於全域背景顏色 */
 		*, *::before, *::after { box-sizing: border-box; } /* 設定所有元素的盒模型為border-box，使寬高計算更直觀 */
@@ -21,8 +22,8 @@
 			background-color: var(--page-background-color); /* 設定背景顏色 */
 		}
 		#dateTimeDisplay {
-			font-family: 'Segoe UI', Arial, sans-serif; /* 設定日期時間區塊的字體 */
-			font-weight: bold; /* 字體加粗 */
+			font-family: 'Digital Dismay', 'Segoe UI'; sans-serif; /* 將字型更改為 'Digital Dismay' 來實現數位時鐘效果 */
+			font-weight: normal; /* 數位字型通常不需要加粗 */
 			text-align: center; /* 文字居中 */
 			padding: 10px; /* 內邊距 */
 			text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* 文字陰影效果 */
@@ -35,10 +36,10 @@
 			z-index: 10; /* 堆疊順序，確保在前景 */
 		}
 		.time-text { font-size: 32vw; margin-bottom: -10vw; position: relative; display: inline-block; white-space: nowrap; padding-right: 8vw; } /* 主要時間(時:分)的樣式 */
-		.time-seconds { font-size: 6vw; position: absolute; right: 0; bottom: 6vw; text-align: right; width: 6vw; } /* 秒數的樣式 */
-		.time-ampm { font-size: 5vw; position: absolute; top: 11vw; right: 0; text-align: right; width: 8vw; } /* 上午/下午/時段的樣式 */
-		.gregorian-date-text { font-size: 10vw; margin-top: -2vw; margin-bottom: -3vw; display: block; white-space: nowrap; cursor: pointer; position: relative; z-index: 1; } /* 公曆日期的樣式 */
-		.lunar-and-jieqi-line { display: flex; justify-content: center; align-items: center; font-size: 6.4vw; white-space: nowrap; width: 92vw; margin: 0 auto; overflow: hidden; position: relative; z-index: 1; } /* 農曆與節氣行的容器樣式 */
+		.time-seconds { font-size: 6vw; position: absolute; right: 0; bottom: 8vw; text-align: right; width: 6vw; } /* 秒數的樣式 */
+		.time-ampm { font-size: 5vw; position: absolute; top: 8vw; right: 0; text-align: right; width: 8vw; } /* 上午/下午/時段的樣式 */
+		.gregorian-date-text { font-family: 'Inter', sans-serif; font-size: 10vw; margin-top: -2vw; margin-bottom: -3vw; display: block; white-space: nowrap; cursor: pointer; position: relative; z-index: 1; } /* 公曆日期的樣式 (恢復預設字體) */
+		.lunar-and-jieqi-line { font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; font-size: 6.4vw; white-space: nowrap; width: 92vw; margin: 0 auto; overflow: hidden; position: relative; z-index: 1; } /* 農曆與節氣行的容器樣式 (恢復預設字體) */
 		.lunar-date-static-text { flex-shrink: 0; text-align: right; cursor: pointer; } /* 農曆日期的靜態文字樣式 */
 		.jieqi-holiday-marquee-container { flex-grow: 1; overflow: hidden; position: relative; text-align: left; min-width: 0; cursor: pointer; } /* 節氣與節日跑馬燈效果的容器 */
 		.jieqi-holiday-marquee-inner { display: flex; flex-wrap: nowrap; width: fit-content; will-change: transform; } /* 跑馬燈內部容器，用於實現動畫 */
@@ -289,7 +290,7 @@
 				}
 			}
 		}
-		function getShengXiaoEmoji(shengXiaoName) { const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐅', '兔': '🐇', '龍': '🐉', '蛇': '🐍', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '�', '豬': '🐖' }; return emojiMap[shengXiaoName] || ''; } // 根據生肖中文名返回對應的Emoji
+		function getShengXiaoEmoji(shengXiaoName) { const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐅', '兔': '🐇', '龍': '🐉', '蛇': '🐍', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '🐶', '豬': '🐖' }; return emojiMap[shengXiaoName] || ''; } // 根據生肖中文名返回對應的Emoji
 		function getJieqiDescription(jieqiName) { const descriptions = { '立春': '春季開始，萬物復甦。', '雨水': '降雨增多，春耕開始。', '驚蟄': '春雷響動，驚醒冬眠動物。', '春分': '晝夜等長，春意盎然。', '清明': '氣候清爽明朗，掃墓祭祖。', '穀雨': '雨水滋潤，穀物生長。', '立夏': '夏季開始，萬物繁茂。', '小滿': '夏熟作物籽粒開始飽滿。', '芒種': '收穫與播種的時節。', '夏至': '北半球白晝最長，盛夏開始。', '小暑': '天氣開始炎熱。', '大暑': '一年中最炎熱的時期。', '立秋': '秋季開始，氣溫漸降。', '處暑': '暑氣漸退，天氣轉涼。', '白露': '水氣凝結成露，天氣漸寒。', '秋分': '晝夜等長，秋高氣爽。', '寒露': '氣溫更低，天氣轉冷。', '霜降': '天氣漸冷，露水凝結成霜。', '立冬': '冬季開始，萬物收藏。', '小雪': '開始降雪，但雪量不大。', '大雪': '降雪量增多，天氣更冷。', '冬至': '北半球白晝最短，數九寒天開始。', '小寒': '天氣寒冷，尚未達到最冷。', '大寒': '一年中最寒冷的時期。' }; return descriptions[jieqiName] || '此節氣無詳細說明。'; } // 根據節氣名稱返回簡短描述
 		function getHolidaysForYear(year) { // 計算指定年份的所有主要節日
 			const holidays = []; // 初始化節日陣列
@@ -358,11 +359,21 @@
 			if (displaySettings.enableTextScanline) { textOverlay.classList.toggle('pattern-a', !scanlinePatternIsA); textOverlay.classList.toggle('pattern-b', scanlinePatternIsA); } // 切換文字掃描線樣式
 			document.documentElement.style.setProperty('--page-background-color', displaySettings.backgroundColor); // 更新背景顏色
 
-			const parts = new Intl.DateTimeFormat('zh-Hant', { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: displaySettings.showAmPm }).formatToParts(now); // 格式化時間
+			const parts = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: false }).formatToParts(now); // 改用 en-US 以確保格式一致性
 			const hourPart = parts.find(p => p.type === 'hour')?.value.padStart(2, '0') || '00', minutePart = parts.find(p => p.type === 'minute')?.value || '00', secondPart = parts.find(p => p.type === 'second')?.value || '00'; // 提取時、分、秒
-			document.getElementById('hoursMinutesDisplay').textContent = `${hourPart}:${minutePart}`; // 更新時:分顯示
+            
+            let displayHour = hourPart;
+            let amPmText = '';
+            if (displaySettings.showAmPm) {
+                const hour12 = parseInt(hourPart, 10);
+                amPmText = getDetailedTimePeriod(hour12);
+                let displayHour12 = hour12 % 12;
+                if (displayHour12 === 0) displayHour12 = 12; // 12點制
+                displayHour = displayHour12.toString().padStart(2, '0');
+            }
+
+			document.getElementById('hoursMinutesDisplay').textContent = `${displayHour}:${minutePart}`; // 更新時:分顯示
 			document.getElementById('secondsDisplay').textContent = secondPart; // 更新秒數顯示
-			const amPmText = displaySettings.showAmPm ? getDetailedTimePeriod(now.getHours()) : ''; // 根據設定獲取時段文字
 			document.getElementById('amPmDisplay').textContent = amPmText; // 更新時段顯示
 			document.getElementById('amPmDisplay').style.display = amPmText ? 'block' : 'none'; // 如果沒有時段文字則隱藏
 			document.getElementById('timeTextContainer').style.color = displaySettings.textColor; // 更新時間文字顏色
@@ -372,7 +383,7 @@
 			if (displaySettings.showGregorianMonth) gregorianParts.push(`<span style="color: ${displaySettings.gregorianMonthColor};">${(now.getMonth() + 1).toString().padStart(2, '0')}月</span>`); // 添加月份
 			if (displaySettings.showGregorianDay) gregorianParts.push(`<span style="color: ${displaySettings.gregorianDayColor};">${now.getDate().toString().padStart(2, '0')}日</span>`); // 添加日期
 			if (displaySettings.showGregorianWeekday) gregorianParts.push(`<span class="weekday-target" style="color: ${displaySettings.gregorianWeekdayColor}; cursor: pointer;">周${['日', '一', '二', '三', '四', '五', '六'][now.getDay()]}</span>`); // 添加星期
-			document.getElementById('gregorianDateDisplay').innerHTML = gregorianParts.join(''); // 更新公曆日期顯示
+			document.getElementById('gregorianDateDisplay').innerHTML = gregorianParts.join(''); // 更新公曆日期顯示，移除多餘空格
 			document.getElementById('gregorianDateDisplay').style.display = gregorianParts.length > 0 ? 'block' : 'none'; // 如果沒有內容則隱藏
 
 			let lunarParts = [], combinedJieqiHolidayText = ''; // 儲存農曆與節氣節日的HTML
@@ -403,7 +414,7 @@
 				if(holidayText) marqueeParts.push(`<span style="color: ${displaySettings.holidayColor};">${holidayText}</span>`); // 添加節日文字
 				combinedJieqiHolidayText = marqueeParts.join(' '); // 組合跑馬燈文字
 			}
-			document.getElementById('lunarDateDisplay').innerHTML = lunarParts.join(''); // 更新農曆日期顯示
+			document.getElementById('lunarDateDisplay').innerHTML = lunarParts.join(''); // 更新農曆日期顯示，移除多餘空格
 			document.getElementById('lunarDateDisplay').style.display = lunarParts.length > 0 ? 'inline-block' : 'none'; // 如果沒內容則隱藏
 			const marqueeIsVisible = displaySettings.showJieqi || displaySettings.showHolidays; // 判斷跑馬燈是否可見
 			document.getElementById('jieqiHolidayMarqueeContainer').style.display = marqueeIsVisible ? 'block' : 'none'; // 設定跑馬燈可見性
