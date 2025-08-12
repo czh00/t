@@ -38,7 +38,7 @@
 		.time-text { font-size: 36vw; font-weight: normal; margin-bottom: -10vw; position: relative; display: inline-block; white-space: nowrap; padding-right: 8vw; } /* 主要時間(時:分)的樣式 */
 		.time-seconds { font-size: 8vw;  font-weight: normal; position: absolute; right: 0; bottom: 8vw; text-align: right; width: 6vw; } /* 秒數的樣式 */
 		.time-ampm { font-size: 5vw; font-weight: bold; position: absolute; top: 8vw; right: 0; text-align: right; width: 8vw; } /* 上午/下午/時段的樣式 */
-		.gregorian-date-text { font-family: 'Inter', sans-serif; font-size: 6.4vw; margin-top: -2vw; margin-bottom: -3vw; display: flex; justify-content: center; align-items: center; width: 92vw; margin-left: auto; margin-right: auto; white-space: nowrap; cursor: pointer; position: relative; z-index: 1; } /* 公曆日期與天氣的容器樣式 */
+		.gregorian-date-text { font-family: 'Inter', sans-serif; font-size: 6.4vw; margin-top: -2vw; margin-bottom: -3vw; display: flex; justify-content: center; align-items: center; width: 92vw; margin-left: auto; margin-right: auto; white-space: nowrap; cursor: pointer; position: relative; z-index: 1; } /* 公曆日期與天氣的容器樣式 (恢復原始間距) */
         .gregorian-date-parts { flex-shrink: 0; } /* 防止公曆日期被壓縮 */
 		.lunar-and-jieqi-line { font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; font-size: 6.4vw; white-space: nowrap; width: 92vw; margin: 0 auto; overflow: hidden; position: relative; z-index: 1; } /* 農曆與節氣行的容器樣式 (恢復預設字體) */
 		.lunar-date-static-text { flex-shrink: 0; text-align: right; cursor: pointer; } /* 農曆日期的靜態文字樣式 */
@@ -70,7 +70,9 @@
 		input:focus + .slider { box-shadow: 0 0 1px #00FF00; } /* 開關聚焦時的外框陰影 */
 		input:checked + .slider:before { transform: translateX(26px); } /* 開關啟用時滑塊的位移 */
 		.setting-item input[type="color"] { width: 40px; height: 34px; border: none; padding: 0; background: none; cursor: pointer; flex-shrink: 0; } /* 顏色選擇器的樣式 */
-        .setting-item input[type="text"] { background-color: #555; color: white; border: 1px solid #888; border-radius: 4px; padding: 5px; font-size: 0.9em; width: 100px; } /* 文字輸入框樣式 */
+        .setting-item input[type="text"] { background-color: #555; color: white; border: 1px solid #888; border-radius: 4px; padding: 5px; font-size: 0.9em; width: 120px; } /* 文字輸入框樣式 */
+        .setting-item button { background: none; border: none; cursor: pointer; padding: 0 5px; display: inline-flex; align-items: center; } /* 設定項目中的按鈕樣式 */
+        .setting-item button svg { width: 24px; height: 24px; stroke: white; } /* 設定項目中按鈕的SVG圖示樣式 */
 		.action-button { background-color: #555; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1em; margin-top: 0px; } /* 通用按鈕樣式 */
 		.action-button:hover { background-color: #777; } /* 按鈕滑鼠懸停時的樣式 */
 		.button-group { display: flex; justify-content: center; gap: 10px; margin-top: 0px; white-space: nowrap; } /* 按鈕群組的容器 */
@@ -80,6 +82,14 @@
         .interval-selector-group { display: flex; align-items: center; gap: 5px; margin-left: auto; } /* 特效時間間隔選擇器的容器 */
         .interval-select { background-color: #555; color: white; border: 1px solid #888; border-radius: 4px; padding: 5px; font-size: 0.9em; } /* 下拉選擇器的樣式 */
         .interval-select-label { color: #ccc; font-size: 0.9em; margin-left: 2px; margin-right: 5px; } /* "分"、"秒"單位的標籤樣式 */
+		/* --- 地點輸入框新增樣式 --- */
+		.location-input-container { position: relative; display: flex; align-items: center; }
+		#locationInfoBtn { position: absolute; left: 5px; top: 50%; transform: translateY(-50%); padding: 0; border: none; background: none; cursor: pointer; z-index: 2; display: inline-flex; align-items: center; justify-content: center; }
+		#locationInfoBtn svg { width: 18px; height: 18px; stroke: #ccc; }
+		#locationInfoBtn:hover svg { stroke: white; }
+		.setting-item input#weatherLocation { padding-left: 30px; } /* 為圖示騰出空間 */
+		.info-tooltip { display: none; position: absolute; bottom: 100%; left: 0; transform: translateY(-5px); background-color: #2a2a2a; color: #FFFFFF; padding: 10px; border-radius: 6px; border: 1px solid #666; box-shadow: 0 2px 8px rgba(0,0,0,0.5); font-size: 0.9em; line-height: 1.4; width: max-content; max-width: 280px; z-index: 10; text-align: left; }
+		.info-tooltip.visible { display: block; }
 		/* --- 日曆彈窗通用樣式 --- */
 		.calendar-header { display: flex; justify-content: space-between; align-items: center; padding: 0 10px; } /* 日曆頭部 (標題與切換按鈕) の容器 */
 		.calendar-header h2 { margin: 0; font-size: 1.5em; color: #00FF00; } /* 日曆標題樣式 */
@@ -205,7 +215,21 @@
                         <div class="setting-item"><label for="showHolidays">節日</label> <label class="switch"><input id="showHolidays" type="checkbox"> <span class="slider"></span></label> <input id="holidayColor" type="color"></div>
                     </div>
                 </div>
-                <div class="setting-item"><label for="showWeather">天氣資訊</label> <input id="weatherLocation" type="text" title="輸入城市名稱"> <input id="weatherColor" type="color"> <label class="switch"><input id="showWeather" type="checkbox"><span class="slider"></span></label></div>
+                <div class="setting-item">
+                    <label for="showWeather">天氣資訊</label> 
+                    <div class="location-input-container">
+						<button id="locationInfoBtn" title="地點格式說明">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+						</button>
+						<div id="locationInfoTooltip" class="info-tooltip">請輸入地點名稱<br>只能輸入英文地名。點擊右側定位圖示可自動偵測您目前的位置。</div>
+						<input id="weatherLocation" type="text" title="輸入城市名稱"> 
+					</div>
+                    <button id="useCurrentLocationBtn" title="使用目前位置">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L12 6"/><path d="M12 18L12 22"/><path d="M20 12L22 12"/><path d="M2 12L4 12"/><circle cx="12" cy="12" r="2"/><path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/></svg>
+                    </button>
+                    <input id="weatherColor" type="color"> 
+                    <label class="switch"><input id="showWeather" type="checkbox"><span class="slider"></span></label>
+                </div>
                 <div class="setting-item"><label for="backgroundColor">背景顏色</label><input id="backgroundColor" type="color"></div>
                 <div class="setting-item"><label for="enableBackgroundScanline">背景掃描線</label><label class="switch"><input id="enableBackgroundScanline" type="checkbox"><span class="slider"></span></label></div>
                 <div class="setting-item"><label for="enableTextScanline">文字掃描線</label><div class="interval-selector-group"><select id="scanlineIntervalMinutes" class="interval-select"></select><span class="interval-select-label">分</span><select id="scanlineIntervalSeconds" class="interval-select"></select><span class="interval-select-label">秒</span></div><label class="switch"><input id="enableTextScanline" type="checkbox"><span class="slider"></span></label></div>
@@ -421,7 +445,7 @@
 			if (displaySettings.showGregorianMonth) gregorianParts.push(`<span style="color: ${displaySettings.gregorianMonthColor};">${(now.getMonth() + 1).toString().padStart(2, '0')}月</span>`); // 添加月份
 			if (displaySettings.showGregorianDay) gregorianParts.push(`<span style="color: ${displaySettings.gregorianDayColor};">${now.getDate().toString().padStart(2, '0')}日</span>`); // 添加日期
 			if (displaySettings.showGregorianWeekday) gregorianParts.push(`<span class="weekday-target" style="color: ${displaySettings.gregorianWeekdayColor}; cursor: pointer;">周${['日', '一', '二', '三', '四', '五', '六'][now.getDay()]}</span>`); // 添加星期
-			document.getElementById('gregorianDateParts').innerHTML = gregorianParts.join(' '); // 更新公曆日期顯示
+			document.getElementById('gregorianDateParts').innerHTML = gregorianParts.join(''); // 更新公曆日期顯示 (移除空格)
 			document.getElementById('gregorianDateDisplay').style.display = gregorianParts.length > 0 || displaySettings.showWeather ? 'flex' : 'none'; // 如果有內容或要顯示天氣則顯示
 
 			let lunarParts = [], combinedJieqiHolidayText = ''; // 儲存農曆與節氣節日的HTML
@@ -452,7 +476,7 @@
 				if(holidayText) marqueeParts.push(`<span style="color: ${displaySettings.holidayColor};">${holidayText}</span>`); // 添加節日文字
 				combinedJieqiHolidayText = marqueeParts.join(' '); // 組合跑馬燈文字
 			}
-			document.getElementById('lunarDateDisplay').innerHTML = lunarParts.join(' '); // 更新農曆日期顯示
+			document.getElementById('lunarDateDisplay').innerHTML = lunarParts.join(''); // 更新農曆日期顯示 (移除空格)
 			document.getElementById('lunarDateDisplay').style.display = lunarParts.length > 0 ? 'inline-block' : 'none'; // 如果沒內容則隱藏
 			const marqueeIsVisible = displaySettings.showJieqi || displaySettings.showHolidays; // 判斷跑馬燈是否可見
 			document.getElementById('jieqiHolidayMarqueeContainer').style.display = marqueeIsVisible ? 'block' : 'none'; // 設定跑馬燈可見性
@@ -627,10 +651,10 @@
                 3: { desc: '陰', emoji: '☁️' }, 45: { desc: '霧', emoji: '🌫️' }, 48: { desc: '凍霧', emoji: '🌫️' },
                 51: { desc: '毛毛雨', emoji: '🌦️' }, 53: { desc: '毛毛雨', emoji: '🌦️' }, 55: { desc: '毛毛雨', emoji: '🌦️' },
                 56: { desc: '凍毛毛雨', emoji: '🌨️' }, 57: { desc: '凍毛毛雨', emoji: '🌨️' }, 61: { desc: '雨', emoji: '🌧️' },
-                63: { desc: '雨', emoji: '🌧️' }, 65: { desc: '大雨', emoji: '🌧️' }, 66: { desc: '凍雨', emoji: '🌨️' },
+                63: { desc: '雨', emoji: '🌧️' }, 65: { desc: '大雨', emoji: '�️' }, 66: { desc: '凍雨', emoji: '🌨️' },
                 67: { desc: '凍雨', emoji: '🌨️' }, 71: { desc: '雪', emoji: '❄️' }, 73: { desc: '雪', emoji: '❄️' },
                 75: { desc: '大雪', emoji: '❄️' }, 77: { desc: '冰雹', emoji: '🌨️' }, 80: { desc: '陣雨', emoji: '🌦️' },
-                81: { desc: '陣雨', emoji: '🌦️' }, 82: { desc: '大陣雨', emoji: '�️' }, 85: { desc: '陣雪', emoji: '🌨️' },
+                81: { desc: '陣雨', emoji: '🌦️' }, 82: { desc: '大陣雨', emoji: '🌦️' }, 85: { desc: '陣雪', emoji: '🌨️' },
                 86: { desc: '大陣雪', emoji: '🌨️' }, 95: { desc: '雷陣雨', emoji: '⛈️' }, 96: { desc: '雷陣雨伴冰雹', emoji: '⛈️' },
                 99: { desc: '雷陣雨伴冰雹', emoji: '⛈️' }
             };
@@ -669,7 +693,7 @@
             container.style.display = 'block';
             const { desc, emoji } = getWeatherDescriptionAndEmoji(weatherDataCache.current.weather_code);
             const temp = Math.round(weatherDataCache.current.temperature_2m);
-            const weatherText = `<span style="color: ${displaySettings.weatherColor};">${locationName} ${desc} ${emoji} ${temp}°C</span>`;
+            const weatherText = `<span style="color: ${displaySettings.weatherColor};">𖣔${locationName} ${desc} ${emoji} ${temp}°C</span>`;
             if (weatherText !== lastWeatherContent) {
                 updateMarquee(weatherText, 'weather');
                 lastWeatherContent = weatherText;
@@ -683,70 +707,26 @@
             }
             weatherContainer.style.display = 'block';
 
-            const locationSuccess = (pos) => {
-                const { latitude, longitude } = pos.coords;
-
-                // 反向地理編碼以獲取地點名稱
-                fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=zh-TW`)
-                    .then(response => response.json())
-                    .then(geoData => {
-                        // 組合一個可讀的地點名稱，例如 "新北市 板橋區"
-                        const locationName = geoData.principalSubdivision ? `${geoData.principalSubdivision} ${geoData.locality || ''}`.trim() : (geoData.city || '未知地區');
-                        
-                        // 將找到的地點儲存到設定中
-                        displaySettings.weatherLocation = locationName;
-                        saveSettings();
-                        updateSettingsModalUI(); // 更新設定彈窗中的輸入框
-
-                        // 返回所有資訊以進行下一步
-                        return { lat: latitude, lon: longitude, name: locationName };
-                    })
-                    .catch(error => {
-                        console.error("反向地理編碼失敗，將僅使用座標。", error);
-                        // 如果反向地理編碼失敗，則使用通用名稱
-                        return { lat: latitude, lon: longitude, name: '目前位置' };
-                    })
-                    .then(locationInfo => {
-                        // 使用座標獲取天氣
-                        fetchWeather(locationInfo.lat, locationInfo.lon).then(data => {
-                            if (data) {
-                                weatherDataCache = data;
-                                // 使用最佳可用名稱顯示天氣
-                                updateWeatherDisplay(locationInfo.name);
-                            }
-                        });
-                    });
-            };
-
-            const locationError = async () => {
-                console.warn("地理定位失敗。將使用設定中的地點。");
-                const locationName = displaySettings.weatherLocation.trim();
-                if (!locationName) {
-                    updateMarquee('請設定地點', 'weather');
-                    return;
-                }
-                
-                // 嘗試為設定中的地點名稱獲取座標
-                const coordsData = await fetchCoordinates(locationName);
-                if (coordsData) {
-                    const { latitude, longitude, name, admin1 } = coordsData;
-                    const displayName = admin1 || name || locationName;
-                    const data = await fetchWeather(latitude, longitude);
-                    if (data) {
-                        weatherDataCache = data;
-                        updateWeatherDisplay(displayName);
-                    }
+            const locationName = displaySettings.weatherLocation.trim();
+            if (!locationName) {
+                updateMarquee('請設定地點', 'weather');
+                return;
+            }
+            
+            const coordsData = await fetchCoordinates(locationName);
+            console.log("Geocoding result for '" + locationName + "':", coordsData); // 用於除錯，觀察API回傳
+            if (coordsData) {
+                const { latitude, longitude, name, admin1 } = coordsData;
+                const displayName = name || admin1 || locationName; // 優先使用API回傳的中文地名
+                const data = await fetchWeather(latitude, longitude);
+                if (data) {
+                    weatherDataCache = data;
+                    updateWeatherDisplay(displayName);
                 } else {
-                    updateMarquee(`找不到地點: ${locationName}`, 'weather');
+                     updateMarquee(`<span style="color: ${displaySettings.weatherColor};">無法取得天氣資訊</span>`, 'weather');
                 }
-            };
-
-            // 嘗試獲取使用者的目前位置
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(locationSuccess, locationError, { timeout: 5000 });
             } else {
-                // 瀏覽器不支援地理定位
-                await locationError();
+                updateMarquee(`<span style="color: ${displaySettings.weatherColor};">找不到地點: ${locationName}</span>`, 'weather');
             }
         }
         function showWeatherForecast() {
@@ -820,7 +800,7 @@
 
             document.getElementById('todayCalendarBtn').onclick = () => { calendarDate = new Date(); generateCalendar(calendarDate.getFullYear(), calendarDate.getMonth()); }; // 月曆"今天"按鈕
             document.getElementById('todayWeeklyBtn').onclick = () => { weeklyCalendarDate = new Date(); generateWeekCalendar(weeklyCalendarDate); }; // 週曆"今天"按鈕
-            document.getElementById('todayYearlyBtn').onclick = () => { yearlyCalendarDate = new Date(); generateYearCalendar(yearlyCalendarDate.getFullYear()); }; // 年曆"今年"按鈕
+            document.getElementById('todayYearlyBtn').onclick = () => { yearlyCalendarDate = new Date(); generateYearCalendar(yearlyCalendarDate.getFullYear()); }; // 年曆"今天"按鈕
 			document.getElementById('prevMonthBtn').onclick = () => { calendarDate.setMonth(calendarDate.getMonth() - 1); generateCalendar(calendarDate.getFullYear(), calendarDate.getMonth()); }; // 上個月
 			document.getElementById('nextMonthBtn').onclick = () => { calendarDate.setMonth(calendarDate.getMonth() + 1); generateCalendar(calendarDate.getFullYear(), calendarDate.getMonth()); }; // 下個月
 			document.getElementById('prevWeekBtn').onclick = () => { weeklyCalendarDate.setDate(weeklyCalendarDate.getDate() - 7); generateWeekCalendar(weeklyCalendarDate); }; // 上一週
@@ -863,6 +843,42 @@
                 saveSettings(); // 儲存設定
                 updateWeather(); // 更新天氣
             });
+            
+            document.getElementById('useCurrentLocationBtn').addEventListener('click', () => {
+                if (navigator.geolocation) {
+                    updateMarquee('正在定位...', 'weather');
+                    navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                            const { latitude, longitude } = pos.coords;
+                            fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`)
+                                .then(response => response.json())
+                                .then(geoData => {
+                                    const city = geoData.locality || geoData.city;
+                                    if (city) {
+                                        displaySettings.weatherLocation = city;
+                                        document.getElementById('weatherLocation').value = city;
+                                        saveSettings();
+                                        updateWeather();
+                                    } else {
+                                        console.error("無法從反向地理編碼獲取城市。");
+                                        updateMarquee(`<span style="color: ${displaySettings.weatherColor};">定位失敗</span>`, 'weather');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error("反向地理編碼失敗:", error);
+                                    updateMarquee(`<span style="color: ${displaySettings.weatherColor};">定位失敗</span>`, 'weather');
+                                });
+                        }, 
+                        () => {
+                            console.warn("地理定位失敗。請檢查瀏覽器權限。");
+                            updateMarquee(`<span style="color: ${displaySettings.weatherColor};">定位失敗，請檢查權限</span>`, 'weather');
+                        }, 
+                        { timeout: 10000 }
+                    );
+                } else {
+                    alert("您的瀏覽器不支援地理位置功能。");
+                }
+            });
 
 			document.getElementById('restoreDefaultsBtn').onclick = restoreDefaults; // 綁定恢復預設按鈕
 			document.getElementById('randomColorsBtn').onclick = setRandomColors; // 綁定隨機顏色按鈕
@@ -878,6 +894,21 @@
 			});
 
 			document.getElementById('settings-icon').addEventListener('click', () => { document.getElementById('settingsModal').classList.add('is-active'); updateSettingsModalUI(); }); // 點擊設定圖示，顯示設定彈窗
+
+			// --- 地點格式提示功能 ---
+			const locationInfoBtn = document.getElementById('locationInfoBtn');
+			const locationInfoTooltip = document.getElementById('locationInfoTooltip');
+			if (locationInfoBtn && locationInfoTooltip) {
+				locationInfoBtn.addEventListener('click', (event) => {
+					event.stopPropagation(); // 防止觸發document的點擊事件
+					locationInfoTooltip.classList.toggle('visible');
+				});
+				document.addEventListener('click', (event) => {
+					if (locationInfoTooltip.classList.contains('visible') && !locationInfoBtn.contains(event.target)) {
+						locationInfoTooltip.classList.remove('visible');
+					}
+				});
+			}
 
 			const fullscreenIcon = document.getElementById('fullscreen-icon'), docElement = document.documentElement; // 獲取全螢幕圖示和文件根元素
 			function toggleFullScreen() { // 切換全螢幕模式
