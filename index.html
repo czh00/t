@@ -245,7 +245,7 @@
 		let yearlyDataCache = { year: -1, holidays: [], jieqi: [] }; // 年度資料快取
         let weatherDataCache = null, weatherUpdateTimer = null, movementTimer = null, scanlineTimer = null; // 天氣與特效計時器
         
-        const cityname = { // *** 台灣地名中英對照表 (擴充版) ***
+        const cityname = { // *** 台灣地名中英對照表 ***
             "taipei": "臺北市", "new taipei": "新北市", "taoyuan": "桃園市", "taichung": "臺中市", "tainan": "臺南市", "kaohsiung": "高雄市", "keelung": "基隆市", "hsinchu": "新竹市", "chiayi": "嘉義市",
             "hsinchu county": "新竹縣", "miaoli": "苗栗縣", "changhua": "彰化縣", "nantou": "南投縣", "yunlin": "雲林縣", "chiayi county": "嘉義縣", "pingtung": "屏東縣", "yilan": "宜蘭縣", "hualien": "花蓮縣", "taitung": "臺東縣", "penghu": "澎湖縣", "kinmen": "金門縣", "lienchiang": "連江縣",
             "songshan": "松山區", "xinyi": "信義區", "da'an": "大安區", "zhongshan": "中山區", "zhongzheng": "中正區", "datong": "大同區", "wanhua": "萬華區", "wenshan": "文山區", "nangang": "南港區", "neihu": "內湖區", "shilin": "士林區", "beitou": "北投區",
@@ -285,7 +285,7 @@
 		function saveSettings() { try { localStorage.setItem('displaySettings', JSON.stringify(displaySettings)); } catch (e) { console.error("儲存設定失敗:", e); } } // 儲存設定到LocalStorage
 		function loadSettings() { try { const settingsJson = localStorage.getItem('displaySettings'); if (settingsJson) { displaySettings = { ...defaultDisplaySettings, ...JSON.parse(settingsJson) }; } } catch (e) { console.error("解析設定失敗:", e); displaySettings = { ...defaultDisplaySettings }; } } // 載入設定
 		function updateSettingsModalUI() { for (const key in displaySettings) { const element = document.getElementById(key); if (element) { if (element.type === 'checkbox') { element.checked = displaySettings[key]; } else { element.value = displaySettings[key]; } } } } // 更新設定視窗UI
-		function getShengXiaoEmoji(shengXiaoName) { const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐅', '兔': '🐇', '龍': '🐉', '蛇': '�', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '🐶', '豬': '🐖' }; return emojiMap[shengXiaoName] || ''; } // 根據生肖名返回Emoji
+		function getShengXiaoEmoji(shengXiaoName) { const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐅', '兔': '🐇', '龍': '🐉', '蛇': '🐍', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '�', '豬': '🐖' }; return emojiMap[shengXiaoName] || ''; } // 根據生肖名返回Emoji
 		function getJieqiDescription(jieqiName) { const descriptions = { '立春': '春季開始，萬物復甦。', '雨水': '降雨增多，春耕開始。', '驚蟄': '春雷響動，驚醒冬眠動物。', '春分': '晝夜等長，春意盎然。', '清明': '氣候清爽明朗，掃墓祭祖。', '穀雨': '雨水滋潤，穀物生長。', '立夏': '夏季開始，萬物繁茂。', '小滿': '夏熟作物籽粒開始飽滿。', '芒種': '收穫與播種的時節。', '夏至': '北半球白晝最長，盛夏開始。', '小暑': '天氣開始炎熱。', '大暑': '一年中最炎熱的時期。', '立秋': '秋季開始，氣溫漸降。', '處暑': '暑氣漸退，天氣轉涼。', '白露': '水氣凝結成露，天氣漸寒。', '秋分': '晝夜等長，秋高氣爽。', '寒露': '氣溫更低，天氣轉冷。', '霜降': '天氣漸冷，露水凝結成霜。', '立冬': '冬季開始，萬物收藏。', '小雪': '開始降雪，但雪量不大。', '大雪': '降雪量增多，天氣更冷。', '冬至': '北半球白晝最短，數九寒天開始。', '小寒': '天氣寒冷，尚未達到最冷。', '大寒': '一年中最寒冷的時期。' }; return descriptions[jieqiName] || '此節氣無詳細說明。'; } // 根據節氣名返回描述
 		function getHolidaysForYear(year) { const holidays = []; const fixedHolidays = [ { name: '元旦', m: 0, d: 1 }, { name: '和平紀念日', m: 1, d: 28 }, { name: '兒童節', m: 3, d: 4 }, { name: '勞動節', m: 4, d: 1 }, { name: '國慶日', m: 9, d: 10 }, { name: '聖誕節', m: 11, d: 25 } ]; fixedHolidays.forEach(h => holidays.push({ name: h.name, date: new Date(year, h.m, h.d) })); const lunarHolidays = [{m:1,d:1,n:'農曆新年'}, {m:1,d:15,n:'元宵節'}, {m:5,d:5,n:'端午節'}, {m:7,d:7,n:'七夕'}, {m:7,d:15,n:'中元節'}, {m:8,d:15,n:'中秋節'}, {m:9,d:9,n:'重陽節'}, {m:12,d:8,n:'臘八節'}]; lunarHolidays.forEach(lh => { const solarDate = Lunar.fromYmd(year, lh.m, lh.d).getSolar(); holidays.push({ name: lh.n, date: new Date(solarDate.getYear(), solarDate.getMonth() - 1, solarDate.getDay()) }); }); const lunarNewYearSolar = Lunar.fromYmd(year, 1, 1).getSolar(); holidays.push({ name: '除夕', date: new Date(lunarNewYearSolar.getYear(), lunarNewYearSolar.getMonth() - 1, lunarNewYearSolar.getDay() - 1) }); const qingmingJieqi = getJieqiForYear(year).find(jq => jq.name === '清明'); if(qingmingJieqi) holidays.push({ name: '清明節', date: qingmingJieqi.date }); const mayFirst = new Date(year, 4, 1); const mothersDay = new Date(year, 4, 1 + (7 - mayFirst.getDay() + 7) % 7 + 7); holidays.push({ name: '母親節', date: mothersDay }); return holidays.sort((a, b) => a.date.getTime() - b.date.getTime()); } // 計算指定年份的所有主要節日
 		function getJieqiForYear(year) { const jieqiPinyinMap = { 'LI_CHUN': '立春', 'YU_SHUI': '雨水', 'JING_ZHE': '驚蟄', 'CHUN_FEN': '春分', 'QING_MING': '清明', 'GU_YU': '穀雨', 'LI_XIA': '立夏', 'XIAO_MAN': '小滿', 'MANG_ZHONG': '芒種', 'XIA_ZHI': '夏至', 'XIAO_SHU': '小暑', 'DA_SHU': '大暑', 'LI_QIU': '立秋', 'CHU_SHU': '處暑', 'BAI_LU': '白露', 'QIU_FEN': '秋分', 'HAN_LU': '寒露', 'SHUANG_JIANG': '霜降', 'LI_DONG': '立冬', 'XIAO_XUE': '小雪', 'DA_XUE': '大雪', 'DONG_ZHI': '冬至', 'XIAO_HAN': '小寒', 'DA_HAN': '大寒' }; const jieqiSimplifiedMap = { '惊蛰': '驚蟄', '小满': '小滿', '芒种': '芒種', '处暑': '處暑', '谷雨': '穀雨' }; const jieqiTable = Lunar.fromYmd(year, 1, 1).getJieQiTable(); return Object.entries(jieqiTable).map(([name, dateStr]) => { const traditionalName = jieqiPinyinMap[name] || jieqiSimplifiedMap[name] || name; return { name: traditionalName, date: new Date(dateStr) }; }).sort((a, b) => a.date.getTime() - b.date.getTime()); } // 計算指定年份的所有節氣
@@ -293,16 +293,132 @@
 		function getShiChen(h) { const shichenMap = { 23: '子', 0: '子', 1: '丑', 2: '丑', 3: '寅', 4: '寅', 5: '卯', 6: '卯', 7: '辰', 8: '辰', 9: '巳', 10: '巳', 11: '午', 12: '午', 13: '未', 14: '未', 15: '申', 16: '申', 17: '酉', 18: '酉', 19: '戌', 20: '戌', 21: '亥', 22: '亥' }; return shichenMap[h] || ''; } // 根據小時返回時辰
         function getShiChenTimeRange(shichenName) { const timeRanges = { '子': '23:00 - 00:59', '丑': '01:00 - 02:59', '寅': '03:00 - 04:59', '卯': '05:00 - 06:59', '辰': '07:00 - 08:59', '巳': '09:00 - 10:59', '午': '11:00 - 12:59', '未': '13:00 - 14:59', '申': '15:00 - 16:59', '酉': '17:00 - 18:59', '戌': '19:00 - 20:59', '亥': '21:00 - 22:59' }; return timeRanges[shichenName] || ''; } // 根據時辰返回時間範圍
 		function getDetailedTimePeriod(hour) { const periodMap = { 0: '凌晨', 1: '凌晨', 2: '凌晨', 3: '凌晨', 4: '凌晨', 5: '清晨', 6: '清晨', 7: '清晨', 8: '清晨', 9: '上午', 10: '上午', 11: '上午', 12: '中午', 13: '下午', 14: '下午', 15: '下午', 16: '下午', 17: '傍晚', 18: '傍晚', 19: '夜晚', 20: '夜晚', 21: '夜晚', 22: '夜晚', 23: '深夜' }; return periodMap[hour] || ''; } // 根據小時返回詳細時段
-		function updateMarquee(text, type) { const containerId = type === 'weather' ? 'weatherMarqueeContainer' : 'jieqiHolidayMarqueeContainer'; const innerId = type === 'weather' ? 'weatherMarqueeInner' : 'jieqiHolidayMarqueeInner'; const contentClass = type === 'weather' ? 'weather-marquee-content' : 'jieqi-holiday-marquee-content'; const duplicateClass = type === 'weather' ? 'weather-marquee-content-duplicate' : 'jieqi-holiday-marquee-content-duplicate'; const container = document.getElementById(containerId), inner = document.getElementById(innerId); if (!container || !inner) return; const contentSpan = inner.querySelector(`.${contentClass}`), duplicateSpan = inner.querySelector(`.${duplicateClass}`); if (!contentSpan || !duplicateSpan) return; contentSpan.innerHTML = text; requestAnimationFrame(() => { const contentWidth = contentSpan.scrollWidth, containerWidth = container.offsetWidth; if (contentWidth > containerWidth) { duplicateSpan.innerHTML = text; container.classList.add('scrolling'); inner.style.animationDuration = `${contentWidth / 40}s`; } else { duplicateSpan.innerHTML = ''; container.classList.remove('scrolling'); } }); } // 更新跑馬燈內容與動畫
-		function updateDateTime() { const now = new Date(); const backgroundOverlay = document.getElementById('background-scanline-overlay'), textOverlay = document.getElementById('text-scanline-overlay'); backgroundOverlay.classList.toggle('active', displaySettings.enableBackgroundScanline); if (displaySettings.enableBackgroundScanline) { backgroundOverlay.classList.toggle('pattern-a', scanlinePatternIsA); backgroundOverlay.classList.toggle('pattern-b', !scanlinePatternIsA); } textOverlay.classList.toggle('active', displaySettings.enableTextScanline); if (displaySettings.enableTextScanline) { textOverlay.classList.toggle('pattern-a', !scanlinePatternIsA); textOverlay.classList.toggle('pattern-b', scanlinePatternIsA); } document.documentElement.style.setProperty('--page-background-color', displaySettings.backgroundColor); const parts = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: false }).formatToParts(now); const hourPart = parts.find(p => p.type === 'hour')?.value.padStart(2, '0') || '00', minutePart = parts.find(p => p.type === 'minute')?.value || '00', secondPart = parts.find(p => p.type === 'second')?.value || '00'; let displayHour = hourPart; let amPmText = ''; if (displaySettings.showAmPm) { const hour12 = parseInt(hourPart, 10); amPmText = getDetailedTimePeriod(hour12); let displayHour12 = hour12 % 12; if (displayHour12 === 0) displayHour12 = 12; displayHour = displayHour12.toString().padStart(2, '0'); } document.getElementById('hoursMinutesDisplay').textContent = `${displayHour}:${minutePart}`; document.getElementById('secondsDisplay').textContent = secondPart; document.getElementById('amPmDisplay').textContent = amPmText; document.getElementById('amPmDisplay').style.display = amPmText ? 'block' : 'none'; document.getElementById('timeTextContainer').style.color = displaySettings.textColor; let gregorianParts = []; if (displaySettings.showGregorianYear) gregorianParts.push(`<span class="gregorian-year-target" style="color: ${displaySettings.gregorianYearColor}; cursor: pointer;">${now.getFullYear()}年</span>`); if (displaySettings.showGregorianMonth) gregorianParts.push(`<span style="color: ${displaySettings.gregorianMonthColor};">${(now.getMonth() + 1).toString().padStart(2, '0')}月</span>`); if (displaySettings.showGregorianDay) gregorianParts.push(`<span style="color: ${displaySettings.gregorianDayColor};">${now.getDate().toString().padStart(2, '0')}日</span>`); if (displaySettings.showGregorianWeekday) gregorianParts.push(`<span class="weekday-target" style="color: ${displaySettings.gregorianWeekdayColor}; cursor: pointer;">周${['日', '一', '二', '三', '四', '五', '六'][now.getDay()]}</span>`); document.getElementById('gregorianDateParts').innerHTML = gregorianParts.join(''); document.getElementById('gregorianDateDisplay').style.display = gregorianParts.length > 0 || displaySettings.showWeather ? 'flex' : 'none'; let lunarParts = [], combinedJieqiHolidayText = ''; if (typeof Lunar !== 'undefined') { const currentYear = now.getFullYear(); if (yearlyDataCache.year !== currentYear) { yearlyDataCache = { year: currentYear, holidays: getHolidaysForYear(currentYear), jieqi: getJieqiForYear(currentYear) }; } const solar = Solar.fromDate(now), lunar = solar.getLunar(); if (displaySettings.showMinguoYear) { const traditionalShengXiao = s2t(lunar.getYearShengXiao()); lunarParts.push(`<span class="lunar-year-target" style="color: ${displaySettings.minguoYearColor}; cursor: pointer;">${now.getFullYear() - 1911}年${getShengXiaoEmoji(traditionalShengXiao)}</span>`); } if (displaySettings.showLunarMonth) lunarParts.push(`<span style="color: ${displaySettings.lunarMonthColor};">${s2t(lunar.getMonthInChinese())}月</span>`); if (displaySettings.showLunarDay) lunarParts.push(`<span class="lunar-day-target lunar-date-clickable" style="color: ${displaySettings.lunarDayColor};">${s2t(lunar.getDayInChinese())}</span>`); if (displaySettings.showLunarShiChen) lunarParts.push(`<span class="lunar-shichen-target lunar-shichen-clickable" style="color: ${displaySettings.lunarShiChenColor};">${getShiChen(now.getHours())}時</span>`); let jieQiText = '', holidayText = ''; if (displaySettings.showJieqi) { const currentJieqi = yearlyDataCache.jieqi.find(jq => jq.date.toDateString() === now.toDateString()) || yearlyDataCache.jieqi.find(jq => jq.date > now); if (currentJieqi) { const daysUntil = Math.ceil((currentJieqi.date - now) / 86400000); jieQiText = (daysUntil === 0) ? `${currentJieqi.name}` : `${daysUntil}➡${currentJieqi.name}`; } } if (displaySettings.showHolidays) { const currentHoliday = yearlyDataCache.holidays.find(h => h.date.toDateString() === now.toDateString()) || yearlyDataCache.holidays.find(h => h.date > now); if (currentHoliday) { const daysUntil = Math.ceil((currentHoliday.date - now) / 86400000); holidayText = (daysUntil === 0) ? `${currentHoliday.name}` : `${daysUntil}➡${currentHoliday.name}`; } } let marqueeParts = []; if(jieQiText) marqueeParts.push(`<span style="color: ${displaySettings.jieqiColor};">${jieQiText}</span>`); if(holidayText) marqueeParts.push(`<span style="color: ${displaySettings.holidayColor};">${holidayText}</span>`); combinedJieqiHolidayText = marqueeParts.join(' '); } document.getElementById('lunarDateDisplay').innerHTML = lunarParts.join(''); document.getElementById('lunarDateDisplay').style.display = lunarParts.length > 0 ? 'inline-block' : 'none'; const marqueeIsVisible = displaySettings.showJieqi || displaySettings.showHolidays; document.getElementById('jieqiHolidayMarqueeContainer').style.display = marqueeIsVisible ? 'block' : 'none'; if (marqueeIsVisible && lastMarqueeContent !== combinedJieqiHolidayText) { updateMarquee(combinedJieqiHolidayText, 'jieqi'); lastMarqueeContent = combinedJieqiHolidayText; } } // 主更新函式
+		
+        function updateMarquee(text, type) {
+            const containerId = type === 'weather' ? 'weatherMarqueeContainer' : 'jieqiHolidayMarqueeContainer';
+            const innerId = type === 'weather' ? 'weatherMarqueeInner' : 'jieqiHolidayMarqueeInner';
+            const contentClass = type === 'weather' ? 'weather-marquee-content' : 'jieqi-holiday-marquee-content';
+            const duplicateClass = type === 'weather' ? 'weather-marquee-content-duplicate' : 'jieqi-holiday-marquee-content-duplicate';
+            const container = document.getElementById(containerId), inner = document.getElementById(innerId);
+            if (!container || !inner) return;
+            const contentSpan = inner.querySelector(`.${contentClass}`), duplicateSpan = inner.querySelector(`.${duplicateClass}`);
+            if (!contentSpan || !duplicateSpan) return;
+
+            contentSpan.innerHTML = text;
+            
+            requestAnimationFrame(() => {
+                const contentWidth = contentSpan.scrollWidth;
+                const containerWidth = container.offsetWidth;
+                
+                if (contentWidth > containerWidth) {
+                    duplicateSpan.innerHTML = text;
+                    container.classList.add('scrolling');
+                    inner.style.animationDuration = `${contentWidth / 40}s`;
+                } else {
+                    duplicateSpan.innerHTML = '';
+                    container.classList.remove('scrolling');
+                }
+            });
+        }
+
+		function updateDateTime() {
+            const now = new Date();
+            const backgroundOverlay = document.getElementById('background-scanline-overlay'), textOverlay = document.getElementById('text-scanline-overlay');
+            backgroundOverlay.classList.toggle('active', displaySettings.enableBackgroundScanline);
+            if (displaySettings.enableBackgroundScanline) {
+                backgroundOverlay.classList.toggle('pattern-a', scanlinePatternIsA);
+                backgroundOverlay.classList.toggle('pattern-b', !scanlinePatternIsA);
+            }
+            textOverlay.classList.toggle('active', displaySettings.enableTextScanline);
+            if (displaySettings.enableTextScanline) {
+                textOverlay.classList.toggle('pattern-a', !scanlinePatternIsA);
+                textOverlay.classList.toggle('pattern-b', scanlinePatternIsA);
+            }
+            document.documentElement.style.setProperty('--page-background-color', displaySettings.backgroundColor);
+            const parts = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: false }).formatToParts(now);
+            const hourPart = parts.find(p => p.type === 'hour')?.value.padStart(2, '0') || '00',
+                minutePart = parts.find(p => p.type === 'minute')?.value || '00',
+                secondPart = parts.find(p => p.type === 'second')?.value || '00';
+            let displayHour = hourPart;
+            let amPmText = '';
+            if (displaySettings.showAmPm) {
+                const hour12 = parseInt(hourPart, 10);
+                amPmText = getDetailedTimePeriod(hour12);
+                let displayHour12 = hour12 % 12;
+                if (displayHour12 === 0) displayHour12 = 12;
+                displayHour = displayHour12.toString().padStart(2, '0');
+            }
+            document.getElementById('hoursMinutesDisplay').textContent = `${displayHour}:${minutePart}`;
+            document.getElementById('secondsDisplay').textContent = secondPart;
+            document.getElementById('amPmDisplay').textContent = amPmText;
+            document.getElementById('amPmDisplay').style.display = amPmText ? 'block' : 'none';
+            document.getElementById('timeTextContainer').style.color = displaySettings.textColor;
+            let gregorianParts = [];
+            if (displaySettings.showGregorianYear) gregorianParts.push(`<span class="gregorian-year-target" style="color: ${displaySettings.gregorianYearColor}; cursor: pointer;">${now.getFullYear()}年</span>`);
+            if (displaySettings.showGregorianMonth) gregorianParts.push(`<span style="color: ${displaySettings.gregorianMonthColor};">${(now.getMonth() + 1).toString().padStart(2, '0')}月</span>`);
+            if (displaySettings.showGregorianDay) gregorianParts.push(`<span style="color: ${displaySettings.gregorianDayColor};">${now.getDate().toString().padStart(2, '0')}日</span>`);
+            if (displaySettings.showGregorianWeekday) gregorianParts.push(`<span class="weekday-target" style="color: ${displaySettings.gregorianWeekdayColor}; cursor: pointer;">周${['日', '一', '二', '三', '四', '五', '六'][now.getDay()]}</span>`);
+            document.getElementById('gregorianDateParts').innerHTML = gregorianParts.join('');
+            document.getElementById('gregorianDateDisplay').style.display = gregorianParts.length > 0 || displaySettings.showWeather ? 'flex' : 'none';
+            let lunarParts = [], combinedJieqiHolidayText = '';
+            if (typeof Lunar !== 'undefined') {
+                const currentYear = now.getFullYear();
+                if (yearlyDataCache.year !== currentYear) {
+                    yearlyDataCache = { year: currentYear, holidays: getHolidaysForYear(currentYear), jieqi: getJieqiForYear(currentYear) };
+                }
+                const solar = Solar.fromDate(now), lunar = solar.getLunar();
+                if (displaySettings.showMinguoYear) {
+                    const traditionalShengXiao = s2t(lunar.getYearShengXiao());
+                    lunarParts.push(`<span class="lunar-year-target" style="color: ${displaySettings.minguoYearColor}; cursor: pointer;">${now.getFullYear() - 1911}年${getShengXiaoEmoji(traditionalShengXiao)}</span>`);
+                }
+                if (displaySettings.showLunarMonth) lunarParts.push(`<span style="color: ${displaySettings.lunarMonthColor};">${s2t(lunar.getMonthInChinese())}月</span>`);
+                if (displaySettings.showLunarDay) lunarParts.push(`<span class="lunar-day-target lunar-date-clickable" style="color: ${displaySettings.lunarDayColor};">${s2t(lunar.getDayInChinese())}</span>`);
+                if (displaySettings.showLunarShiChen) lunarParts.push(`<span class="lunar-shichen-target lunar-shichen-clickable" style="color: ${displaySettings.lunarShiChenColor};">${getShiChen(now.getHours())}時</span>`);
+                let jieQiText = '', holidayText = '';
+                if (displaySettings.showJieqi) {
+                    const currentJieqi = yearlyDataCache.jieqi.find(jq => jq.date.toDateString() === now.toDateString()) || yearlyDataCache.jieqi.find(jq => jq.date > now);
+                    if (currentJieqi) {
+                        const daysUntil = Math.ceil((currentJieqi.date - now) / 86400000);
+                        jieQiText = (daysUntil === 0) ? `${currentJieqi.name}` : `${daysUntil}➡${currentJieqi.name}`;
+                    }
+                }
+                if (displaySettings.showHolidays) {
+                    const currentHoliday = yearlyDataCache.holidays.find(h => h.date.toDateString() === now.toDateString()) || yearlyDataCache.holidays.find(h => h.date > now);
+                    if (currentHoliday) {
+                        const daysUntil = Math.ceil((currentHoliday.date - now) / 86400000);
+                        holidayText = (daysUntil === 0) ? `${currentHoliday.name}` : `${daysUntil}➡${currentHoliday.name}`;
+                    }
+                }
+                let marqueeParts = [];
+                if(jieQiText) marqueeParts.push(`<span style="color: ${displaySettings.jieqiColor};">${jieQiText}</span>`);
+                if(holidayText) marqueeParts.push(`<span style="color: ${displaySettings.holidayColor};">${holidayText}</span>`);
+                combinedJieqiHolidayText = marqueeParts.join(' ');
+            }
+            document.getElementById('lunarDateDisplay').innerHTML = lunarParts.join('');
+            document.getElementById('lunarDateDisplay').style.display = lunarParts.length > 0 ? 'inline-block' : 'none';
+            
+            // [--- 修改開始 ---]
+            // 將兩個跑馬燈的更新邏輯都放在主更新循環中，確保它們的行為一致
+            const jieqiMarqueeIsVisible = displaySettings.showJieqi || displaySettings.showHolidays;
+            document.getElementById('jieqiHolidayMarqueeContainer').style.display = jieqiMarqueeIsVisible ? 'block' : 'none';
+            if (jieqiMarqueeIsVisible && lastMarqueeContent !== combinedJieqiHolidayText) {
+                updateMarquee(combinedJieqiHolidayText, 'jieqi');
+                lastMarqueeContent = combinedJieqiHolidayText;
+            }
+
+            const weatherMarqueeIsVisible = displaySettings.showWeather;
+            document.getElementById('weatherMarqueeContainer').style.display = weatherMarqueeIsVisible ? 'block' : 'none';
+            if (weatherMarqueeIsVisible && lastWeatherContent) {
+                updateMarquee(lastWeatherContent, 'weather');
+            }
+            // [--- 修改結束 ---]
+        }
+
 		function moveRandomly() { const displayElement = document.getElementById('dateTimeDisplay'), viewportWidth = window.innerWidth, viewportHeight = window.innerHeight; const elementRect = displayElement.getBoundingClientRect(), safeMargin = 20; const maxX = (viewportWidth - elementRect.width) / 2 - safeMargin, maxY = (viewportHeight - elementRect.height) / 2 - safeMargin; const newTargetX = Math.random() * (maxX * 2) - maxX, newTargetY = Math.random() * (maxY * 2) - maxY; displayElement.style.transform = `translate(calc(-50% + ${newTargetX}px), calc(-60% + ${newTargetY}px))`; } // 隨機移動
 		function resetPosition() { document.getElementById('dateTimeDisplay').style.transform = `translate(-50%, -50%)`; } // 重置位置
 		function restoreDefaults() { displaySettings = { ...defaultDisplaySettings }; saveSettings(); updateSettingsModalUI(); if (displaySettings.enableMovement) { moveRandomly(); } else { resetPosition(); } lastMarqueeContent = ''; lastWeatherContent = ''; updateDateTime(); setupEffectTimers(); updateWeather(); } // 恢復預設
 		function getRandomColor() { return '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0'); } // 生成隨機顏色
 		
-        // [--- 修改開始 ---]
-        // 舊的函式只更新了主時間顯示，沒有更新天氣部分。
-        // 新的函式在更新主時間後，會接著更新天氣顯示，確保所有顏色都能即時反應。
         function setRandomColors() {
             for (const key in displaySettings) {
                 if (key.toLowerCase().includes('color')) {
@@ -311,10 +427,9 @@
             }
             saveSettings();
             updateSettingsModalUI();
-            updateDateTime(); // 更新主時間、日期、農曆等
-            updateWeatherDisplay(displaySettings.weatherLocation); // 更新天氣資訊
+            updateDateTime(); 
+            updateWeatherDisplay(displaySettings.weatherLocation); 
         }
-        // [--- 修改結束 ---]
 
         function showDateDetails(date) { date.setHours(12, 0, 0, 0); const year = date.getFullYear(); const holidaysForYear = getHolidaysForYear(year); const jieqiForYear = getJieqiForYear(year); const isToday = date.toDateString() === new Date().toDateString(); const lunar = Solar.fromDate(date).getLunar(); const dayYi = s2t(lunar.getDayYi()).join('、') || '無'; const dayJi = s2t(lunar.getDayJi()).join('、') || '無'; const traditionalShengXiao = s2t(lunar.getYearShengXiao()); const lunarYearText = `${s2t(lunar.getYearInGanZhi())}${traditionalShengXiao}${getShengXiaoEmoji(traditionalShengXiao)}年`; const lunarDateText = `${s2t(lunar.getMonthInChinese())}月${s2t(lunar.getDayInChinese())}`; const currentJieqi = jieqiForYear.find(jq => jq.date.toDateString() === date.toDateString()); const currentHoliday = holidaysForYear.find(h => h.date.toDateString() === date.toDateString()); const nextJieqi = jieqiForYear.find(jq => jq.date > date); const nextHoliday = holidaysForYear.find(h => h.date > date); let eventHtml = ''; if (currentJieqi) { eventHtml += `<p>${isToday ? '今天是' : '這天是'} <strong>${currentJieqi.name}</strong>！ ${getJieqiDescription(currentJieqi.name)}</p>`; } if (currentHoliday) { eventHtml += `<p>${isToday ? '今天是' : '這天是'} <strong>${currentHoliday.name}</strong>！</p>`; } let countdownHtml = ''; if (nextJieqi) { const daysUntil = Math.ceil((nextJieqi.date - date) / 86400000); countdownHtml += `<p>距離下個節氣 <strong>${nextJieqi.name}</strong> 還有 ${daysUntil} 天。<br><span style="font-size:0.9em; color:#ccc;">${getJieqiDescription(nextJieqi.name)}</span></p>`; } if (nextHoliday) { const daysUntil = Math.ceil((nextHoliday.date - date) / 86400000); countdownHtml += `<p>距離下個節日 <strong>${nextHoliday.name}</strong> 還有 ${daysUntil} 天</p>`; } if (countdownHtml) { eventHtml += `<div class="countdown-section">${countdownHtml}</div>`; } const detailsHtml = `<p><strong>公曆：</strong>${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日</p><p><strong>農曆：</strong>${lunarYearText} ${lunarDateText}</p><div class="yi-ji-grid"><strong>宜：</strong><span>${dayYi}</span><strong>忌：</strong><span>${dayJi}</span></div>${eventHtml}<p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">宜忌僅供參考，請順心而為。</p>`; document.getElementById('dateDetailsModalContent').innerHTML = detailsHtml; document.getElementById('dateDetailsModal').classList.add('is-active'); } // 顯示日期詳情
         function updateShiChenDetailsView(date) { shichenDetailDate = new Date(date); const lunar = Solar.fromDate(shichenDetailDate).getLunar(); const currentHour = shichenDetailDate.getHours(); const shiChenName = getShiChen(currentHour); const shiChenTimeRange = getShiChenTimeRange(shiChenName); document.getElementById('shichenDetailsModalTitle').textContent = `${shichenDetailDate.getMonth() + 1}月${shichenDetailDate.getDate()}日 ${shiChenName}時`; const currentLunarTime = lunar.getTimes().find(lt => lt.getZhi() === shiChenName); if (currentLunarTime) { const shiChenGanZhi = s2t(currentLunarTime.getGan() + currentLunarTime.getZhi()); const yi = s2t(currentLunarTime.getYi()).join('、') || '無'; const ji = s2t(currentLunarTime.getJi()).join('、') || '無'; const detailsHtml = `<p><strong>時辰：</strong>${shiChenName}時 (${shiChenGanZhi}) <span style="font-size: 0.9em; color: #ccc;">${shiChenTimeRange}</span></p><div class="yi-ji-grid"><strong>宜：</strong><span>${yi}</span><strong>忌：</strong><span>${ji}</span></div><p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">時辰宜忌僅供參考。</p>`; document.getElementById('shichenDetailsModalContent').innerHTML = detailsHtml; } else { document.getElementById('shichenDetailsModalContent').innerHTML = `<p>找不到 ${shiChenName}時 的詳細資訊。</p>`; } document.getElementById('shichenDetailsModal').classList.add('is-active'); } // 更新時辰詳情
@@ -327,13 +442,13 @@
         function getWeatherDescriptionAndEmoji(code) { const map = { 0: { desc: '晴', emoji: '☀️' }, 1: { desc: '大致晴朗', emoji: '🌤️' }, 2: { desc: '局部多雲', emoji: '⛅️' }, 3: { desc: '陰', emoji: '☁️' }, 45: { desc: '霧', emoji: '🌫️' }, 48: { desc: '凍霧', emoji: '🌫️' }, 51: { desc: '毛毛雨', emoji: '🌦️' }, 53: { desc: '毛毛雨', emoji: '🌦️' }, 55: { desc: '毛毛雨', emoji: '🌦️' }, 56: { desc: '凍毛毛雨', emoji: '🌨️' }, 57: { desc: '凍毛毛雨', emoji: '🌨️' }, 61: { desc: '雨', emoji: '🌧️' }, 63: { desc: '雨', emoji: '🌧️' }, 65: { desc: '大雨', emoji: '🌧️' }, 66: { desc: '凍雨', emoji: '🌨️' }, 67: { desc: '凍雨', emoji: '🌨️' }, 71: { desc: '雪', emoji: '❄️' }, 73: { desc: '雪', emoji: '❄️' }, 75: { desc: '大雪', emoji: '❄️' }, 77: { desc: '冰雹', emoji: '🌨️' }, 80: { desc: '陣雨', emoji: '🌦️' }, 81: { desc: '陣雨', emoji: '🌦️' }, 82: { desc: '大陣雨', emoji: '🌦️' }, 85: { desc: '陣雪', emoji: '🌨️' }, 86: { desc: '大陣雪', emoji: '🌨️' }, 95: { desc: '雷陣雨', emoji: '⛈️' }, 96: { desc: '雷陣雨伴冰雹', emoji: '⛈️' }, 99: { desc: '雷陣雨伴冰雹', emoji: '⛈️' } }; return map[code] || { desc: '未知', emoji: '❓' }; } // 天氣代碼轉換
         async function fetchCoordinates(locationName) { if (!locationName) return null; const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(locationName)}&count=1&language=en&format=json`; try { const response = await fetch(url); if (!response.ok) throw new Error('地理編碼API請求失敗'); const data = await response.json(); return data.results?.[0] || null; } catch (error) { console.error("獲取座標失敗:", error); return null; } } // 獲取座標
         async function fetchWeather(lat, lon) { const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=8`; try { const response = await fetch(url); if (!response.ok) throw new Error('天氣API請求失敗'); return await response.json(); } catch (error) { console.error("獲取天氣失敗:", error); return null; } } // 獲取天氣
+        
+        // [--- 修改開始 ---]
         function updateWeatherDisplay(locationName) {
-            const container = document.getElementById('weatherMarqueeContainer');
             if (!displaySettings.showWeather || !weatherDataCache) {
-                container.style.display = 'none';
+                lastWeatherContent = ''; // 清除天氣內容
                 return;
             }
-            container.style.display = 'block';
             const { desc, emoji } = getWeatherDescriptionAndEmoji(weatherDataCache.current.weather_code);
             const temp = Math.round(weatherDataCache.current.temperature_2m);
             const displayName = cityname[locationName.toLowerCase()] || locationName;
@@ -342,10 +457,31 @@
             const weatherInfoPart = `<span style="color: ${displaySettings.weatherColor};">${desc}${emoji}${temp}°C</span>`;
             const weatherText = `<span style="color: ${displaySettings.weatherColor};">𖣔</span>${locationPart}${weatherInfoPart}`;
             
-            updateMarquee(weatherText, 'weather');
+            // 只更新天氣內容變數，不直接調用跑馬燈
             lastWeatherContent = weatherText;
-        } // 更新天氣顯示
-        async function updateWeather() { const weatherContainer = document.getElementById('weatherMarqueeContainer'); if (!displaySettings.showWeather) { weatherContainer.style.display = 'none'; return; } weatherContainer.style.display = 'block'; const locationName = displaySettings.weatherLocation.trim(); if (!locationName) { updateMarquee('請設定地點', 'weather'); return; } const coordsData = await fetchCoordinates(locationName); if (coordsData) { const { latitude, longitude } = coordsData; const data = await fetchWeather(latitude, longitude); if (data) { weatherDataCache = data; updateWeatherDisplay(locationName); } else { updateMarquee(`<span style="color: ${displaySettings.weatherColor};">無法取得天氣資訊</span>`, 'weather'); } } else { updateMarquee(`<span style="color: ${displaySettings.weatherColor};">找不到地點: ${locationName}</span>`, 'weather'); } } // 更新天氣主函式
+        }
+        // [--- 修改結束 ---]
+
+        async function updateWeather() {
+            const locationName = displaySettings.weatherLocation.trim();
+            if (!displaySettings.showWeather || !locationName) {
+                updateWeatherDisplay(null); // 傳入null來清除天氣顯示
+                return;
+            }
+            const coordsData = await fetchCoordinates(locationName);
+            if (coordsData) {
+                const { latitude, longitude } = coordsData;
+                const data = await fetchWeather(latitude, longitude);
+                if (data) {
+                    weatherDataCache = data;
+                    updateWeatherDisplay(locationName);
+                } else {
+                    lastWeatherContent = `<span style="color: ${displaySettings.weatherColor};">無法取得天氣資訊</span>`;
+                }
+            } else {
+                lastWeatherContent = `<span style="color: ${displaySettings.weatherColor};">找不到地點: ${locationName}</span>`;
+            }
+        }
         function showWeatherForecast() { if (!weatherDataCache) { const weatherContainer = document.getElementById('weatherMarqueeContainer'); weatherContainer.style.backgroundColor = '#552222'; setTimeout(() => { weatherContainer.style.backgroundColor = '' }, 500); return; } const grid = document.getElementById('weatherForecastGrid'); const title = document.getElementById('weatherForecastModalTitle'); grid.innerHTML = ''; const locationName = displaySettings.weatherLocation.trim(); const displayName = cityname[locationName.toLowerCase()] || locationName; title.textContent = `${displayName} - 未來一週預報`; for (let i = 0; i < 7; i++) { const date = new Date(weatherDataCache.daily.time[i+1]); const dayName = `周${['日', '一', '二', '三', '四', '五', '六'][date.getDay()]}`; const { desc, emoji } = getWeatherDescriptionAndEmoji(weatherDataCache.daily.weather_code[i+1]); const tempMax = Math.round(weatherDataCache.daily.temperature_2m_max[i+1]); const tempMin = Math.round(weatherDataCache.daily.temperature_2m_min[i+1]); const dayCell = document.createElement('div'); dayCell.classList.add('forecast-day'); dayCell.innerHTML = `<p class="day-name">${dayName}</p><p>${date.getMonth() + 1}/${date.getDate()}</p><p class="weather-icon">${emoji}</p><p>${desc}</p><p><span class="temp-high">${tempMax}°</span> / <span class="temp-low">${tempMin}°</span></p>`; grid.appendChild(dayCell); } document.getElementById('weatherForecastModal').classList.add('is-active'); } // 顯示天氣預報
         function setupWeatherUpdater() { clearInterval(weatherUpdateTimer); updateWeather(); weatherUpdateTimer = setInterval(updateWeather, 10 * 60 * 1000); } // 設定天氣更新器 (每10分鐘)
         // --- 頁面載入與事件綁定 ---
