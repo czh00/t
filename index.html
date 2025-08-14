@@ -94,7 +94,7 @@
 		/* --- 共用元件：日曆 (月曆/週曆/年曆) --- */
 		.calendar-content, .weekly-calendar-content { background-color: #2c2c2c; margin: auto; padding: 20px; border: 1px solid #888; border-radius: 10px; width: 95%; max-width: 900px; }
         .yearly-calendar-content { background-color: #2c2c2c; margin: auto; padding: 20px; border: 1px solid #888; border-radius: 10px; width: 95%; max-width: 1400px; }
-		.calendar-weekdays, .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin: -0.3vw; }
+		.calendar-weekdays, .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
 		.calendar-weekdays div { font-weight: bold; padding-bottom: 5px; text-align: center; }
 		body.layout-digital .calendar-weekdays div { color: #aaa; }
 		body.layout-analog .calendar-weekdays div { color: var(--calendar-weekday-color); }
@@ -253,7 +253,6 @@
 			color: var(--calendar-header-color);
 			cursor: pointer;
 			transition: color 0.3s;
-			margin: -0.3vw;
 		}
 		.calendar-container .calendar-header:hover { filter: brightness(1.2); }
 		.calendar-container .calendar-grid {
