@@ -98,14 +98,14 @@
 		.calendar-weekdays div { font-weight: bold; padding-bottom: 5px; text-align: center; }
 		body.layout-digital .calendar-weekdays div { color: #aaa; }
 		body.layout-analog .calendar-weekdays div { color: var(--calendar-weekday-color); }
-		.calendar-day { background-color: #444; border-radius: 5px; padding: 5px; min-height: 80px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; font-size: 0.9em; border: 0px solid #555; cursor: pointer; transition: background-color 0.3s; }
+		.calendar-day { background-color: #444; border-radius: 5px; padding: 5px; min-height: 60px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; font-size: 0.9em; border: 0px solid #555; cursor: pointer; transition: background-color 0.3s; }
         .calendar-day:hover { background-color: #5e5e5e; }
 		.calendar-day.other-month { color: #777; background-color: #3a3a3a; cursor: default; }
 		.calendar-day.is-today { border-color: #00FF00; box-shadow: 0 0 5px #00FF00; }
 		body.layout-analog .calendar-day.is-today { border-color: var(--highlight-color); box-shadow: 0 0 5px var(--highlight-color); }
-		.calendar-day .gregorian-day { font-size: 1.2em; font-weight: bold; margin: -0.3vw; }
-		.calendar-day .lunar-day { font-size: 0.8em; color: #ccc; margin: -0.2vw; }
-        .calendar-day .event-indicator { font-size: 0.75em; padding: 1px 4px; border-radius: 3px; margin-top: 3px; display: block; text-align: center; width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin: -0.2vw; }
+		.calendar-day .gregorian-day { font-size: 1.2em; font-weight: bold; margin: -0.2; }
+		.calendar-day .lunar-day { font-size: 0.8em; color: #ccc; margin: -0.2; }
+        .calendar-day .event-indicator { font-size: 0.75em; padding: 1px 4px; border-radius: 3px; margin-top: 3px; display: block; text-align: center; width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin: 0; }
         .event-indicator.holiday { background-color: #007bff; color: white; }
         .event-indicator.jieqi { background-color: #28a745; color: white; }
 		.weekly-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
@@ -189,7 +189,6 @@
 		/* --- 類比版面專用樣式 --- */
 		#analog-layout-wrapper {
 			display: flex;
-			/* 預設為垂直排列 (直向模式) */
 			flex-direction: column;
 			align-items: center;
 			justify-content: center;
@@ -200,18 +199,20 @@
 			top: 50%;
 			left: 50%;
 			transform: translate(-50%, -50%);
+			width: 100%;
+			height: 100%;
 		}
-		/* 僅在螢幕為橫向時，才改變佈局為水平排列 */
 		@media (orientation: landscape) {
 			#analog-layout-wrapper {
 				flex-direction: row;
-				gap: 5vw;
+				justify-content: center;
+				align-items: center;
+				gap: 8vw;
 				width: 95vw;
 				height: 90vh;
 			}
 		}
 		.clock-container {
-			/* 在直向模式下，時鐘可以佔用較多寬度；在橫向模式下，其大小會被父容器和長寬比限制 */
 			width: clamp(300px, 80vw, 600px);
 			aspect-ratio: 1 / 1;
 			position: relative;
@@ -221,7 +222,7 @@
 			align-items: center;
 			background-color: var(--page-background-color);
 			box-shadow: 0 0 0 0px var(--tick-color);
-			flex-shrink: 1; /* 允許容器在 flex 佈局中縮小 */
+			flex-shrink: 1;
 		}
 		.clock-center-dot {
 			position: absolute;
@@ -229,7 +230,7 @@
 			height: 15px;
 			background-color: var(--tick-color);
 			border-radius: 50%;
-			z-index: 11; /* 確保在指針之上 */
+			z-index: 11;
 			cursor: pointer;
 			transition: transform 0.2s ease;
 		}
@@ -242,7 +243,6 @@
 		.minute-hand i { position: absolute; top: 15%; left: 50%; width: 6px; height: 35%; background-color: var(--minute-hand-color); transform: translateX(-50%); border-radius: 2px; }
 		.second-hand i { position: absolute; top: 10%; left: 50%; width: 2px; height: 40%; background-color: var(--second-hand-color); transform: translateX(-50%); border-radius: 1px; }
 		
-		/* --- [已修改] 刻度與數字定位 --- */
 		.tick-wrapper {
 			position: absolute;
 			top: 0;
@@ -259,25 +259,22 @@
 		.tick-hour { height: 12px; width: 3px; top: 0; }
 		.tick-minute { height: 6px; width: 1px; top: 0; opacity: 0.7; }
 
-		/* 數字容器，位於旋轉的 .tick-wrapper 內部 */
 		.number {
 			position: absolute;
-			top: 25px; /* 將數字從中心點向外推移的固定距離 */
+			top: 25px;
 			left: 50%;
-			transform: translateX(-50%); /* 水平置中 */
+			transform: translateX(-50%);
 			color: var(--tick-color);
 			font-family: 'Inter', sans-serif;
 			font-size: clamp(0.8rem, 2.2vw, 1.4rem);
 			font-weight: 700;
 		}
-		/* 數字本身，用於反向旋轉以保持直立 */
 		.number div {
 			transform: rotate(calc(-1 * var(--rotation)));
 		}
 		
 		.calendar-container {
-			width: 100%;
-			max-width: 400px;
+			width: clamp(350px, 30vw, 500px);
 			text-align: center;
 			z-index: 10;
 			display: flex;
@@ -296,21 +293,55 @@
 		.calendar-container .calendar-grid {
 			background-color: transparent;
 			width: 100%;
-			gap: 1px;
 		}
+		.calendar-container .calendar-grid,
 		.calendar-container .calendar-weekdays {
-			gap: 1px;
+			gap: 2px;
 		}
+		/* [修改] 主畫面月曆對齊修正 */
 		.calendar-container .calendar-day {
 			background-color: transparent;
 			border-color: transparent;
 			min-height: auto;
-			max-height: 8vw;
-			padding: 0rem 0;
+			padding: 0.3rem 0 1em 0; /* 增加底部內距為事件標示預留空間 */
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			position: relative; /* 設為相對定位，作為事件容器的基準 */
 		}
 		.calendar-container .calendar-day:hover { background-color: #333; }
 		.calendar-container .calendar-day.is-today { background-color: transparent; }
-		
+		.calendar-container .calendar-day .gregorian-day {
+			font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+			font-weight: bold;
+		}
+		.calendar-container .calendar-day .lunar-day {
+			font-size: clamp(0.7rem, 1.1vw, 0.9rem);
+			color: var(--calendar-lunar-color);
+		}
+		.calendar-container .event-container {
+			position: absolute; /* 絕對定位，使其脫離文檔流 */
+			bottom: 4px; /* 距離儲存格底部 4px */
+			left: 50%;
+			transform: translateX(-50%);
+			width: 90%;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 2px;
+		}
+		.calendar-container .event-container .event-indicator {
+			font-size: clamp(0.6rem, 0.9vw, 0.75rem);
+			width: 100%;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			padding: 1px 3px;
+			border-radius: 3px;
+			margin: 0; /* 移除預設邊距 */
+		}
+
 		.weather-display {
 			font-size: clamp(1.2rem, 4vw, 2rem);
 			font-weight: bold;
@@ -627,7 +658,7 @@
 		function getShiChen(h) { const shichenMap = { 23: '子', 0: '子', 1: '丑', 2: '丑', 3: '寅', 4: '寅', 5: '卯', 6: '卯', 7: '辰', 8: '辰', 9: '巳', 10: '巳', 11: '午', 12: '午', 13: '未', 14: '未', 15: '申', 16: '申', 17: '酉', 18: '酉', 19: '戌', 20: '戌', 21: '亥', 22: '亥' }; return shichenMap[h] || ''; } // 根據小時返回時辰
         function getShiChenTimeRange(shichenName) { const timeRanges = { '子': '23:00 - 00:59', '丑': '01:00 - 02:59', '寅': '03:00 - 04:59', '卯': '05:00 - 06:59', '辰': '07:00 - 08:59', '巳': '09:00 - 10:59', '午': '11:00 - 12:59', '未': '13:00 - 14:59', '申': '15:00 - 16:59', '酉': '17:00 - 18:59', '戌': '19:00 - 20:59', '亥': '21:00 - 22:59' }; return timeRanges[shichenName] || ''; } // 根據時辰返回時間範圍
 		function getDetailedTimePeriod(hour) { const periodMap = { 0: '凌晨', 1: '凌晨', 2: '凌晨', 3: '凌晨', 4: '凌晨', 5: '清晨', 6: '清晨', 7: '清晨', 8: '清晨', 9: '上午', 10: '上午', 11: '上午', 12: '中午', 13: '下午', 14: '下午', 15: '下午', 16: '下午', 17: '傍晚', 18: '傍晚', 19: '夜晚', 20: '夜晚', 21: '夜晚', 22: '夜晚', 23: '深夜' }; return periodMap[hour] || ''; } // 根據小時返回詳細時段
-		function getWeatherDescriptionAndEmoji(code) { const map = { 0: { desc: '晴', emoji: '☀️' }, 1: { desc: '多雲時晴', emoji: '�️' }, 2: { desc: '局部多雲', emoji: '⛅️' }, 3: { desc: '陰', emoji: '☁️' }, 45: { desc: '霧', emoji: '🌫️' }, 48: { desc: '凍霧', emoji: '🌫️' }, 51: { desc: '毛毛雨', emoji: '🌦️' }, 53: { desc: '毛毛雨', emoji: '🌦️' }, 55: { desc: '毛毛雨', emoji: '🌦️' }, 56: { desc: '凍毛毛雨', emoji: '🌨️' }, 57: { desc: '凍毛毛雨', emoji: '🌨️' }, 61: { desc: '雨', emoji: '🌧️' }, 63: { desc: '雨', emoji: '🌧️' }, 65: { desc: '大雨', emoji: '🌧️' }, 66: { desc: '凍雨', emoji: '🌨️' }, 67: { desc: '凍雨', emoji: '🌨️' }, 71: { desc: '雪', emoji: '❄️' }, 73: { desc: '雪', emoji: '❄️' }, 75: { desc: '大雪', emoji: '❄️' }, 77: { desc: '冰雹', emoji: '🌨️' }, 80: { desc: '陣雨', emoji: '🌦️' }, 81: { desc: '陣雨', emoji: '🌦️' }, 82: { desc: '大陣雨', emoji: '🌦️' }, 85: { desc: '陣雪', emoji: '🌨️' }, 86: { desc: '大陣雪', emoji: '🌨️' }, 95: { desc: '雷陣雨', emoji: '⛈️' }, 96: { desc: '雷陣雨伴冰雹', emoji: '⛈️' }, 99: { desc: '雷陣雨伴冰雹', emoji: '⛈️' } }; return map[code] || { desc: '未知', emoji: '❓' }; } // 天氣代碼轉換
+		function getWeatherDescriptionAndEmoji(code) { const map = { 0: { desc: '晴', emoji: '☀️' }, 1: { desc: '多雲時晴', emoji: '️' }, 2: { desc: '局部多雲', emoji: '⛅️' }, 3: { desc: '陰', emoji: '☁️' }, 45: { desc: '霧', emoji: '🌫️' }, 48: { desc: '凍霧', emoji: '🌫️' }, 51: { desc: '毛毛雨', emoji: '🌦️' }, 53: { desc: '毛毛雨', emoji: '🌦️' }, 55: { desc: '毛毛雨', emoji: '🌦️' }, 56: { desc: '凍毛毛雨', emoji: '🌨️' }, 57: { desc: '凍毛毛雨', emoji: '🌨️' }, 61: { desc: '雨', emoji: '🌧️' }, 63: { desc: '雨', emoji: '🌧️' }, 65: { desc: '大雨', emoji: '🌧️' }, 66: { desc: '凍雨', emoji: '🌨️' }, 67: { desc: '凍雨', emoji: '🌨️' }, 71: { desc: '雪', emoji: '❄️' }, 73: { desc: '雪', emoji: '❄️' }, 75: { desc: '大雪', emoji: '❄️' }, 77: { desc: '冰雹', emoji: '🌨️' }, 80: { desc: '陣雨', emoji: '🌦️' }, 81: { desc: '陣雨', emoji: '🌦️' }, 82: { desc: '大陣雨', emoji: '🌦️' }, 85: { desc: '陣雪', emoji: '🌨️' }, 86: { desc: '大陣雪', emoji: '🌨️' }, 95: { desc: '雷陣雨', emoji: '⛈️' }, 96: { desc: '雷陣雨伴冰雹', emoji: '⛈️' }, 99: { desc: '雷陣雨伴冰雹', emoji: '⛈️' } }; return map[code] || { desc: '未知', emoji: '❓' }; } // 天氣代碼轉換
 
 		// --- 數位版面更新 ---
 		function updateDigitalClock() { // 更新數位時鐘所有顯示內容
@@ -781,11 +812,28 @@
 			for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) { // 遍歷當月每一天
 				const cell = document.createElement('div'); cell.className = 'calendar-day'; // 建立日期格子
 				const date = new Date(year, month, dayNum); cell.dataset.date = date.toISOString(); cell.onclick = () => showDateDetails(date); // 設定點擊事件
-				const lunar = Solar.fromDate(date).getLunar(), lunarDayText = lunar.getDay() === 1 ? s2t(lunar.getMonthInChinese()) + '月' : s2t(lunar.getDayInChinese()); // 取得農曆
-				cell.innerHTML = `<div class="gregorian-day">${dayNum}</div><div class="lunar-day">${lunarDayText}</div>`; // 填入公農曆
+				
+				const lunar = Solar.fromDate(date).getLunar();
+				const lunarDayText = lunar.getDay() === 1 ? s2t(lunar.getMonthInChinese()) + '月' : s2t(lunar.getDayInChinese());
+
+				let eventHtml = '';
+				const holiday = holidays.find(h => h.date.toDateString() === date.toDateString());
+				if (holiday) {
+					eventHtml += `<span class="event-indicator holiday">${holiday.name}</span>`;
+				}
+				const jq = jieqi.find(j => j.date.toDateString() === date.toDateString());
+				if (jq) {
+					eventHtml += `<span class="event-indicator jieqi">${jq.name}</span>`;
+				}
+				
+				// [修改] 將事件標示包在一個容器中，以便使用絕對定位
+				cell.innerHTML = `
+					<div class="gregorian-day">${dayNum}</div>
+					<div class="lunar-day">${lunarDayText}</div>
+					${eventHtml ? `<div class="event-container">${eventHtml}</div>` : ''}
+				`;
+
 				if (dayNum === today) { cell.classList.add('is-today'); } // 標示今天
-				const holiday = holidays.find(h => h.date.toDateString() === date.toDateString()); if (holiday) cell.innerHTML += `<span class="event-indicator holiday">${holiday.name}</span>`; // 標示節日
-				const jq = jieqi.find(j => j.date.toDateString() === date.toDateString()); if (jq) cell.innerHTML += `<span class="event-indicator jieqi">${jq.name}</span>`; // 標示節氣
 				gridEl.appendChild(cell); // 加入DOM
 			}
 		}
