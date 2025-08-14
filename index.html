@@ -202,10 +202,6 @@
 			background-color: var(--page-background-color);
 			box-shadow: 0 0 0 0px var(--tick-color); flex-shrink: 0;
 		}
-		/* [移除] 舊的中央點，由新的可點擊圓點取代 */
-		/* .clock-container::before { content: ''; position: absolute; width: 10px; height: 10px; background-color: var(--tick-color); border-radius: 50%; z-index: 1; } */
-		
-		/* [新增] 時鐘中央可點擊的圓點 */
 		.clock-center-dot {
 			position: absolute;
 			width: 15px;
@@ -226,17 +222,14 @@
 		.second-hand i { position: absolute; top: 10%; left: 50%; width: 2px; height: 40%; background-color: var(--second-hand-color); transform: translateX(-50%); border-radius: 1px; }
 		.number, .tick-wrapper { position: absolute; left: 0; width: 100%; height: 100%; color: var(--tick-color); font-family: 'Inter', sans-serif; }
 		
-		/* [修正] 調整數字大小與位置 */
 		.number div {
 			position: absolute;
 			top: -18px;
 			width: 100%;
 			height: 100%;
-			/* [修正] 縮小字體以匹配日曆 */
 			font-size: clamp(0.8rem, 2.2vw, 1.4rem);
 			font-weight: 700;
 			text-align: center;
-			/* [修正] 將數字向外推，更靠近刻度 */
 			transform: rotate(var(--rotation)) translateY(calc(-50% + 2.5rem)) rotate(calc(-1 * var(--rotation)));
 		}
 		.tick-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
@@ -253,11 +246,10 @@
 			flex-direction: column;
 			flex-shrink: 1;
 		}
-		/* [修正] 縮減日曆高度 */
 		.calendar-container .calendar-header {
 			font-size: clamp(1.2rem, 4vw, 2rem);
 			font-weight: bold;
-			margin-bottom: 0.5rem; /* 減少邊距 */
+			margin-bottom: 0.5rem;
 			color: var(--calendar-header-color);
 			cursor: pointer;
 			transition: color 0.3s;
@@ -266,26 +258,25 @@
 		.calendar-container .calendar-grid {
 			background-color: transparent;
 			width: 100%;
-			gap: 1px; /* 減少間距 */
+			gap: 1px;
 		}
 		.calendar-container .calendar-weekdays {
-			gap: 1px; /* 減少間距 */
+			gap: 1px;
 		}
 		.calendar-container .calendar-day {
 			background-color: transparent;
 			border-color: transparent;
 			min-height: auto;
 			max-height: 8vw;
-			padding: 0rem 0; /* 減少內距 */
+			padding: 0rem 0;
 		}
 		.calendar-container .calendar-day:hover { background-color: #333; }
 		.calendar-container .calendar-day.is-today { background-color: transparent; }
 		
-		/* [修正] 縮減天氣顯示高度 */
 		.weather-display {
 			font-size: clamp(1.2rem, 4vw, 2rem);
 			font-weight: bold;
-			margin-top: 0.5rem; /* 減少邊距 */
+			margin-top: 0.5rem;
 			cursor: pointer;
 			transition: filter 0.3s;
 			overflow: hidden;
@@ -333,7 +324,6 @@
 				<div class="hand hour-hand"><i></i></div>
 				<div class="hand minute-hand"><i></i></div>
 				<div class="hand second-hand"><i></i></div>
-				<!-- [新增] 時鐘中央圓點 -->
 				<div class="clock-center-dot" id="clockCenterDot" title="查看時辰宜忌"></div>
 				<div id="ticks-container"></div>
 				<div id="numbers-container"></div>
@@ -589,7 +579,7 @@
 			if (Array.isArray(input)) { return input.map(item => item.split('').map(char => s2tMap[char] || char).join('')); } // 如果是陣列，遍歷轉換
 			return input.split('').map(char => s2tMap[char] || char).join(''); // 如果是字串，逐字轉換
 		}
-		function getShengXiaoEmoji(shengXiaoName) { const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐅', '兔': '🐇', '龍': '🐉', '蛇': '🐍', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '🐶', '豬': '🐖' }; return emojiMap[shengXiaoName] || ''; } // 根據生肖名返回Emoji
+		function getShengXiaoEmoji(shengXiaoName) { const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐅', '兔': '🐇', '龍': '🐉', '蛇': '🐍', '馬': '🐎', '羊': '🐑', '猴': '🐒', '雞': '�', '狗': '🐶', '豬': '🐖' }; return emojiMap[shengXiaoName] || ''; } // 根據生肖名返回Emoji
 		function getJieqiDescription(jieqiName) { const descriptions = { '立春': '春季開始，萬物復甦。', '雨水': '降雨增多，春耕開始。', '驚蟄': '春雷響動，驚醒冬眠動物。', '春分': '晝夜等長，春意盎然。', '清明': '氣候清爽明朗，掃墓祭祖。', '穀雨': '雨水滋潤，穀物生長。', '立夏': '夏季開始，萬物繁茂。', '小滿': '夏熟作物籽粒開始飽滿。', '芒種': '收穫與播種的時節。', '夏至': '北半球白晝最長，盛夏開始。', '小暑': '天氣開始炎熱。', '大暑': '一年中最炎熱的時期。', '立秋': '秋季開始，氣溫漸降。', '處暑': '暑氣漸退，天氣轉涼。', '白露': '水氣凝結成露，天氣漸寒。', '秋分': '晝夜等長，秋高氣爽。', '寒露': '氣溫更低，天氣轉冷。', '霜降': '天氣漸冷，露水凝結成霜。', '立冬': '冬季開始，萬物收藏。', '小雪': '開始降雪，但雪量不大。', '大雪': '降雪量增多，天氣更冷。', '冬至': '北半球白晝最短，數九寒天開始。', '小寒': '天氣寒冷，尚未達到最冷。', '大寒': '一年中最寒冷的時期。' }; return descriptions[jieqiName] || '此節氣無詳細說明。'; } // 根據節氣名返回描述
 		function getHolidaysForYear(year) { if (yearlyDataCache.year === year && yearlyDataCache.holidays.length > 0) return yearlyDataCache.holidays; const holidays = []; const fixedHolidays = [ { name: '元旦', m: 0, d: 1 }, { name: '和平紀念日', m: 1, d: 28 }, { name: '兒童節', m: 3, d: 4 }, { name: '勞動節', m: 4, d: 1 }, { name: '國慶日', m: 9, d: 10 }, { name: '聖誕節', m: 11, d: 25 } ]; fixedHolidays.forEach(h => holidays.push({ name: h.name, date: new Date(year, h.m, h.d) })); const lunarHolidays = [{m:1,d:1,n:'農曆新年'}, {m:1,d:15,n:'元宵節'}, {m:5,d:5,n:'端午節'}, {m:7,d:7,n:'七夕'}, {m:7,d:15,n:'中元節'}, {m:8,d:15,n:'中秋節'}, {m:9,d:9,n:'重陽節'}, {m:12,d:8,n:'臘八節'}]; lunarHolidays.forEach(lh => { const solarDate = Lunar.fromYmd(year, lh.m, lh.d).getSolar(); holidays.push({ name: lh.n, date: new Date(solarDate.getYear(), solarDate.getMonth() - 1, solarDate.getDay()) }); }); const lunarNewYearSolar = Lunar.fromYmd(year, 1, 1).getSolar(); holidays.push({ name: '除夕', date: new Date(lunarNewYearSolar.getYear(), lunarNewYearSolar.getMonth() - 1, lunarNewYearSolar.getDay() - 1) }); const qingmingJieqi = getJieqiForYear(year).find(jq => jq.name === '清明'); if(qingmingJieqi) holidays.push({ name: '清明節', date: qingmingJieqi.date }); const mayFirst = new Date(year, 4, 1); const mothersDay = new Date(year, 4, 1 + (7 - mayFirst.getDay() + 7) % 7 + 7); holidays.push({ name: '母親節', date: mothersDay }); yearlyDataCache.holidays = holidays.sort((a, b) => a.date.getTime() - b.date.getTime()); return yearlyDataCache.holidays; } // 計算指定年份的所有主要節日
 		function getJieqiForYear(year) { if (yearlyDataCache.year === year && yearlyDataCache.jieqi.length > 0) return yearlyDataCache.jieqi; const jieqiPinyinMap = { 'LI_CHUN': '立春', 'YU_SHUI': '雨水', 'JING_ZHE': '驚蟄', 'CHUN_FEN': '春分', 'QING_MING': '清明', 'GU_YU': '穀雨', 'LI_XIA': '立夏', 'XIAO_MAN': '小滿', 'MANG_ZHONG': '芒種', 'XIA_ZHI': '夏至', 'XIAO_SHU': '小暑', 'DA_SHU': '大暑', 'LI_QIU': '立秋', 'CHU_SHU': '處暑', 'BAI_LU': '白露', 'QIU_FEN': '秋分', 'HAN_LU': '寒露', 'SHUANG_JIANG': '霜降', 'LI_DONG': '立冬', 'XIAO_XUE': '小雪', 'DA_XUE': '大雪', 'DONG_ZHI': '冬至', 'XIAO_HAN': '小寒', 'DA_HAN': '大寒' }; const jieqiSimplifiedMap = { '惊蛰': '驚蟄', '小满': '小滿', '芒种': '芒種', '处暑': '處暑', '谷雨': '穀雨' }; const jieqiTable = Lunar.fromYmd(year, 1, 1).getJieQiTable(); yearlyDataCache.jieqi = Object.entries(jieqiTable).map(([name, dateStr]) => { const traditionalName = jieqiPinyinMap[name] || jieqiSimplifiedMap[name] || name; return { name: traditionalName, date: new Date(dateStr) }; }).sort((a, b) => a.date.getTime() - b.date.getTime()); return yearlyDataCache.jieqi; } // 計算指定年份的所有節氣
@@ -745,26 +735,31 @@
 				gridEl.appendChild(cell); // 加入DOM
 			}
 		}
-		function checkAnalogWeatherMarquee() { // 檢查類比版天氣是否需要跑馬燈
-			const container = document.getElementById('analog-weather-display'); // 取得容器
-			const inner = container.querySelector('.analog-weather-marquee-inner'); // 取得內部容器
-			const content = container.querySelector('.analog-weather-marquee-content:first-child'); // 取得內容
-			if (!container || !inner || !content) return; // 防呆
-			requestAnimationFrame(() => { // 請求下一影格
-				const contentWidth = content.scrollWidth; // 取得內容寬度
-				const containerWidth = container.offsetWidth; // 取得容器寬度
-				if (contentWidth > containerWidth) { // 如果內容較寬
-					inner.classList.add('scrolling'); // 加入滾動class
-					inner.style.animationDuration = `${contentWidth / 40}s`; // 計算滾動時間
-				} else { // 如果內容較短
-					inner.classList.remove('scrolling'); // 移除滾動class
-					inner.style.animationDuration = ''; // 清除時間
+		function checkAnalogWeatherMarquee() { // [修正] 檢查類比版天氣是否需要跑馬燈
+			const container = document.getElementById('analog-weather-display');
+			const inner = container.querySelector('.analog-weather-marquee-inner');
+			const content = container.querySelector('.analog-weather-marquee-content:first-child');
+			const duplicate = container.querySelector('.analog-weather-marquee-content-duplicate');
+			if (!container || !inner || !content || !duplicate) return;
+
+			requestAnimationFrame(() => {
+				const contentWidth = content.scrollWidth;
+				const containerWidth = container.offsetWidth;
+
+				if (contentWidth > containerWidth) {
+					duplicate.innerHTML = content.innerHTML; // 只有在需要滾動時才填入複製的內容
+					inner.classList.add('scrolling');
+					inner.style.animationDuration = `${contentWidth / 40}s`;
+				} else {
+					duplicate.innerHTML = ''; // 如果不需要滾動，就清空複製的內容
+					inner.classList.remove('scrolling');
+					inner.style.animationDuration = '';
 				}
 			});
 		}
 
 		// --- 共用UI與資料更新 ---
-		function updateWeatherDisplay() { // 更新天氣顯示 (共用邏輯)
+		function updateWeatherDisplay() { // [修正] 更新天氣顯示 (共用邏輯)
 			if (!settings.showWeather) { // 如果不顯示天氣
 				if (settings.layoutMode === 'digital') { lastWeatherContent = ''; updateDigitalClock(); } // 清空數位版天氣
 				else { document.getElementById('analog-weather-display').style.display = 'none'; } // 隱藏類比版天氣
@@ -784,9 +779,11 @@
 				lastWeatherContent = weatherText; // 更新快取
 				updateMarquee(weatherText, 'weather'); // 更新跑馬燈
 			} else { // 如果是類比版
-				const contentSpans = document.querySelectorAll('.analog-weather-marquee-content'); // 取得內容元素
-				contentSpans.forEach(span => span.innerHTML = weatherText); // 設定內容
-				checkAnalogWeatherMarquee(); // 檢查是否需要滾動
+				const mainContentSpan = document.querySelector('#analog-weather-display .analog-weather-marquee-content:not(.analog-weather-marquee-content-duplicate)');
+				if (mainContentSpan) {
+					mainContentSpan.innerHTML = weatherText; // 只更新主要的內容
+				}
+				checkAnalogWeatherMarquee(); // 讓這個函式去決定是否要顯示複製的內容
 			}
 		}
 		async function updateWeather() { // 獲取天氣資料
@@ -846,7 +843,6 @@
 			// 類比版面點擊事件
 			document.getElementById('analog-calendar-header').onclick = () => { calendarDate = new Date(); generateCalendarPopup(calendarDate.getFullYear(), calendarDate.getMonth()); document.getElementById('calendarModal').classList.add('is-active'); };
 			document.getElementById('analog-weather-display').onclick = showWeatherForecast;
-			// [新增] 類比時鐘中央圓點點擊事件
 			const clockCenterDot = document.getElementById('clockCenterDot');
 			if (clockCenterDot) {
 				clockCenterDot.onclick = () => {
