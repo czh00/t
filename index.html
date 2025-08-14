@@ -47,7 +47,7 @@
 		#calendarModal, #weeklyCalendarModal, #yearlyCalendarModal { z-index: 110; }
 		#dateDetailsModal, #shichenDetailsModal, #weatherForecastModal, #hourlyWeatherModal { z-index: 120; }
         #settingsModal { z-index: 130; }
-		.modal-content { background-color: #333; margin: auto; padding: 20px; border: 1px solid #888; width: 90%; max-width: 600px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); color: #e0e0e0; text-align: center; display: flex; flex-direction: column; gap: 15px; max-height: 90vh; overflow-y: auto; }
+		.modal-content { background-color: #333; margin: auto; padding: 20px; border: 1px solid #888; width: 90%; max-width: 600px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); color: #e0e0e0; text-align: center; display: flex; flex-direction: column; gap: 0px; max-height: 90vh; overflow-y: auto; }
 		.modal-header { display: flex; justify-content: space-between; align-items: center; padding: 0 10px; }
 		.modal-header h2 { margin: 0; font-size: 1.5em; color: #00FF00; }
 		.modal-header button { background: none; border: none; color: #00FF00; font-size: 2em; cursor: pointer; }
@@ -65,7 +65,7 @@
 
 		/* --- 共用元件：設定彈窗 --- */
 		#settingsModal .modal-content { max-width: 600px; }
-		.setting-item { margin-bottom: 15px; display: flex; align-items: center; flex-wrap: wrap; gap: 10px;}
+		.setting-item { margin-bottom: 6px; display: flex; align-items: center; flex-wrap: wrap; gap: 10px;}
 		.setting-item label:first-child { margin-right: 10px; flex-shrink: 0;}
 		.switch { position: relative; display: inline-block; width: 60px; height: 34px; flex-shrink: 0; }
 		.switch input { opacity: 0; width: 0; height: 0; }
@@ -94,18 +94,18 @@
 		/* --- 共用元件：日曆 (月曆/週曆/年曆) --- */
 		.calendar-content, .weekly-calendar-content { background-color: #2c2c2c; margin: auto; padding: 20px; border: 1px solid #888; border-radius: 10px; width: 95%; max-width: 900px; }
         .yearly-calendar-content { background-color: #2c2c2c; margin: auto; padding: 20px; border: 1px solid #888; border-radius: 10px; width: 95%; max-width: 1400px; }
-		.calendar-weekdays, .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+		.calendar-weekdays, .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin: -0.3vw; }
 		.calendar-weekdays div { font-weight: bold; padding-bottom: 5px; text-align: center; }
 		body.layout-digital .calendar-weekdays div { color: #aaa; }
 		body.layout-analog .calendar-weekdays div { color: var(--calendar-weekday-color); }
-		.calendar-day { background-color: #444; border-radius: 5px; padding: 5px; min-height: 80px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; font-size: 0.9em; border: 1px solid #555; cursor: pointer; transition: background-color 0.3s; }
+		.calendar-day { background-color: #444; border-radius: 5px; padding: 5px; min-height: 80px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; font-size: 0.9em; border: 0px solid #555; cursor: pointer; transition: background-color 0.3s; }
         .calendar-day:hover { background-color: #5e5e5e; }
 		.calendar-day.other-month { color: #777; background-color: #3a3a3a; cursor: default; }
 		.calendar-day.is-today { border-color: #00FF00; box-shadow: 0 0 5px #00FF00; }
 		body.layout-analog .calendar-day.is-today { border-color: var(--highlight-color); box-shadow: 0 0 5px var(--highlight-color); }
-		.calendar-day .gregorian-day { font-size: 1.2em; font-weight: bold; }
-		.calendar-day .lunar-day { font-size: 0.8em; color: #ccc; }
-        .calendar-day .event-indicator { font-size: 0.75em; padding: 1px 4px; border-radius: 3px; margin-top: 3px; display: block; text-align: center; width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+		.calendar-day .gregorian-day { font-size: 1.2em; font-weight: bold; margin: -0.3vw; }
+		.calendar-day .lunar-day { font-size: 0.8em; color: #ccc; margin: -0.2vw; }
+        .calendar-day .event-indicator { font-size: 0.75em; padding: 1px 4px; border-radius: 3px; margin-top: 3px; display: block; text-align: center; width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin: -0.2vw; }
         .event-indicator.holiday { background-color: #007bff; color: white; }
         .event-indicator.jieqi { background-color: #28a745; color: white; }
 		.weekly-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
@@ -253,6 +253,7 @@
 			color: var(--calendar-header-color);
 			cursor: pointer;
 			transition: color 0.3s;
+			margin: -0.3vw;
 		}
 		.calendar-container .calendar-header:hover { filter: brightness(1.2); }
 		.calendar-container .calendar-grid {
@@ -282,6 +283,7 @@
 			overflow: hidden;
 			white-space: nowrap;
 			position: relative;
+			margin: -0.3vw;
 		}
 		.weather-display:hover { filter: brightness(1.2); }
 		.analog-weather-marquee-inner { display: flex; width: fit-content; will-change: transform; }
@@ -352,7 +354,6 @@
 					<label class="switch"><input id="layoutSwitch" type="checkbox"><span class="slider"></span></label>
 				</div>
 			</div>
-			<hr>
 			<!-- 數位版設定 -->
 			<div id="digital-settings">
 				<div class="settings-columns-container">
@@ -396,7 +397,6 @@
 					</div>
 				</div>
 			</div>
-			<hr>
 			<!-- 共用設定 -->
 			<div id="common-settings">
 				<div class="setting-item"><label for="showWeather">天氣資訊</label><div class="setting-controls"><label class="switch"><input id="showWeather" type="checkbox"><span class="slider"></span></label><input id="weatherColor" type="color"></div></div>
