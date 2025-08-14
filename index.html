@@ -186,7 +186,7 @@
 		#text-scanline-overlay.active.pattern-a { display: block; background-image: repeating-linear-gradient(to bottom, transparent, transparent 2px, var(--page-background-color) 2px, var(--page-background-color) 4px); }
 		#text-scanline-overlay.active.pattern-b { display: block; background-image: repeating-linear-gradient(to bottom, var(--page-background-color) 0, var(--page-background-color) 2px, transparent 2px, transparent 4px); }
 
-		/* --- 類比版面專用樣式 (已修改) --- */
+		/* --- 類比版面專用樣式 --- */
 		#analog-layout-wrapper {
 			display: flex;
 			/* 預設為垂直排列 (直向模式) */
@@ -241,22 +241,39 @@
 		.hour-hand i { position: absolute; top: 25%; left: 50%; width: 10px; height: 25%; background-color: var(--hour-hand-color); transform: translateX(-50%); border-radius: 2px; }
 		.minute-hand i { position: absolute; top: 15%; left: 50%; width: 6px; height: 35%; background-color: var(--minute-hand-color); transform: translateX(-50%); border-radius: 2px; }
 		.second-hand i { position: absolute; top: 10%; left: 50%; width: 2px; height: 40%; background-color: var(--second-hand-color); transform: translateX(-50%); border-radius: 1px; }
-		.number, .tick-wrapper { position: absolute; left: 0; width: 100%; height: 100%; color: var(--tick-color); font-family: 'Inter', sans-serif; }
 		
-		.number div {
+		/* --- [已修改] 刻度與數字定位 --- */
+		.tick-wrapper {
 			position: absolute;
-			top: -16px;
+			top: 0;
+			left: 0;
 			width: 100%;
 			height: 100%;
-			font-size: clamp(0.8rem, 2.2vw, 1.4rem);
-			font-weight: 700;
-			text-align: center;
-			transform: rotate(var(--rotation)) translateY(calc(-50% + 2.5rem)) rotate(calc(-1 * var(--rotation)));
 		}
-		.tick-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-		.tick { position: absolute; background: var(--tick-color); left: 50%; transform: translateX(-50%); }
+		.tick {
+			position: absolute;
+			background: var(--tick-color);
+			left: 50%;
+			transform: translateX(-50%);
+		}
 		.tick-hour { height: 12px; width: 3px; top: 0; }
 		.tick-minute { height: 6px; width: 1px; top: 0; opacity: 0.7; }
+
+		/* 數字容器，位於旋轉的 .tick-wrapper 內部 */
+		.number {
+			position: absolute;
+			top: 25px; /* 將數字從中心點向外推移的固定距離 */
+			left: 50%;
+			transform: translateX(-50%); /* 水平置中 */
+			color: var(--tick-color);
+			font-family: 'Inter', sans-serif;
+			font-size: clamp(0.8rem, 2.2vw, 1.4rem);
+			font-weight: 700;
+		}
+		/* 數字本身，用於反向旋轉以保持直立 */
+		.number div {
+			transform: rotate(calc(-1 * var(--rotation)));
+		}
 		
 		.calendar-container {
 			width: 100%;
@@ -348,7 +365,7 @@
 				<div class="hand second-hand"><i></i></div>
 				<div class="clock-center-dot" id="clockCenterDot" title="查看時辰宜忌"></div>
 				<div id="ticks-container"></div>
-				<div id="numbers-container"></div>
+				<!-- 數字容器已移除，數字將被動態加入到 ticks-container 中 -->
 			</div>
 			<div class="calendar-container">
 				<h2 class="calendar-header" id="analog-calendar-header"></h2>
@@ -603,14 +620,14 @@
 			if (Array.isArray(input)) { return input.map(item => item.split('').map(char => s2tMap[char] || char).join('')); } // 如果是陣列，遍歷轉換
 			return input.split('').map(char => s2tMap[char] || char).join(''); // 如果是字串，逐字轉換
 		}
-		function getShengXiaoEmoji(shengXiaoName) { const emojiMap = { '鼠': '�', '牛': '🐮', '虎': '🐯', '兔': '🐇', '龍': '🐲', '蛇': '🐍', '馬': '🐴', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '🐶', '豬': '🐖' }; return emojiMap[shengXiaoName] || ''; } // 根據生肖名返回Emoji
+		function getShengXiaoEmoji(shengXiaoName) { const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐯', '兔': '🐇', '龍': '🐲', '蛇': '🐍', '馬': '🐴', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '🐶', '豬': '🐖' }; return emojiMap[shengXiaoName] || ''; } // 根據生肖名返回Emoji
 		function getJieqiDescription(jieqiName) { const descriptions = { '立春': '春季開始，萬物復甦。', '雨水': '降雨增多，春耕開始。', '驚蟄': '春雷響動，驚醒冬眠動物。', '春分': '晝夜等長，春意盎然。', '清明': '氣候清爽明朗，掃墓祭祖。', '穀雨': '雨水滋潤，穀物生長。', '立夏': '夏季開始，萬物繁茂。', '小滿': '夏熟作物籽粒開始飽滿。', '芒種': '收穫與播種的時節。', '夏至': '北半球白晝最長，盛夏開始。', '小暑': '天氣開始炎熱。', '大暑': '一年中最炎熱的時期。', '立秋': '秋季開始，氣溫漸降。', '處暑': '暑氣漸退，天氣轉涼。', '白露': '水氣凝結成露，天氣漸寒。', '秋分': '晝夜等長，秋高氣爽。', '寒露': '氣溫更低，天氣轉冷。', '霜降': '天氣漸冷，露水凝結成霜。', '立冬': '冬季開始，萬物收藏。', '小雪': '開始降雪，但雪量不大。', '大雪': '降雪量增多，天氣更冷。', '冬至': '北半球白晝最短，數九寒天開始。', '小寒': '天氣寒冷，尚未達到最冷。', '大寒': '一年中最寒冷的時期。' }; return descriptions[jieqiName] || '此節氣無詳細說明。'; } // 根據節氣名返回描述
 		function getHolidaysForYear(year) { if (yearlyDataCache.year === year && yearlyDataCache.holidays.length > 0) return yearlyDataCache.holidays; const holidays = []; const fixedHolidays = [ { name: '元旦', m: 0, d: 1 }, { name: '和平紀念日', m: 1, d: 28 }, { name: '兒童節', m: 3, d: 4 }, { name: '勞動節', m: 4, d: 1 }, { name: '國慶日', m: 9, d: 10 }, { name: '聖誕節', m: 11, d: 25 } ]; fixedHolidays.forEach(h => holidays.push({ name: h.name, date: new Date(year, h.m, h.d) })); const lunarHolidays = [{m:1,d:1,n:'農曆新年'}, {m:1,d:15,n:'元宵節'}, {m:5,d:5,n:'端午節'}, {m:7,d:7,n:'七夕'}, {m:7,d:15,n:'中元節'}, {m:8,d:15,n:'中秋節'}, {m:9,d:9,n:'重陽節'}, {m:12,d:8,n:'臘八節'}]; lunarHolidays.forEach(lh => { const solarDate = Lunar.fromYmd(year, lh.m, lh.d).getSolar(); holidays.push({ name: lh.n, date: new Date(solarDate.getYear(), solarDate.getMonth() - 1, solarDate.getDay()) }); }); const lunarNewYearSolar = Lunar.fromYmd(year, 1, 1).getSolar(); holidays.push({ name: '除夕', date: new Date(lunarNewYearSolar.getYear(), lunarNewYearSolar.getMonth() - 1, lunarNewYearSolar.getDay() - 1) }); const qingmingJieqi = getJieqiForYear(year).find(jq => jq.name === '清明'); if(qingmingJieqi) holidays.push({ name: '清明節', date: qingmingJieqi.date }); const mayFirst = new Date(year, 4, 1); const mothersDay = new Date(year, 4, 1 + (7 - mayFirst.getDay() + 7) % 7 + 7); holidays.push({ name: '母親節', date: mothersDay }); yearlyDataCache.holidays = holidays.sort((a, b) => a.date.getTime() - b.date.getTime()); return yearlyDataCache.holidays; } // 計算指定年份的所有主要節日
 		function getJieqiForYear(year) { if (yearlyDataCache.year === year && yearlyDataCache.jieqi.length > 0) return yearlyDataCache.jieqi; const jieqiPinyinMap = { 'LI_CHUN': '立春', 'YU_SHUI': '雨水', 'JING_ZHE': '驚蟄', 'CHUN_FEN': '春分', 'QING_MING': '清明', 'GU_YU': '穀雨', 'LI_XIA': '立夏', 'XIAO_MAN': '小滿', 'MANG_ZHONG': '芒種', 'XIA_ZHI': '夏至', 'XIAO_SHU': '小暑', 'DA_SHU': '大暑', 'LI_QIU': '立秋', 'CHU_SHU': '處暑', 'BAI_LU': '白露', 'QIU_FEN': '秋分', 'HAN_LU': '寒露', 'SHUANG_JIANG': '霜降', 'LI_DONG': '立冬', 'XIAO_XUE': '小雪', 'DA_XUE': '大雪', 'DONG_ZHI': '冬至', 'XIAO_HAN': '小寒', 'DA_HAN': '大寒' }; const jieqiSimplifiedMap = { '惊蛰': '驚蟄', '小满': '小滿', '芒种': '芒種', '处暑': '處暑', '谷雨': '穀雨' }; const jieqiTable = Lunar.fromYmd(year, 1, 1).getJieQiTable(); yearlyDataCache.jieqi = Object.entries(jieqiTable).map(([name, dateStr]) => { const traditionalName = jieqiPinyinMap[name] || jieqiSimplifiedMap[name] || name; return { name: traditionalName, date: new Date(dateStr) }; }).sort((a, b) => a.date.getTime() - b.date.getTime()); return yearlyDataCache.jieqi; } // 計算指定年份的所有節氣
 		function getShiChen(h) { const shichenMap = { 23: '子', 0: '子', 1: '丑', 2: '丑', 3: '寅', 4: '寅', 5: '卯', 6: '卯', 7: '辰', 8: '辰', 9: '巳', 10: '巳', 11: '午', 12: '午', 13: '未', 14: '未', 15: '申', 16: '申', 17: '酉', 18: '酉', 19: '戌', 20: '戌', 21: '亥', 22: '亥' }; return shichenMap[h] || ''; } // 根據小時返回時辰
         function getShiChenTimeRange(shichenName) { const timeRanges = { '子': '23:00 - 00:59', '丑': '01:00 - 02:59', '寅': '03:00 - 04:59', '卯': '05:00 - 06:59', '辰': '07:00 - 08:59', '巳': '09:00 - 10:59', '午': '11:00 - 12:59', '未': '13:00 - 14:59', '申': '15:00 - 16:59', '酉': '17:00 - 18:59', '戌': '19:00 - 20:59', '亥': '21:00 - 22:59' }; return timeRanges[shichenName] || ''; } // 根據時辰返回時間範圍
 		function getDetailedTimePeriod(hour) { const periodMap = { 0: '凌晨', 1: '凌晨', 2: '凌晨', 3: '凌晨', 4: '凌晨', 5: '清晨', 6: '清晨', 7: '清晨', 8: '清晨', 9: '上午', 10: '上午', 11: '上午', 12: '中午', 13: '下午', 14: '下午', 15: '下午', 16: '下午', 17: '傍晚', 18: '傍晚', 19: '夜晚', 20: '夜晚', 21: '夜晚', 22: '夜晚', 23: '深夜' }; return periodMap[hour] || ''; } // 根據小時返回詳細時段
-		function getWeatherDescriptionAndEmoji(code) { const map = { 0: { desc: '晴', emoji: '☀️' }, 1: { desc: '多雲時晴', emoji: '🌤️' }, 2: { desc: '局部多雲', emoji: '⛅️' }, 3: { desc: '陰', emoji: '☁️' }, 45: { desc: '霧', emoji: '🌫️' }, 48: { desc: '凍霧', emoji: '🌫️' }, 51: { desc: '毛毛雨', emoji: '🌦️' }, 53: { desc: '毛毛雨', emoji: '🌦️' }, 55: { desc: '毛毛雨', emoji: '🌦️' }, 56: { desc: '凍毛毛雨', emoji: '🌨️' }, 57: { desc: '凍毛毛雨', emoji: '🌨️' }, 61: { desc: '雨', emoji: '🌧️' }, 63: { desc: '雨', emoji: '🌧️' }, 65: { desc: '大雨', emoji: '🌧️' }, 66: { desc: '凍雨', emoji: '🌨️' }, 67: { desc: '凍雨', emoji: '🌨️' }, 71: { desc: '雪', emoji: '❄️' }, 73: { desc: '雪', emoji: '❄️' }, 75: { desc: '大雪', emoji: '❄️' }, 77: { desc: '冰雹', emoji: '🌨️' }, 80: { desc: '陣雨', emoji: '🌦️' }, 81: { desc: '陣雨', emoji: '🌦️' }, 82: { desc: '大陣雨', emoji: '🌦️' }, 85: { desc: '陣雪', emoji: '🌨️' }, 86: { desc: '大陣雪', emoji: '🌨️' }, 95: { desc: '雷陣雨', emoji: '⛈️' }, 96: { desc: '雷陣雨伴冰雹', emoji: '⛈️' }, 99: { desc: '雷陣雨伴冰雹', emoji: '⛈️' } }; return map[code] || { desc: '未知', emoji: '❓' }; } // 天氣代碼轉換
+		function getWeatherDescriptionAndEmoji(code) { const map = { 0: { desc: '晴', emoji: '☀️' }, 1: { desc: '多雲時晴', emoji: '�️' }, 2: { desc: '局部多雲', emoji: '⛅️' }, 3: { desc: '陰', emoji: '☁️' }, 45: { desc: '霧', emoji: '🌫️' }, 48: { desc: '凍霧', emoji: '🌫️' }, 51: { desc: '毛毛雨', emoji: '🌦️' }, 53: { desc: '毛毛雨', emoji: '🌦️' }, 55: { desc: '毛毛雨', emoji: '🌦️' }, 56: { desc: '凍毛毛雨', emoji: '🌨️' }, 57: { desc: '凍毛毛雨', emoji: '🌨️' }, 61: { desc: '雨', emoji: '🌧️' }, 63: { desc: '雨', emoji: '🌧️' }, 65: { desc: '大雨', emoji: '🌧️' }, 66: { desc: '凍雨', emoji: '🌨️' }, 67: { desc: '凍雨', emoji: '🌨️' }, 71: { desc: '雪', emoji: '❄️' }, 73: { desc: '雪', emoji: '❄️' }, 75: { desc: '大雪', emoji: '❄️' }, 77: { desc: '冰雹', emoji: '🌨️' }, 80: { desc: '陣雨', emoji: '🌦️' }, 81: { desc: '陣雨', emoji: '🌦️' }, 82: { desc: '大陣雨', emoji: '🌦️' }, 85: { desc: '陣雪', emoji: '🌨️' }, 86: { desc: '大陣雪', emoji: '🌨️' }, 95: { desc: '雷陣雨', emoji: '⛈️' }, 96: { desc: '雷陣雨伴冰雹', emoji: '⛈️' }, 99: { desc: '雷陣雨伴冰雹', emoji: '⛈️' } }; return map[code] || { desc: '未知', emoji: '❓' }; } // 天氣代碼轉換
 
 		// --- 數位版面更新 ---
 		function updateDigitalClock() { // 更新數位時鐘所有顯示內容
@@ -704,21 +721,34 @@
 
 		// --- 類比版面更新 ---
 		function initializeAnalogClock() { // 初始化類比時鐘 (建立錶盤)
-			const ticksContainer = document.getElementById('ticks-container'); // 取得刻度容器
-			const numbersContainer = document.getElementById('numbers-container'); // 取得數字容器
-			ticksContainer.innerHTML = ''; numbersContainer.innerHTML = ''; // 清空現有內容
-			for (let i = 1; i <= 60; i++) { // 迴圈60次，代表60個刻度
-                const isHour = i % 5 === 0, rotation = i * 6; // 判斷是否為整點刻度，並計算旋轉角度
-                const tickWrapper = document.createElement('div'); tickWrapper.className = 'tick-wrapper'; tickWrapper.style.transform = `rotate(${rotation}deg)`; // 建立刻度包裝元素並旋轉
-                const tick = document.createElement('div'); tick.className = isHour ? 'tick tick-hour' : 'tick tick-minute'; // 根據是否整點設定不同樣式
-                tickWrapper.appendChild(tick); ticksContainer.appendChild(tickWrapper); // 加入DOM
-                if (isHour) { // 如果是整點
-                    const numberDiv = document.createElement('div'); const hour = i / 5; // 建立數字元素並計算小時
-                    numberDiv.className = 'number'; numberDiv.style.setProperty('--rotation', `${rotation}deg`); // 設定旋轉角度
-                    numberDiv.innerHTML = `<div>${hour}</div>`; numbersContainer.appendChild(numberDiv); // 加入DOM
-                }
-            }
-			createAnalogCalendar(); // 建立主畫面的日曆
+			const ticksContainer = document.getElementById('ticks-container');
+			ticksContainer.innerHTML = ''; // 清空先前的刻度和數字
+
+			for (let i = 1; i <= 60; i++) {
+				const isHour = i % 5 === 0;
+				const rotation = i * 6;
+
+				const tickWrapper = document.createElement('div');
+				tickWrapper.className = 'tick-wrapper';
+				tickWrapper.style.transform = `rotate(${rotation}deg)`;
+
+				const tick = document.createElement('div');
+				tick.className = isHour ? 'tick tick-hour' : 'tick tick-minute';
+				tickWrapper.appendChild(tick);
+
+				if (isHour) {
+					// 將旋轉角度儲存在 CSS 變數中，供數字的反向旋轉使用
+					tickWrapper.style.setProperty('--rotation', `${rotation}deg`);
+
+					const numberDiv = document.createElement('div');
+					const hour = i / 5;
+					numberDiv.className = 'number';
+					numberDiv.innerHTML = `<div>${hour}</div>`;
+					tickWrapper.appendChild(numberDiv); // 將數字放在刻度容器內
+				}
+				ticksContainer.appendChild(tickWrapper);
+			}
+			createAnalogCalendar();
 		}
 		function updateAnalogClock() { // 更新類比時鐘指針位置與日曆
 			const now = new Date(); // 取得目前時間
