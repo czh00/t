@@ -43,11 +43,11 @@
         #settingsModal { z-index: 130; } /* 設定彈窗層級 */
 		.modal-content { background-color: #333; margin: auto; padding: 20px; border: 1px solid #888; width: 90%; max-width: 600px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); color: #e0e0e0; text-align: center; display: flex; flex-direction: column; gap: 0px; max-height: 90vh; overflow-y: auto; } /* 彈窗內容 */
 		.modal-header { display: flex; justify-content: space-between; align-items: center; padding: 0 10px; } /* 彈窗標題 */
-		.modal-header h2 { margin: 0; font-size: 1.5em; color: #00FF00; } /* 彈窗標題文字 */
+		.modal-header h2, .modal-header h3 { margin: 0; font-size: 1.5em; color: #00FF00; } /* 彈窗標題文字 */
 		.modal-header button { background: none; border: none; color: #00FF00; font-size: 2em; cursor: pointer; } /* 彈窗標題按鈕 */
 		.action-button { background-color: #555; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1em; margin-top: 0px; } /* 操作按鈕 */
 		.action-button:hover { background-color: #777; } /* 按鈕懸停效果 */
-		.button-group { display: flex; justify-content: center; gap: 10px; margin-top: 0px; white-space: nowrap; flex-wrap: wrap; } /* 按鈕群組 */
+		.button-group { display: flex; justify-content: center; gap: 10px; margin-top: 20px; white-space: nowrap; flex-wrap: wrap; } /* 按鈕群組 */
 		.calendar-footer { display: flex; justify-content: center; gap: 10px; width: 100%; margin-top: 10px; } /* 日曆底部 */
 
 		.control-icon { position: fixed; bottom: 20px; width: 32px; height: 32px; cursor: pointer; z-index: 200; opacity: 0.5; transition: opacity 0.3s ease; } /* 控制圖示 */
@@ -144,10 +144,18 @@
         .hourly-item .hour-time { font-weight: bold; color: #FFD700; } /* 小時 */
         .hourly-item .weather-icon { font-size: 1.8em; margin: 4px 0; } /* 小時天氣圖示 */
         .hourly-item.is-now { border-color: #00FF00; box-shadow: 0 0 8px #00FF00; } /* 當前小時高亮 */
-		#moonPhaseModalContent { display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center; } /* 月相彈窗內容 */
-		#moonPhaseModalContent .moon-phase-icon-large { line-height: 1; } /* 大月相圖示容器 */
-		#moonPhaseModalContent p { font-size: 1.1em; line-height: 1.6; max-width: 400px; margin: 0; } /* 月相說明 */
-		
+		#moonPhaseModal .modal-content { max-width: 500px; } /* 月相彈窗最大寬度 */
+		#moonPhaseModalContent { display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center; } /* 月相彈窗內容 */
+		#moonPhaseDisplay { display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%; } /* 月相主要顯示區 */
+		#moonPhaseDisplay .moon-phase-icon-large { line-height: 1; } /* 大月相圖示容器 */
+		#moonPhaseDisplay p { font-size: 1.1em; line-height: 1.6; max-width: 400px; margin: 0; } /* 月相說明 */
+		.moon-calendar-container { width: 100%; max-width: 400px; margin-top: 15px; border-top: 1px solid #555; padding-top: 15px; } /* 月相月曆容器 */
+		#moonCalendarGrid .calendar-day { min-height: 65px; padding: 2px; font-size: 0.8em; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2px; } /* 月相月曆每日格子 */
+		#moonCalendarGrid .calendar-day .gregorian-day { font-size: 1.1em; } /* 月相月曆公曆日期 */
+		#moonCalendarGrid .moon-phase-icon-small svg { width: 24px; height: 24px; } /* 月相月曆圖示大小 */
+		#moonCalendarGrid .calendar-day.is-selected { border-color: #FFD700; box-shadow: 0 0 8px #FFD700; background-color: #5a5a5a; } /* 月相月曆選中日 */
+		#moonCalendarGrid .lunar-day { font-size: 0.75em; color: #ccc; }
+
 		#digital-layout-wrapper { position: relative; } /* 數位版面容器 */
 		#dateTimeDisplay {
 			font-family: 'Digital Dismay', 'Noto Sans TC', sans-serif; /* 數位時鐘字型 */
@@ -432,7 +440,7 @@
 	<div class="modal" id="dateDetailsModal"><div class="modal-content details-content"><div class="modal-header"><h2 id="dateDetailsModalTitle">當日詳情</h2></div><div id="dateDetailsModalContent"></div><div class="button-group"><button class="action-button" id="closeDateDetailsModalBtn">關閉</button></div></div></div>
 	<div class="modal" id="shichenDetailsModal"><div class="modal-content details-content"><div class="modal-header"><button id="prevShichenBtn">&lt;</button><h2 id="shichenDetailsModalTitle">時辰詳情</h2><button id="nextShichenBtn">&gt;</button></div><div id="shichenDetailsModalContent"></div><div class="button-group"><button class="action-button" id="nowShichenBtn">現在</button><button class="action-button" id="closeShichenDetailsModalBtn">關閉</button></div></div></div>
 	<div class="modal" id="calendarModal"><div class="modal-content calendar-content"><div class="modal-header"><button id="prevMonthBtn">&lt;</button><h2 id="calendarMonthYear"></h2><button id="nextMonthBtn">&gt;</button></div><div class="calendar-weekdays" id="calendarWeekdays"></div><div class="calendar-grid" id="calendarGrid"></div><div class="calendar-footer"><button class="action-button" id="todayCalendarBtn">今天</button><button class="action-button" id="closeCalendarBtn">關閉</button></div></div></div>
-	<div class="modal" id="weeklyCalendarModal"><div class="modal-content weekly-calendar-content"><div class="modal-header"><button id="prevWeekBtn">&lt;</button><h2 id="weeklyCalendarTitle"></h2><button id="nextWeekBtn">&gt;</button></div><div class="weekly-calendar-grid" id="weeklyCalendarGrid"></div><div class="calendar-footer"><button class="action-button" id="todayWeeklyBtn">今天</button><button class="action-button" id="closeWeeklyCalendarBtn">關閉</button></div></div></div>
+	<div class="modal" id="weeklyCalendarModal"><div class="modal-content weekly-calendar-content"><div class="modal-header"><button id="prevWeekBtn">&lt;</button><h2 id="weeklyCalendarTitle"></h2><button id="nextWeekBtn">&gt;</button></div><div class="weekly-calendar-grid" id="weeklyCalendarGrid"></div><div class="calendar-footer"><button class="action-button" id="todayWeeklyBtn">本週</button><button class="action-button" id="closeWeeklyCalendarBtn">關閉</button></div></div></div>
 	<div class="modal" id="yearlyCalendarModal"><div class="yearly-calendar-content"><div class="modal-header"><button id="prevYearBtn">&lt;</button><h2 id="yearlyCalendarTitle"></h2><button id="nextYearBtn">&gt;</button></div><div class="yearly-calendar-grid" id="yearlyCalendarGrid"></div><div class="calendar-footer"><button class="action-button" id="todayYearlyBtn">今年</button><button class="action-button" id="closeYearlyCalendarBtn">關閉</button></div></div></div>
 	<div class="modal" id="weatherForecastModal"><div class="modal-content"><div class="modal-header"><h2 id="weatherForecastModalTitle">未來一週天氣預報</h2></div><div class="weather-forecast-grid" id="weatherForecastGrid"></div><div class="button-group"><button class="action-button" id="closeWeatherForecastModalBtn">關閉</button></div></div></div>
 	<div class="modal" id="hourlyWeatherModal"><div class="modal-content"><div class="modal-header"><h2 id="hourlyWeatherModalTitle">每小時天氣預報</h2></div><div class="hourly-weather-grid" id="hourlyWeatherGrid"></div><div class="button-group"><button class="action-button" id="backToWeeklyForecastBtn">返回週預報</button><button class="action-button" id="closeHourlyWeatherModalBtn">關閉</button></div></div></div>
@@ -441,8 +449,23 @@
 			<div class="modal-header">
 				<h2 id="moonPhaseModalTitle">月相詳情</h2>
 			</div>
-			<div id="moonPhaseModalContent"></div>
+			<div id="moonPhaseModalContent">
+				<div id="moonPhaseDisplay">
+					<div class="moon-phase-icon-large" id="mainMoonIcon"></div>
+					<p id="mainMoonDescription"></p>
+				</div>
+				<div class="moon-calendar-container">
+					<div class="modal-header">
+						<button id="prevMoonMonthBtn">&lt;</button>
+						<h3 id="moonCalendarMonthYear"></h3>
+						<button id="nextMoonMonthBtn">&gt;</button>
+					</div>
+					<div class="calendar-weekdays" id="moonCalendarWeekdays"></div>
+					<div class="calendar-grid" id="moonCalendarGrid"></div>
+				</div>
+			</div>
 			<div class="button-group">
+				<button class="action-button" id="todayMoonCalendarBtn">今天</button>
 				<button class="action-button" id="closeMoonPhaseModalBtn">關閉</button>
 			</div>
 		</div>
@@ -457,7 +480,7 @@
 		let movementTimer = null, scanlineTimer = null, weatherUpdateTimer = null, analogMarqueeInterval = null; // 各功能計時器
 		let scanlinePatternIsA = true, lastMarqueeContent = '', lastWeatherContent = ''; // 數位版動態效果變數
 		let lastAnalogMarqueeContent = ''; // 類比版跑馬燈內容快取
-		let calendarDate = new Date(), weeklyCalendarDate = new Date(), yearlyCalendarDate = new Date(), shichenDetailDate = new Date(); // 日曆日期變數
+		let calendarDate = new Date(), weeklyCalendarDate = new Date(), yearlyCalendarDate = new Date(), shichenDetailDate = new Date(), moonCalendarDate = new Date(); // 日曆日期變數
 		let yearlyDataCache = { year: -1, holidays: [], jieqi: [] }; // 年度資料快取
         let weatherDataCache = null; // 天氣資料快取
 
@@ -522,11 +545,6 @@
 		function s2t(input) { if (typeof input !== 'string' && !Array.isArray(input)) return input; const s2tMap = {'见':'見','贵':'貴','无':'無','开':'開','纳':'納','财':'財','挂':'掛','梁':'樑','动':'動','种':'種','启':'啟','钻':'鑽','订':'訂','竖':'豎','门':'門','词':'詞','讼':'訟','发':'髮','养':'養','马':'馬','经':'經','络':'絡','盖':'蓋','会':'會','学':'學','艺':'藝','医':'醫','装':'裝','结':'結','网':'網','渔':'漁','猎':'獵','亲':'親','进':'進','扫':'掃','绘':'繪','齐':'齊','斋':'齋','庙':'廟','灶':'竈','谢':'謝','问':'問','婿':'壻','归':'歸','宁':'寧','坟':'墳','寿':'壽','坏':'壞','补':'補','厕':'廁','仓':'倉','涂':'塗','桥':'橋','筑':'築','饰':'飾','墙':'牆','买':'買','车':'車','产':'產','雇':'僱','佣':'傭','货':'貨','机':'機','械':'械','酝':'醞','酿':'釀','铸':'鑄','针':'針','库':'庫','疗':'療','诸':'諸','馀':'餘','丧':'喪','断':'斷','蚁':'蟻','户':'戶','炉':'爐','栖':'棲','厨':'廚','胜':'勝','负':'負','灭':'滅','龙':'龍','鸡':'雞','猪':'豬','乌':'烏','双':'雙','宫':'宮','惊':'驚','蛰':'蟄','满':'滿','处':'處','时':'時','气':'氣','后':'後','灾':'災','复':'復','虚':'虛','贼':'賊','败':'敗','仪':'儀','祸':'禍','临':'臨','阴':'陰','阳':'陽','圣':'聖','冲':'沖','绝':'絕','岁':'歲','伤':'傷','杀':'殺','黄':'黃','节':'節','树':'樹','国':'國','万':'萬','长':'長','华':'華','为':'為','电':'電','声':'聲','冻':'凍','虫':'蟲','鱼':'魚','鹰':'鷹','来':'來','润':'潤','凉':'涼','麦':'麥','温':'溫','收':'收','闭':'閉','闰':'閏','谷':'穀'}; if (Array.isArray(input)) { return input.map(item => item.split('').map(char => s2tMap[char] || char).join('')); } return input.split('').map(char => s2tMap[char] || char).join(''); } // 簡轉繁
 		function getShengXiaoEmoji(shengXiaoName) { const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐯', '兔': '🐇', '龍': '🐲', '蛇': '🐍', '馬': '🐴', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '🐶', '豬': '🐖' }; return emojiMap[shengXiaoName] || ''; } // 取得生肖表情符號
 		
-		/**
-		 * 根據日期精確計算月相 (月齡)
-		 * @param {Date} date - 日期物件
-		 * @returns {number} - 0 到 29.53 之間的月齡
-		 */
 		const KNOWN_NEW_MOON = new Date('2000-01-06T18:14:00Z').getTime();
 		const LUNAR_CYCLE = 29.530588853;
 		function calculateMoonPhase(date) {
@@ -535,58 +553,64 @@
 			const phase = (daysSinceKnownNewMoon % LUNAR_CYCLE);
 			return phase < 0 ? phase + LUNAR_CYCLE : phase;
 		}
-
+		
 		/**
-		 * 根據計算出的月齡，對應到傳統的八個月相名稱 (用於文字顯示)
-		 * @param {number} moonAge - 月齡 (0-29.53)
-		 * @returns {string} - 月相中文名
+		 * [FIXED] 根據月齡（0-29.53天）返回對應的月相名稱。
+		 * 調整了主要月相的判斷區間，使其更精確，避免重複。
+		 * @param {number} moonAge - 月齡
+		 * @returns {string} 月相中文名
 		 */
 		function getPhaseNameFromAge(moonAge) {
 			const age = moonAge;
-			if (age < 1.84566) return '朔';       // 新月
-			if (age < 5.53699) return '峨眉';     // 盈眉月
-			if (age < 9.22831) return '上弦';     // 上弦月
-			if (age < 12.91963) return '盈凸';    // 盈凸月
-			if (age < 16.61096) return '望';       // 滿月
-			if (age < 20.30228) return '虧凸';    // 虧凸月
-			if (age < 23.99361) return '下弦';     // 下弦月
-			if (age < 27.68493) return '殘';      // 殘月
-			return '朔'; // 預設為新月
+			// 主要月相（朔、上弦、望、下弦）的判斷區間縮小，使其通常只會對應到一天
+			if (age > 29.03 || age <= 0.5) return '朔';    // 新月 (前後約 1 天)
+			if (age > 14.26 && age <= 15.26) return '望'; // 滿月 (前後約 1 天)
+			if (age > 6.88 && age <= 7.88) return '上弦';  // 上弦月 (前後約 1 天)
+			if (age > 21.64 && age <= 22.64) return '下弦';// 下弦月 (前後約 1 天)
+			
+			// 其他過渡月相填補其餘區間
+			if (age > 0.5 && age <= 6.88) return '峨眉';    // 盈月
+			if (age > 7.88 && age <= 14.26) return '盈凸';   // 盈凸月
+			if (age > 15.26 && age <= 21.64) return '虧凸'; // 虧凸月
+			if (age > 22.64 && age <= 29.03) return '殘';   // 殘月
+
+			return '朔'; // 預設值
 		}
 
 		/**
-		 * [核心修正] 根據精確的月齡動態、連續地生成月相 SVG 圖示
-		 * 這個函數是解決月相顯示不連貫問題的關鍵。
-		 * 它不再使用固定的幾個圖像，而是根據0到29.53天之間的精確月齡，
-		 * 通過數學計算動態生成SVG圖形。
-		 * 這樣可以確保月相的變化是平滑且連續的，完美模擬真實的月相過渡。
-		 * @param {number} moonAge - 月齡 (0-29.53)
-		 * @param {string} [size='1em'] - SVG 的尺寸
-		 * @param {string} [color='#FFF'] - 月亮明亮部分的顏色
-		 * @param {string} [darkColor='#444'] - 月亮陰影部分的顏色
-		 * @returns {string} - SVG 圖示的 HTML 字串
+		 * [FIXED] 根據月齡產生對應的SVG圖示。
+		 * 同步修改了判斷朔、望的區間，使其與 getPhaseNameFromAge 一致。
+		 * @param {number} moonAge - 月齡
+		 * @param {string} size - SVG大小
+		 * @param {string} color - 亮部顏色
+		 * @param {string} darkColor - 暗部顏色
+		 * @returns {string} SVG HTML字串
 		 */
 		function getMoonPhaseSVG(moonAge, size = '1em', color = '#FFF', darkColor = '#444') {
+			// [視覺修正] 為了讓標籤與圖示一致，強制將「望」和「朔」期間的圖示繪製為完美的圓形。
+			// 使用與 getPhaseNameFromAge 相同的精確區間
+			if (moonAge > 14.26 && moonAge <= 15.26) { // 望 (滿月)
+				return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" style="display: inline-block; vertical-align: middle;"><circle cx="12" cy="12" r="12" fill="${color}"/></svg>`;
+			}
+			if (moonAge > 29.03 || moonAge <= 0.5) { // 朔 (新月)
+				return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" style="display: inline-block; vertical-align: middle;"><circle cx="12" cy="12" r="11.5" fill="${darkColor}" stroke="${color}" stroke-width="0.5"/></svg>`;
+			}
+
 			const uniqueId = 'moon-svg-clip-' + Math.random().toString(36).substr(2, 9);
 			const clipPath = `<defs><clipPath id="${uniqueId}"><circle cx="12" cy="12" r="12"/></clipPath></defs>`;
 			const phase = moonAge / LUNAR_CYCLE;
 			let svgContent;
 
-			if (moonAge < 0.5 || moonAge > (LUNAR_CYCLE - 0.5)) {
-				svgContent = `<circle cx="12" cy="12" r="11.5" fill="${darkColor}" stroke="${color}" stroke-width="0.5"/>`;
-			} else if (phase <= 0.5) {
+			if (phase <= 0.5) {
 				// 盈月期 (從新月到滿月)
-				// 畫一個全亮的圓形作為底，然後用一個移動的暗圓形來遮擋，模擬陰影
-				const cx = 12 - 48 * phase; // cx 從 12 (完全覆蓋) 平滑移動到 -12 (完全不見)
+				const cx = 12 - 48 * phase;
 				svgContent = `<g clip-path="url(#${uniqueId})">
 					<circle cx="12" cy="12" r="12" fill="${color}"/>
 					<circle cx="${cx}" cy="12" r="12" fill="${darkColor}"/>
 				</g>`;
 			} else {
 				// 虧月期 (從滿月到新月)
-				// [錯誤修正] 原本的邏輯會錯誤地再次顯示盈月。
-				// 正確邏輯：畫一個全亮的圓形作為底，然後用一個移動的暗圓形從右到左覆蓋它，模擬陰影。
-				const cx = 60 - 48 * phase; // cx 從 36 (在右側畫面外) 平滑移動到 12 (完全覆蓋)
+				const cx = 60 - 48 * phase;
 				svgContent = `<g clip-path="url(#${uniqueId})">
 					<circle cx="12" cy="12" r="12" fill="${color}"/>
 					<circle cx="${cx}" cy="12" r="12" fill="${darkColor}"/>
@@ -645,7 +669,7 @@
 		function getShiChen(h) { const shichenMap = { 23: '子', 0: '子', 1: '丑', 2: '丑', 3: '寅', 4: '寅', 5: '卯', 6: '卯', 7: '辰', 8: '辰', 9: '巳', 10: '巳', 11: '午', 12: '午', 13: '未', 14: '未', 15: '申', 16: '申', 17: '酉', 18: '酉', 19: '戌', 20: '戌', 21: '亥', 22: '亥' }; return shichenMap[h] || ''; } // 根據小時取得時辰
         function getShiChenTimeRange(shichenName) { const timeRanges = { '子': '23:00 - 00:59', '丑': '01:00 - 02:59', '寅': '03:00 - 04:59', '卯': '05:00 - 06:59', '辰': '07:00 - 08:59', '巳': '09:00 - 10:59', '午': '11:00 - 12:59', '未': '13:00 - 14:59', '申': '15:00 - 16:59', '酉': '17:00 - 18:59', '戌': '19:00 - 20:59', '亥': '21:00 - 22:59' }; return timeRanges[shichenName] || ''; } // 取得時辰時間範圍
 		function getDetailedTimePeriod(hour) { const periodMap = { 0: '凌晨', 1: '凌晨', 2: '凌晨', 3: '凌晨', 4: '凌晨', 5: '清晨', 6: '清晨', 7: '清晨', 8: '清晨', 9: '上午', 10: '上午', 11: '上午', 12: '中午', 13: '下午', 14: '下午', 15: '下午', 16: '下午', 17: '傍晚', 18: '傍晚', 19: '夜晚', 20: '夜晚', 21: '夜晚', 22: '夜晚', 23: '深夜' }; return periodMap[hour] || ''; } // 取得詳細時段名稱
-		function getWeatherDescriptionAndEmoji(code) { const map = { 0: { desc: '晴', emoji: '☀️' }, 1: { desc: '多雲時晴', emoji: '🌤️' }, 2: { desc: '局部多雲', emoji: '⛅️' }, 3: { desc: '陰', emoji: '☁️' }, 45: { desc: '霧', emoji: '🌫️' }, 48: { desc: '凍霧', emoji: '🌫️' }, 51: { desc: '毛毛雨', emoji: '🌦️' }, 53: { desc: '毛毛雨', emoji: '🌦️' }, 55: { desc: '毛毛雨', emoji: '🌦️' }, 56: { desc: '凍毛毛雨', emoji: '🌨️' }, 57: { desc: '凍毛毛雨', emoji: '🌨️' }, 61: { desc: '雨', emoji: '🌧️' }, 63: { desc: '雨', emoji: '🌧️' }, 65: { desc: '大雨', emoji: '🌧️' }, 66: { desc: '凍雨', emoji: '🌨️' }, 67: { desc: '凍雨', emoji: '🌨️' }, 71: { desc: '雪', emoji: '❄️' }, 73: { desc: '雪', emoji: '❄️' }, 75: { desc: '大雪', emoji: '❄️' }, 77: { desc: '冰雹', emoji: '🌨️' }, 80: { desc: '陣雨', emoji: '🌦️' }, 81: { desc: '陣雨', emoji: '🌦️' }, 82: { desc: '大陣雨', emoji: '�️' }, 85: { desc: '陣雪', emoji: '🌨️' }, 86: { desc: '大陣雪', emoji: '🌨️' }, 95: { desc: '雷陣雨', emoji: '⛈️' }, 96: { desc: '雷陣雨伴冰雹', emoji: '⛈️' }, 99: { desc: '雷陣雨伴冰雹', emoji: '⛈️' } }; return map[code] || { desc: '未知', emoji: '❓' }; } // 根據天氣代碼取得天氣描述與圖示
+		function getWeatherDescriptionAndEmoji(code) { const map = { 0: { desc: '晴', emoji: '☀️' }, 1: { desc: '多雲時晴', emoji: '🌤️' }, 2: { desc: '局部多雲', emoji: '⛅️' }, 3: { desc: '陰', emoji: '☁️' }, 45: { desc: '霧', emoji: '🌫️' }, 48: { desc: '凍霧', emoji: '🌫️' }, 51: { desc: '毛毛雨', emoji: '🌦️' }, 53: { desc: '毛毛雨', emoji: '🌦️' }, 55: { desc: '毛毛雨', emoji: '🌦️' }, 56: { desc: '凍毛毛雨', emoji: '🌨️' }, 57: { desc: '凍毛毛雨', emoji: '🌨️' }, 61: { desc: '雨', emoji: '🌧️' }, 63: { desc: '雨', emoji: '🌧️' }, 65: { desc: '大雨', emoji: '🌧️' }, 66: { desc: '凍雨', emoji: '🌨️' }, 67: { desc: '凍雨', emoji: '🌨️' }, 71: { desc: '雪', emoji: '❄️' }, 73: { desc: '雪', emoji: '❄️' }, 75: { desc: '大雪', emoji: '❄️' }, 77: { desc: '冰雹', emoji: '🌨️' }, 80: { desc: '陣雨', emoji: '🌦️' }, 81: { desc: '陣雨', emoji: '🌦️' }, 82: { desc: '大陣雨', emoji: '⛈️' }, 85: { desc: '陣雪', emoji: '🌨️' }, 86: { desc: '大陣雪', emoji: '🌨️' }, 95: { desc: '雷陣雨', emoji: '⛈️' }, 96: { desc: '雷陣雨伴冰雹', emoji: '⛈️' }, 99: { desc: '雷陣雨伴冰雹', emoji: '⛈️' } }; return map[code] || { desc: '未知', emoji: '❓' }; } // 根據天氣代碼取得天氣描述與圖示
 
 		function updateDigitalClock() { // 更新數位時鐘顯示
 			const now = new Date();
@@ -883,7 +907,7 @@
 		 * @param {string} phaseName - 月相中文名
 		 * @returns {object} - 包含名稱、描述和 SVG 圖示的物件
 		 */
-		function getMoonPhaseDetails(phaseName, moonAge) {
+		function getMoonPhaseDetails(phaseName) {
 			const p = s2t(phaseName);
 			const details = {
 				'朔': { name: '朔 (新月)', desc: '月球位於太陽和地球之間，月球的黑暗面朝向地球，因此我們看不見月亮。這是農曆月的開始。' },
@@ -895,21 +919,104 @@
 				'下弦': { name: '下弦月', desc: '月球運行到其軌道的三分之一處，我們再次看到月球被照亮的一半，但這次看起來像一個反向的 "D"。' },
 				'殘': { name: '殘月', desc: '下弦月之後，可見的被照亮部分繼續減少，直到下一個新月，再次呈現鐮刀形狀。' }
 			};
-			const phaseInfo = details[p] || { name: p, desc: '無此月相的詳細資訊。' };
-			phaseInfo.icon = getMoonPhaseSVG(moonAge, '100px', '#FFF', '#333'); // 使用連續計算的函式產生大型 SVG
-			return phaseInfo;
+			return details[p] || { name: p, desc: '無此月相的詳細資訊。' };
 		}
-		function showMoonPhaseDetails(date) { 
-			const moonAge = calculateMoonPhase(date);
-			const yueXiangName = getPhaseNameFromAge(moonAge);
-            const details = getMoonPhaseDetails(yueXiangName, moonAge); 
-            document.getElementById('moonPhaseModalTitle').textContent = `月相詳情：${details.name}`; 
-            document.getElementById('moonPhaseModalContent').innerHTML = `<div class="moon-phase-icon-large">${details.icon}</div><p>${details.desc}</p>`; 
-            document.getElementById('moonPhaseModal').classList.add('is-active'); 
-        } // 顯示月相彈窗
 		
 		/**
-		 * 顯示日期詳情彈窗，並在農曆行後方加入月相圖示
+		 * [FIXED] 更新月相彈窗中的主要顯示區域。
+		 * 移除了根據農曆初一強制判斷為新月的邏輯，統一使用天文計算。
+		 * @param {Date} date - 要顯示的日期
+		 */
+		function updateMainMoonPhaseDisplay(date) {
+			const moonAge = calculateMoonPhase(date);
+			const yueXiangName = getPhaseNameFromAge(moonAge);
+			const details = getMoonPhaseDetails(yueXiangName);
+			
+			document.getElementById('moonPhaseModalTitle').textContent = `月相詳情：${details.name}`;
+			document.getElementById('mainMoonIcon').innerHTML = getMoonPhaseSVG(moonAge, '100px', '#FFF', '#333');
+			document.getElementById('mainMoonDescription').textContent = details.desc;
+			
+			// 更新月曆中的選中狀態
+			const allDays = document.querySelectorAll('#moonCalendarGrid .calendar-day');
+			allDays.forEach(day => day.classList.remove('is-selected'));
+			const selectedDayEl = document.querySelector(`#moonCalendarGrid .calendar-day[data-date-string='${date.toDateString()}']`);
+			if (selectedDayEl) {
+				selectedDayEl.classList.add('is-selected');
+			}
+		}
+
+		/**
+		 * [FIXED] 產生月相月曆。
+		 * 移除了根據農曆初一強制判斷為新月的邏輯，統一使用天文計算。
+		 * @param {number} year - 年份
+		 * @param {number} month - 月份 (0-11)
+		 * @param {Date} selectedDate - 當前選中的日期
+		 */
+		function generateMoonPhaseCalendar(year, month, selectedDate) {
+			const grid = document.getElementById('moonCalendarGrid');
+			const monthYear = document.getElementById('moonCalendarMonthYear');
+			const weekdaysEl = document.getElementById('moonCalendarWeekdays');
+			if (!grid || !monthYear || !weekdaysEl) return;
+
+			grid.innerHTML = '';
+			weekdaysEl.innerHTML = '';
+			['日', '一', '二', '三', '四', '五', '六'].forEach(day => {
+				const el = document.createElement('div');
+				el.textContent = day;
+				weekdaysEl.appendChild(el);
+			});
+
+			monthYear.textContent = `${year}年 ${month + 1}月`;
+			const firstDay = new Date(year, month, 1).getDay();
+			const daysInMonth = new Date(year, month + 1, 0).getDate();
+			const today = new Date();
+
+			for (let i = 0; i < firstDay; i++) {
+				grid.appendChild(document.createElement('div')).classList.add('calendar-day', 'other-month');
+			}
+
+			for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) {
+				const cell = document.createElement('div');
+				cell.classList.add('calendar-day');
+				const date = new Date(year, month, dayNum, 12, 0, 0); // 設定為中午以確保日期計算一致性
+				cell.dataset.date = date.toISOString();
+				cell.dataset.dateString = date.toDateString();
+
+				cell.onclick = () => {
+					const clickedDate = new Date(date);
+					moonCalendarDate = clickedDate;
+					updateMainMoonPhaseDisplay(clickedDate);
+				};
+				
+				const lunar = Solar.fromDate(date).getLunar();
+				const moonAge = calculateMoonPhase(date); // 直接使用天文計算
+				const moonIcon = getMoonPhaseSVG(moonAge, '24px', '#FFF', '#555');
+				const lunarDayText = lunar.getDay() === 1 ? s2t(lunar.getMonthInChinese()) + '月' : s2t(lunar.getDayInChinese());
+
+				cell.innerHTML = `<div class="gregorian-day">${dayNum}</div><div class="moon-phase-icon-small">${moonIcon}</div><div class="lunar-day">${lunarDayText}</div>`;
+
+				if (today.getFullYear() === year && today.getMonth() === month && dayNum === today.getDate()) {
+					cell.classList.add('is-today');
+				}
+				if (selectedDate.toDateString() === date.toDateString()) {
+					cell.classList.add('is-selected');
+				}
+				grid.appendChild(cell);
+			}
+		}
+
+		function showMoonPhaseDetails(date) { // 顯示月相彈窗
+			const dateForPhase = new Date(date);
+			dateForPhase.setHours(12, 0, 0, 0); // 標準化到中午進行日期計算
+			moonCalendarDate = dateForPhase; // 設定當前日期
+			updateMainMoonPhaseDisplay(moonCalendarDate); // 更新主顯示區
+			generateMoonPhaseCalendar(moonCalendarDate.getFullYear(), moonCalendarDate.getMonth(), moonCalendarDate); // 產生月曆
+			document.getElementById('moonPhaseModal').classList.add('is-active');
+		}
+		
+		/**
+		 * [FIXED] 顯示日期詳情彈窗。
+		 * 移除了根據農曆初一強制判斷為新月的邏輯，統一使用天文計算。
 		 * @param {Date} date - 要顯示詳情的日期物件
 		 */
 		function showDateDetails(date) {
@@ -924,8 +1031,10 @@
 			const traditionalShengXiao = s2t(lunar.getYearShengXiao());
 			const lunarYearText = `${s2t(lunar.getYearInGanZhi())}${traditionalShengXiao}${getShengXiaoEmoji(traditionalShengXiao)}年`;
 			const lunarDateText = `${s2t(lunar.getMonthInChinese())}月${s2t(lunar.getDayInChinese())}`;
-			const moonAge = calculateMoonPhase(date);
-			const moonPhaseIconSVG = getMoonPhaseSVG(moonAge, '1.2em', '#FFD700', '#333'); // 產生用於此彈窗的月相圖示
+			
+			const moonAge = calculateMoonPhase(date); // 直接使用天文計算
+			const moonPhaseIconSVG = getMoonPhaseSVG(moonAge, '1.2em', '#FFD700', '#333');
+
 			const currentJieqi = jieqiForYear.find(jq => jq.date.toDateString() === date.toDateString());
 			const currentHoliday = holidaysForYear.find(h => h.date.toDateString() === date.toDateString());
 			const nextJieqi = jieqiForYear.find(jq => jq.date > date);
@@ -1012,6 +1121,11 @@
 			document.getElementById('prevShichenBtn').onclick = () => { shichenDetailDate.setHours(shichenDetailDate.getHours() - 2); updateShiChenDetailsView(shichenDetailDate); };
 			document.getElementById('nextShichenBtn').onclick = () => { shichenDetailDate.setHours(shichenDetailDate.getHours() + 2); updateShiChenDetailsView(shichenDetailDate); };
 			document.getElementById('nowShichenBtn').onclick = () => { updateShiChenDetailsView(new Date()); };
+			// 月相月曆導覽
+			document.getElementById('prevMoonMonthBtn').onclick = () => { moonCalendarDate.setMonth(moonCalendarDate.getMonth() - 1); generateMoonPhaseCalendar(moonCalendarDate.getFullYear(), moonCalendarDate.getMonth(), moonCalendarDate); };
+			document.getElementById('nextMoonMonthBtn').onclick = () => { moonCalendarDate.setMonth(moonCalendarDate.getMonth() + 1); generateMoonPhaseCalendar(moonCalendarDate.getFullYear(), moonCalendarDate.getMonth(), moonCalendarDate); };
+			document.getElementById('todayMoonCalendarBtn').onclick = () => { const today = new Date(); today.setHours(12,0,0,0); moonCalendarDate = new Date(today); updateMainMoonPhaseDisplay(today); generateMoonPhaseCalendar(today.getFullYear(), today.getMonth(), today); };
+
 			document.getElementById('settings-icon').addEventListener('click', () => { document.getElementById('settingsModal').classList.add('is-active'); updateSettingsModalUI(); });
 			document.getElementById('fullscreen-icon').addEventListener('click', () => { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => console.warn(`無法進入全螢幕模式: ${err.message}`)); } else { if (document.exitFullscreen) { document.exitFullscreen(); } } });
 			const handleFullscreenChange = () => { document.getElementById('fullscreen-icon').style.display = document.fullscreenElement ? 'none' : 'block'; window.dispatchEvent(new Event('resize')); };
