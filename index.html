@@ -152,7 +152,7 @@
 		.moon-calendar-container { width: 100%; max-width: 400px; margin-top: 15px; border-top: 1px solid #555; padding-top: 15px; } /* 月相月曆容器 */
 		#moonCalendarGrid .calendar-day { min-height: 65px; padding: 2px; font-size: 0.8em; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2px; } /* 月相月曆每日格子 */
 		#moonCalendarGrid .calendar-day .gregorian-day { font-size: 1.1em; } /* 月相月曆公曆日期 */
-		#moonCalendarGrid .moon-phase-icon-small svg { width: 24px; height: 24px; } /* 月相月曆圖示大小 */
+		#moonCalendarGrid .moon-phase-icon-small svg, #moonCalendarGrid .moon-phase-icon-small img { width: 24px; height: 24px; } /* 月相月曆圖示大小 */
 		#moonCalendarGrid .calendar-day.is-selected { border-color: #FFD700; box-shadow: 0 0 8px #FFD700; background-color: #5a5a5a; } /* 月相月曆選中日 */
 		#moonCalendarGrid .lunar-day { font-size: 0.75em; color: #ccc; }
 
@@ -542,82 +542,85 @@
 		function moveRandomly(element) { if (!element) return; const viewportWidth = window.innerWidth, viewportHeight = window.innerHeight; const elementRect = element.getBoundingClientRect(); const safeMargin = 20; const maxX = (viewportWidth - elementRect.width) / 2 - safeMargin; const maxY = (viewportHeight - elementRect.height) / 2 - safeMargin; const newTargetX = Math.random() * (maxX * 2) - maxX; const newTargetY = Math.random() * (maxY * 2) - maxY; element.style.transform = `translate(calc(-50% + ${newTargetX}px), calc(-56% + ${newTargetY}px))`; } // 隨機移動元素
 		function resetPosition(element) { if (!element) return; element.style.transform = `translate(-50%, -50%)`; } // 重設元素位置
 
-		function s2t(input) { if (typeof input !== 'string' && !Array.isArray(input)) return input; const s2tMap = {'见':'見','贵':'貴','无':'無','开':'開','纳':'納','财':'財','挂':'掛','梁':'樑','动':'動','种':'種','启':'啟','钻':'鑽','订':'訂','竖':'豎','门':'門','词':'詞','讼':'訟','发':'髮','养':'養','马':'馬','经':'經','络':'絡','盖':'蓋','会':'會','学':'學','艺':'藝','医':'醫','装':'裝','结':'結','网':'網','渔':'漁','猎':'獵','亲':'親','进':'進','扫':'掃','绘':'繪','齐':'齊','斋':'齋','庙':'廟','灶':'竈','谢':'謝','问':'問','婿':'壻','归':'歸','宁':'寧','坟':'墳','寿':'壽','坏':'壞','补':'補','厕':'廁','仓':'倉','涂':'塗','桥':'橋','筑':'築','饰':'飾','墙':'牆','买':'買','车':'車','产':'產','雇':'僱','佣':'傭','货':'貨','机':'機','械':'械','酝':'醞','酿':'釀','铸':'鑄','针':'針','库':'庫','疗':'療','诸':'諸','馀':'餘','丧':'喪','断':'斷','蚁':'蟻','户':'戶','炉':'爐','栖':'棲','厨':'廚','胜':'勝','负':'負','灭':'滅','龙':'龍','鸡':'雞','猪':'豬','乌':'烏','双':'雙','宫':'宮','惊':'驚','蛰':'蟄','满':'滿','处':'處','时':'時','气':'氣','后':'後','灾':'災','复':'復','虚':'虛','贼':'賊','败':'敗','仪':'儀','祸':'禍','临':'臨','阴':'陰','阳':'陽','圣':'聖','冲':'沖','绝':'絕','岁':'歲','伤':'傷','杀':'殺','黄':'黃','节':'節','树':'樹','国':'國','万':'萬','长':'長','华':'華','为':'為','电':'電','声':'聲','冻':'凍','虫':'蟲','鱼':'魚','鹰':'鷹','来':'來','润':'潤','凉':'涼','麦':'麥','温':'溫','收':'收','闭':'閉','闰':'閏','谷':'穀'}; if (Array.isArray(input)) { return input.map(item => item.split('').map(char => s2tMap[char] || char).join('')); } return input.split('').map(char => s2tMap[char] || char).join(''); } // 簡轉繁
+		function s2t(input) { if (typeof input !== 'string' && !Array.isArray(input)) return input; const s2tMap = {'见':'見','贵':'貴','无':'無','开':'開','纳':'納','财':'財','挂':'掛','梁':'樑','动':'動','种':'種','启':'啟','钻':'鑽','订':'訂','竖':'豎','门':'門','词':'詞','讼':'訟','发':'髮','养':'養','马':'馬','经':'經','络':'絡','盖':'蓋','会':'會','学':'學','艺':'藝','医':'醫','装':'裝','结':'結','网':'網','渔':'漁','猎':'獵','亲':'親','进':'進','扫':'掃','绘':'繪','齐':'齊','斋':'齋','庙':'廟','灶':'竈','谢':'謝','问':'問','婿':'壻','归':'歸','宁':'寧','坟':'墳','寿':'壽','坏':'壞','补':'補','厕':'廁','仓':'倉','涂':'塗','桥':'橋','筑':'築','饰':'飾','墙':'牆','买':'買','车':'車','产':'產','雇':'僱','佣':'傭','货':'貨','机':'機','械':'械','酝':'醞','酿':'釀','铸':'鑄','针':'針','库':'庫','疗':'療','诸':'諸','馀':'餘','丧':'喪','断':'斷','蚁':'蟻','户':'戶','炉':'爐','栖':'棲','厨':'廚','胜':'勝','负':'負','灭':'滅','龙':'龍','鸡':'雞','猪':'豬','乌':'烏','双':'雙','宫':'宮','惊':'驚','蛰':'蟄','满':'滿','处':'處','时':'時','气':'氣','后':'後','灾':'災','复':'復','虚':'虛','贼':'賊','败':'敗','仪':'儀','祸':'禍','临':'臨','阴':'陰','阳':'陽','圣':'聖','冲':'沖','绝':'絕','岁':'歲','伤':'傷','杀':'殺','黄':'黃','节':'節','树':'樹','国':'國','万':'萬','长':'長','华':'華','为':'為','电':'電','声':'聲','冻':'凍','虫':'蟲','鱼':'魚','鹰':'鷹','来':'來','润':'潤','凉':'涼','麦':'麥','温':'溫','收':'收','闭':'閉','闰':'閏','谷':'穀','殓':'殮'}; if (Array.isArray(input)) { return input.map(item => item.split('').map(char => s2tMap[char] || char).join('')); } return input.split('').map(char => s2tMap[char] || char).join(''); } // 簡轉繁
 		function getShengXiaoEmoji(shengXiaoName) { const emojiMap = { '鼠': '🐭', '牛': '🐮', '虎': '🐯', '兔': '🐇', '龍': '🐲', '蛇': '🐍', '馬': '🐴', '羊': '🐑', '猴': '🐒', '雞': '🐔', '狗': '🐶', '豬': '🐖' }; return emojiMap[shengXiaoName] || ''; } // 取得生肖表情符號
 		
-		const KNOWN_NEW_MOON = new Date('2000-01-06T18:14:00Z').getTime();
-		const LUNAR_CYCLE = 29.530588853;
-		function calculateMoonPhase(date) {
-			const dateMillis = date.getTime();
-			const daysSinceKnownNewMoon = (dateMillis - KNOWN_NEW_MOON) / (1000 * 60 * 60 * 24);
-			const phase = (daysSinceKnownNewMoon % LUNAR_CYCLE);
-			return phase < 0 ? phase + LUNAR_CYCLE : phase;
-		}
-		
 		/**
-		 * [FIXED] 根據月齡（0-29.53天）返回對應的月相名稱。
-		 * 調整了主要月相的判斷區間，使其更精確，避免重複。
-		 * @param {number} moonAge - 月齡
-		 * @returns {string} 月相中文名
+		 * [NEW] 根據農曆日期（1-30）獲取對應的月相中文名稱。
+		 * @param {number} lunarDay - 農曆日期 (1-30)。
+		 * @returns {string} 月相中文名稱。
 		 */
-		function getPhaseNameFromAge(moonAge) {
-			const age = moonAge;
-			// 主要月相（朔、上弦、望、下弦）的判斷區間縮小，使其通常只會對應到一天
-			if (age > 29.03 || age <= 0.5) return '朔';    // 新月 (前後約 1 天)
-			if (age > 14.26 && age <= 15.26) return '望'; // 滿月 (前後約 1 天)
-			if (age > 6.88 && age <= 7.88) return '上弦';  // 上弦月 (前後約 1 天)
-			if (age > 21.64 && age <= 22.64) return '下弦';// 下弦月 (前後約 1 天)
+		function getPhaseNameFromLunarDay(lunarDay) {
+			if (lunarDay === 1) return '朔';
+			if (lunarDay === 15) return '望';
+			if (lunarDay >= 2 && lunarDay <= 7) return '峨眉';
+			if (lunarDay === 8) return '上弦';
+			if (lunarDay >= 9 && lunarDay <= 14) return '盈凸';
+			if (lunarDay >= 16 && lunarDay <= 22) return '虧凸';
+			if (lunarDay === 23) return '下弦';
+			if (lunarDay >= 24) return '殘';
+			return '朔'; // 預設
+		}
+
+		/**
+		 * [NEW] 根據農曆日期繪製符合天文觀測的SVG月相圖示。
+		 * 此函式模仿 m.htm 中的 canvas 繪圖邏輯，但使用 SVG 實現。
+		 * @param {number} lunarDay - 農曆日期 (1-30)。
+		 * @param {string} size - SVG 的 CSS 尺寸 (例如 '100px', '2em')。
+		 * @returns {string} 包含 SVG 的 HTML 字串。
+		 */
+		function getMoonPhaseSVG(lunarDay, size = '1em') {
+			// 將農曆日期轉換為 0 (初一) 到 1 (三十) 的相位值
+			// 使用 29.0 是為了讓第30天 (lunarDay=30) 的 phase 剛好是 1.0
+			const phase = (lunarDay - 1) / 29.0;
+
+			const r = 50; // SVG 內部座標半徑
+			const cx = 50, cy = 50; // SVG 內部座標中心點
+			const lightColor = '#f0e68c';
+			const darkColor = '#222';
 			
-			// 其他過渡月相填補其餘區間
-			if (age > 0.5 && age <= 6.88) return '峨眉';    // 盈月
-			if (age > 7.88 && age <= 14.26) return '盈凸';   // 盈凸月
-			if (age > 15.26 && age <= 21.64) return '虧凸'; // 虧凸月
-			if (age > 22.64 && age <= 29.03) return '殘';   // 殘月
+			// cos值決定了晨昏線的形狀和位置
+			// 我們將相位角度加上 PI，使得 phase=0 (朔月) 時 cos值為 -1
+			const angle = phase * 2 * Math.PI + Math.PI;
+			const cos_angle = Math.cos(angle);
 
-			return '朔'; // 預設值
-		}
+			let baseLayer, terminatorLayer;
 
-		/**
-		 * [FIXED] 根據月齡產生對應的SVG圖示。
-		 * 同步修改了判斷朔、望的區間，使其與 getPhaseNameFromAge 一致。
-		 * @param {number} moonAge - 月齡
-		 * @param {string} size - SVG大小
-		 * @param {string} color - 亮部顏色
-		 * @param {string} darkColor - 暗部顏色
-		 * @returns {string} SVG HTML字串
-		 */
-		function getMoonPhaseSVG(moonAge, size = '1em', color = '#FFF', darkColor = '#444') {
-			// [視覺修正] 為了讓標籤與圖示一致，強制將「望」和「朔」期間的圖示繪製為完美的圓形。
-			// 使用與 getPhaseNameFromAge 相同的精確區間
-			if (moonAge > 14.26 && moonAge <= 15.26) { // 望 (滿月)
-				return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" style="display: inline-block; vertical-align: middle;"><circle cx="12" cy="12" r="12" fill="${color}"/></svg>`;
-			}
-			if (moonAge > 29.03 || moonAge <= 0.5) { // 朔 (新月)
-				return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" style="display: inline-block; vertical-align: middle;"><circle cx="12" cy="12" r="11.5" fill="${darkColor}" stroke="${color}" stroke-width="0.5"/></svg>`;
+			// 步驟 1: 繪製一個基礎的半亮半暗的月亮
+			if (phase > 0.5) { // 虧月: 左亮右暗
+				baseLayer = `<rect x="0" y="0" width="${cx}" height="${r*2}" fill="${lightColor}" /><rect x="${cx}" y="0" width="${cx}" height="${r*2}" fill="${darkColor}" />`;
+			} else { // 盈月: 右亮左暗
+				baseLayer = `<rect x="0" y="0" width="${cx}" height="${r*2}" fill="${darkColor}" /><rect x="${cx}" y="0" width="${cx}" height="${r*2}" fill="${lightColor}" />`;
 			}
 
-			const uniqueId = 'moon-svg-clip-' + Math.random().toString(36).substr(2, 9);
-			const clipPath = `<defs><clipPath id="${uniqueId}"><circle cx="12" cy="12" r="12"/></clipPath></defs>`;
-			const phase = moonAge / LUNAR_CYCLE;
-			let svgContent;
-
-			if (phase <= 0.5) {
-				// 盈月期 (從新月到滿月)
-				const cx = 12 - 48 * phase;
-				svgContent = `<g clip-path="url(#${uniqueId})">
-					<circle cx="12" cy="12" r="12" fill="${color}"/>
-					<circle cx="${cx}" cy="12" r="12" fill="${darkColor}"/>
-				</g>`;
-			} else {
-				// 虧月期 (從滿月到新月)
-				const cx = 60 - 48 * phase;
-				svgContent = `<g clip-path="url(#${uniqueId})">
-					<circle cx="12" cy="12" r="12" fill="${color}"/>
-					<circle cx="${cx}" cy="12" r="12" fill="${darkColor}"/>
-				</g>`;
+			// 步驟 2: 在基礎上疊加晨昏線的橢圓
+			const rx = r * Math.abs(cos_angle); // 橢圓的水平半徑
+			let terminatorFill;
+			
+			// 判斷橢圓該填上亮色（形成凸月）還是暗色（形成眉月）
+			if (cos_angle > 0) { // 凸月 (Gibbous)
+				terminatorFill = lightColor;
+			} else { // 眉月 (Crescent)
+				terminatorFill = darkColor;
 			}
-
-			return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" style="display: inline-block; vertical-align: middle;">${clipPath}${svgContent}</svg>`;
+			terminatorLayer = `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${r}" fill="${terminatorFill}" />`;
+			
+			// 步驟 3: 組合 SVG 字串
+			const uniqueId = 'moon-clip-' + Math.random().toString(36).substr(2, 9);
+			const svgContent = `
+				<svg width="${size}" height="${size}" viewBox="0 0 100 100" style="display: inline-block; vertical-align: middle; border-radius: 50%; box-shadow: 0 0 2px rgba(240, 230, 140, 0.5);">
+					<defs>
+						<clipPath id="${uniqueId}">
+							<circle cx="${cx}" cy="${cy}" r="${r}" />
+						</clipPath>
+					</defs>
+					<g clip-path="url(#${uniqueId})">
+						${baseLayer}
+						${terminatorLayer}
+					</g>
+				</svg>
+			`;
+			return svgContent;
 		}
 
 		function getJieqiDescription(jieqiName) { const descriptions = { '立春': '春季開始，萬物復甦。', '雨水': '降雨增多，春耕開始。', '驚蟄': '春雷響動，驚醒冬眠動物。', '春分': '晝夜等長，春意盎然。', '清明': '氣候清爽明朗，掃墓祭祖。', '穀雨': '雨水滋潤，穀物生長。', '立夏': '夏季開始，萬物繁茂。', '小滿': '夏熟作物籽粒開始飽滿。', '芒種': '收穫與播種的時節。', '夏至': '北半球白晝最長，盛夏開始。', '小暑': '天氣開始炎熱。', '大暑': '一年中最炎熱的時期。', '立秋': '秋季開始，氣溫漸降。', '處暑': '暑氣漸退，天氣轉涼。', '白露': '水氣凝結成露，天氣漸寒。', '秋分': '晝夜等長，秋高氣爽。', '寒露': '氣溫更低，天氣轉冷。', '霜降': '天氣漸冷，露水凝結成霜。', '立冬': '冬季開始，萬物收藏。', '小雪': '開始降雪，但雪量不大。', '大雪': '降雪量增多，天氣更冷。', '冬至': '北半球白晝最短，數九寒天開始。', '小寒': '天氣寒冷，尚未達到最冷。', '大寒': '一年中最寒冷的時期。' }; return descriptions[jieqiName] || '此節氣無詳細說明。'; } // 取得節氣說明
@@ -669,7 +672,7 @@
 		function getShiChen(h) { const shichenMap = { 23: '子', 0: '子', 1: '丑', 2: '丑', 3: '寅', 4: '寅', 5: '卯', 6: '卯', 7: '辰', 8: '辰', 9: '巳', 10: '巳', 11: '午', 12: '午', 13: '未', 14: '未', 15: '申', 16: '申', 17: '酉', 18: '酉', 19: '戌', 20: '戌', 21: '亥', 22: '亥' }; return shichenMap[h] || ''; } // 根據小時取得時辰
         function getShiChenTimeRange(shichenName) { const timeRanges = { '子': '23:00 - 00:59', '丑': '01:00 - 02:59', '寅': '03:00 - 04:59', '卯': '05:00 - 06:59', '辰': '07:00 - 08:59', '巳': '09:00 - 10:59', '午': '11:00 - 12:59', '未': '13:00 - 14:59', '申': '15:00 - 16:59', '酉': '17:00 - 18:59', '戌': '19:00 - 20:59', '亥': '21:00 - 22:59' }; return timeRanges[shichenName] || ''; } // 取得時辰時間範圍
 		function getDetailedTimePeriod(hour) { const periodMap = { 0: '凌晨', 1: '凌晨', 2: '凌晨', 3: '凌晨', 4: '凌晨', 5: '清晨', 6: '清晨', 7: '清晨', 8: '清晨', 9: '上午', 10: '上午', 11: '上午', 12: '中午', 13: '下午', 14: '下午', 15: '下午', 16: '下午', 17: '傍晚', 18: '傍晚', 19: '夜晚', 20: '夜晚', 21: '夜晚', 22: '夜晚', 23: '深夜' }; return periodMap[hour] || ''; } // 取得詳細時段名稱
-		function getWeatherDescriptionAndEmoji(code) { const map = { 0: { desc: '晴', emoji: '☀️' }, 1: { desc: '多雲時晴', emoji: '🌤️' }, 2: { desc: '局部多雲', emoji: '⛅️' }, 3: { desc: '陰', emoji: '☁️' }, 45: { desc: '霧', emoji: '🌫️' }, 48: { desc: '凍霧', emoji: '🌫️' }, 51: { desc: '毛毛雨', emoji: '🌦️' }, 53: { desc: '毛毛雨', emoji: '🌦️' }, 55: { desc: '毛毛雨', emoji: '🌦️' }, 56: { desc: '凍毛毛雨', emoji: '🌨️' }, 57: { desc: '凍毛毛雨', emoji: '🌨️' }, 61: { desc: '雨', emoji: '🌧️' }, 63: { desc: '雨', emoji: '🌧️' }, 65: { desc: '大雨', emoji: '🌧️' }, 66: { desc: '凍雨', emoji: '🌨️' }, 67: { desc: '凍雨', emoji: '🌨️' }, 71: { desc: '雪', emoji: '❄️' }, 73: { desc: '雪', emoji: '❄️' }, 75: { desc: '大雪', emoji: '❄️' }, 77: { desc: '冰雹', emoji: '🌨️' }, 80: { desc: '陣雨', emoji: '🌦️' }, 81: { desc: '陣雨', emoji: '🌦️' }, 82: { desc: '大陣雨', emoji: '⛈️' }, 85: { desc: '陣雪', emoji: '🌨️' }, 86: { desc: '大陣雪', emoji: '🌨️' }, 95: { desc: '雷陣雨', emoji: '⛈️' }, 96: { desc: '雷陣雨伴冰雹', emoji: '⛈️' }, 99: { desc: '雷陣雨伴冰雹', emoji: '⛈️' } }; return map[code] || { desc: '未知', emoji: '❓' }; } // 根據天氣代碼取得天氣描述與圖示
+		function getWeatherDescriptionAndEmoji(code) { const map = { 0: { desc: '晴', emoji: '☀️' }, 1: { desc: '多雲時晴', emoji: '🌤️' }, 2: { desc: '局部多雲', emoji: '⛅️' }, 3: { desc: '陰', emoji: '☁️' }, 45: { desc: '霧', emoji: '🌫️' }, 48: { desc: '凍霧', emoji: '🌫️' }, 51: { desc: '毛毛雨', emoji: '🌦️' }, 53: { desc: '毛毛雨', emoji: '🌦️' }, 55: { desc: '毛毛雨', emoji: '🌦️' }, 56: { desc: '凍毛毛雨', emoji: '🌨️' }, 57: { desc: '凍毛毛雨', emoji: '🌨️' }, 61: { desc: '雨', emoji: '🌧️' }, 63: { desc: '雨', emoji: '🌧️' }, 65: { desc: '大雨', emoji: '🌧️' }, 66: { desc: '凍雨', emoji: '�️' }, 67: { desc: '凍雨', emoji: '🌨️' }, 71: { desc: '雪', emoji: '❄️' }, 73: { desc: '雪', emoji: '❄️' }, 75: { desc: '大雪', emoji: '❄️' }, 77: { desc: '冰雹', emoji: '🌨️' }, 80: { desc: '陣雨', emoji: '🌦️' }, 81: { desc: '陣雨', emoji: '🌦️' }, 82: { desc: '大陣雨', emoji: '⛈️' }, 85: { desc: '陣雪', emoji: '🌨️' }, 86: { desc: '大陣雪', emoji: '🌨️' }, 95: { desc: '雷陣雨', emoji: '⛈️' }, 96: { desc: '雷陣雨伴冰雹', emoji: '⛈️' }, 99: { desc: '雷陣雨伴冰雹', emoji: '⛈️' } }; return map[code] || { desc: '未知', emoji: '❓' }; } // 根據天氣代碼取得天氣描述與圖示
 
 		function updateDigitalClock() { // 更新數位時鐘顯示
 			const now = new Date();
@@ -700,11 +703,10 @@
 			const solar = Solar.fromDate(now), lunar = solar.getLunar();
 			if (settings.showMinguoYear) { const traditionalShengXiao = s2t(lunar.getYearShengXiao()); lunarParts.push(`<span class="lunar-year-target" style="color: ${settings.minguoYearColor};">${now.getFullYear() - 1911}年${getShengXiaoEmoji(traditionalShengXiao)}</span>`); }
 			if (settings.showLunarMonth) { 
-				const moonAge = calculateMoonPhase(now);
-                const yueXiangName = getPhaseNameFromAge(moonAge);
+				const lunarDay = lunar.getDay();
+                const yueXiangName = getPhaseNameFromLunarDay(lunarDay);
 				const phaseDisplayNameMap = { '朔': '新月', '峨眉': '峨眉月', '上弦': '上弦月', '盈凸': '盈凸月', '望': '滿月', '虧凸': '虧凸月', '下弦': '下弦月', '殘': '殘月' };
-                const moonIconColor = settings.lunarMonthColor;
-                const yueXiangIcon = getMoonPhaseSVG(moonAge, '1.1em', moonIconColor, '#444');
+                const yueXiangIcon = getMoonPhaseSVG(lunarDay, '1.1em');
                 const monthText = s2t(lunar.getMonthInChinese()); 
                 lunarParts.push(`<span class="lunar-month-target" style="color: ${settings.lunarMonthColor};"><span class="lunar-month-text-target" title="查看月曆">${monthText}</span><span class="moon-phase-icon-target" title="查看月相詳情: ${phaseDisplayNameMap[yueXiangName] || yueXiangName}">${yueXiangIcon}</span></span>`); 
             }
@@ -820,11 +822,10 @@
 			const traditionalShengXiao = s2t(lunar.getYearShengXiao());
 			if (settings.showMinguoYear) { const year = now.getFullYear(); const rocYear = year - 1911; lunarParts.push(`<span class="analog-marquee-clickable analog-lunar-year-target" style="color: ${settings.minguoYearColor};">${year}/${rocYear}年${getShengXiaoEmoji(traditionalShengXiao)}</span>`); }
 			if (settings.showLunarMonth) {
-				const moonAge = calculateMoonPhase(now);
-                const yueXiangName = getPhaseNameFromAge(moonAge);
+				const lunarDay = lunar.getDay();
+                const yueXiangName = getPhaseNameFromLunarDay(lunarDay);
 				const phaseDisplayNameMap = { '朔': '新月', '峨眉': '峨眉月', '上弦': '上弦月', '盈凸': '盈凸月', '望': '滿月', '虧凸': '虧凸月', '下弦': '下弦月', '殘': '殘月' };
-                const moonIconColor = settings.lunarMonthColor;
-                const yueXiangIcon = getMoonPhaseSVG(moonAge, '1.1em', moonIconColor, '#444');
+                const yueXiangIcon = getMoonPhaseSVG(lunarDay, '1.1em');
 				const monthText = s2t(lunar.getMonthInChinese());
 				lunarParts.push(`<span class="analog-marquee-clickable analog-lunar-month-target" style="color: ${settings.lunarMonthColor};" title="查看月曆">${monthText}</span><span class="analog-marquee-clickable analog-moon-phase-target" style="color: ${settings.lunarMonthColor};" title="查看月相詳情: ${phaseDisplayNameMap[yueXiangName] || yueXiangName}">${yueXiangIcon}</span>`);
 			}
@@ -902,11 +903,6 @@
         async function fetchWeather(lat, lon) { const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=8`; try { const response = await fetch(url); if (!response.ok) throw new Error('天氣API請求失敗'); return await response.json(); } catch (error) { console.error("獲取天氣失敗:", error); return null; } } // 從 API 獲取天氣
 		function getChineseLocationName(englishName) { for (const countyName in taiwanLocations) { const countyData = taiwanLocations[countyName]; for (const districtName in countyData.districts) { if (countyData.districts[districtName].toLowerCase() === englishName.toLowerCase()) { return countyName === districtName ? countyName : districtName; } } } return englishName; } // 將英文地名轉為中文
 
-		/**
-		 * 取得月相詳細資訊，並產生大型 SVG 圖示
-		 * @param {string} phaseName - 月相中文名
-		 * @returns {object} - 包含名稱、描述和 SVG 圖示的物件
-		 */
 		function getMoonPhaseDetails(phaseName) {
 			const p = s2t(phaseName);
 			const details = {
@@ -922,21 +918,16 @@
 			return details[p] || { name: p, desc: '無此月相的詳細資訊。' };
 		}
 		
-		/**
-		 * [FIXED] 更新月相彈窗中的主要顯示區域。
-		 * 移除了根據農曆初一強制判斷為新月的邏輯，統一使用天文計算。
-		 * @param {Date} date - 要顯示的日期
-		 */
 		function updateMainMoonPhaseDisplay(date) {
-			const moonAge = calculateMoonPhase(date);
-			const yueXiangName = getPhaseNameFromAge(moonAge);
+			const lunar = Solar.fromDate(date).getLunar();
+			const lunarDay = lunar.getDay();
+			const yueXiangName = getPhaseNameFromLunarDay(lunarDay);
 			const details = getMoonPhaseDetails(yueXiangName);
 			
 			document.getElementById('moonPhaseModalTitle').textContent = `月相詳情：${details.name}`;
-			document.getElementById('mainMoonIcon').innerHTML = getMoonPhaseSVG(moonAge, '100px', '#FFF', '#333');
+			document.getElementById('mainMoonIcon').innerHTML = getMoonPhaseSVG(lunarDay, '100px');
 			document.getElementById('mainMoonDescription').textContent = details.desc;
 			
-			// 更新月曆中的選中狀態
 			const allDays = document.querySelectorAll('#moonCalendarGrid .calendar-day');
 			allDays.forEach(day => day.classList.remove('is-selected'));
 			const selectedDayEl = document.querySelector(`#moonCalendarGrid .calendar-day[data-date-string='${date.toDateString()}']`);
@@ -945,13 +936,6 @@
 			}
 		}
 
-		/**
-		 * [FIXED] 產生月相月曆。
-		 * 移除了根據農曆初一強制判斷為新月的邏輯，統一使用天文計算。
-		 * @param {number} year - 年份
-		 * @param {number} month - 月份 (0-11)
-		 * @param {Date} selectedDate - 當前選中的日期
-		 */
 		function generateMoonPhaseCalendar(year, month, selectedDate) {
 			const grid = document.getElementById('moonCalendarGrid');
 			const monthYear = document.getElementById('moonCalendarMonthYear');
@@ -989,8 +973,7 @@
 				};
 				
 				const lunar = Solar.fromDate(date).getLunar();
-				const moonAge = calculateMoonPhase(date); // 直接使用天文計算
-				const moonIcon = getMoonPhaseSVG(moonAge, '24px', '#FFF', '#555');
+				const moonIcon = getMoonPhaseSVG(lunar.getDay(), '24px');
 				const lunarDayText = lunar.getDay() === 1 ? s2t(lunar.getMonthInChinese()) + '月' : s2t(lunar.getDayInChinese());
 
 				cell.innerHTML = `<div class="gregorian-day">${dayNum}</div><div class="moon-phase-icon-small">${moonIcon}</div><div class="lunar-day">${lunarDayText}</div>`;
@@ -1014,11 +997,6 @@
 			document.getElementById('moonPhaseModal').classList.add('is-active');
 		}
 		
-		/**
-		 * [FIXED] 顯示日期詳情彈窗。
-		 * 移除了根據農曆初一強制判斷為新月的邏輯，統一使用天文計算。
-		 * @param {Date} date - 要顯示詳情的日期物件
-		 */
 		function showDateDetails(date) {
 			date.setHours(12, 0, 0, 0); 
 			const year = date.getFullYear();
@@ -1032,8 +1010,7 @@
 			const lunarYearText = `${s2t(lunar.getYearInGanZhi())}${traditionalShengXiao}${getShengXiaoEmoji(traditionalShengXiao)}年`;
 			const lunarDateText = `${s2t(lunar.getMonthInChinese())}月${s2t(lunar.getDayInChinese())}`;
 			
-			const moonAge = calculateMoonPhase(date); // 直接使用天文計算
-			const moonPhaseIconSVG = getMoonPhaseSVG(moonAge, '1.2em', '#FFD700', '#333');
+			const moonPhaseIconSVG = getMoonPhaseSVG(lunar.getDay(), '1.2em');
 
 			const currentJieqi = jieqiForYear.find(jq => jq.date.toDateString() === date.toDateString());
 			const currentHoliday = holidaysForYear.find(h => h.date.toDateString() === date.toDateString());
