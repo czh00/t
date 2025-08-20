@@ -35,7 +35,6 @@
 		#digital-layout, #analog-layout { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; } /* 版面容器 */
 		body.layout-digital #analog-layout, body.layout-digital #analog-settings { display: none; } /* 數位版面時隱藏類比相關元素 */
 		body.layout-analog #digital-layout, body.layout-analog #digital-settings { display: none; } /* 類比版面時隱藏數位相關元素 */
-
 		.modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); } /* 彈出視窗背景 */
 		.modal.is-active { display: flex; justify-content: center; align-items: center; } /* 顯示彈出視窗 */
 		#calendarModal, #weeklyCalendarModal, #yearlyCalendarModal { z-index: 110; } /* 日曆彈窗層級 */
@@ -49,13 +48,11 @@
 		.action-button:hover { background-color: #777; } /* 按鈕懸停效果 */
 		.button-group { display: flex; justify-content: center; gap: 10px; margin-top: 20px; white-space: nowrap; flex-wrap: wrap; } /* 按鈕群組 */
 		.calendar-footer { display: flex; justify-content: center; gap: 10px; width: 100%; margin-top: 10px; } /* 日曆底部 */
-
 		.control-icon { position: fixed; bottom: 20px; width: 32px; height: 32px; cursor: pointer; z-index: 200; opacity: 0.5; transition: opacity 0.3s ease; } /* 控制圖示 */
 		.control-icon svg { width: 100%; height: 100%; fill: #fff; } /* 圖示 SVG */
 		.control-icon:hover { opacity: 1; } /* 圖示懸停效果 */
 		#settings-icon { right: 62px; } /* 設定圖示位置 */
 		#fullscreen-icon { right: 20px; } /* 全螢幕圖示位置 */
-
 		#settingsModal .modal-content { max-width: 600px; } /* 設定彈窗最大寬度 */
 		.setting-item { margin-bottom: 6px; display: flex; align-items: center; flex-wrap: wrap; gap: 10px;} /* 設定項目 */
 		.setting-item label:first-child { margin-right: 10px; flex-shrink: 0;} /* 設定項目標籤 */
@@ -82,7 +79,6 @@
 		.settings-column h3 { text-align: center; margin-top: 0; } /* 欄位標題 */
 		body.layout-digital .settings-column h3 { color: #00FF00; } /* 數位版欄位標題顏色 */
 		body.layout-analog .settings-column h3 { color: var(--highlight-color); } /* 類比版欄位標題顏色 */
-
 		.calendar-content, .weekly-calendar-content { background-color: #2c2c2c; margin: auto; padding: 20px; border: 1px solid #888; border-radius: 10px; width: 95%; max-width: 900px; } /* 月曆/週曆內容 */
 		.yearly-calendar-content { background-color: #2c2c2c; margin: auto; padding: 20px; border: 1px solid #888; border-radius: 10px; width: 95%; max-width: 1400px; } /* 年曆內容 */
 		.calendar-weekdays, .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; } /* 星期與日期網格 */
@@ -121,7 +117,6 @@
 		.yearly-indicators .dot { width: 4px; height: 4px; border-radius: 50%; } /* 年曆事件點 */
 		.yearly-indicators .holiday { background-color: #007bff; } /* 節日點 */
 		.yearly-indicators .jieqi { background-color: #28a745; } /* 節氣點 */
-
 		.details-content { max-width: 800px; text-align: left;} /* 詳情內容 */
 		.details-content p { margin-bottom: 10px; font-size: 1.2em; line-height: 1.6; } /* 詳情段落 */
 		.details-content strong { color: #FFD700; } /* 詳情強調文字 */
@@ -160,7 +155,6 @@
 		.zodiac-item { background-color: #444; padding: 10px; border-radius: 8px; border: 1px solid #555; } /* 生肖項目 */
 		.zodiac-item .zodiac-icon { height: 4em; margin-bottom: 5px; } /* 生肖圖示 */
 		.zodiac-item p { margin: 0; font-weight: bold; } /* 生肖名稱 */
-
 		#digital-layout-wrapper { position: relative; } /* 數位版面容器 */
 		#dateTimeDisplay {
 			font-family: 'Digital Dismay', 'Noto Sans TC', sans-serif; /* 數位時鐘字型 */
@@ -174,12 +168,12 @@
 		.time-text { font-size: 36vw; font-weight: normal; margin-bottom: -10vw; position: relative; display: inline-block; white-space: nowrap; padding-right: 8vw; } /* 時間文字 */
 		.time-seconds { font-size: 8vw; font-weight: normal; position: absolute; right: 0; bottom: 8vw; text-align: right; width: 6vw; } /* 秒數 */
 		.time-ampm { font-size: 5vw; font-weight: bold; position: absolute; top: 8vw; right: 0; text-align: right; width: 8vw; } /* 上下午/時段 */
-		.gregorian-date-text { font-family: 'Noto Sans TC', 'Inter', sans-serif; font-size: 7.4vw; display: flex; justify-content: center; align-items: center; width: 92vw; margin: -2vw auto -3vw; white-space: nowrap; cursor: default; position: relative; z-index: 1; } /* 公曆日期行 */
+		.gregorian-date-text { font-family: 'Noto Sans TC', 'Inter', sans-serif; font-size: 6.5vw; display: flex; justify-content: center; align-items: center; width: 92vw; margin: -2vw auto -3vw; white-space: nowrap; cursor: default; position: relative; z-index: 1; } /* 公曆日期行 */
 		.gregorian-date-parts { flex-shrink: 0; } /* 公曆日期部分不壓縮 */
 		.gregorian-date-parts span { cursor: pointer; } /* 公曆日期部分可點擊 */
 		.lunar-and-jieqi-line { font-family: 'Noto Sans TC', 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; font-size: 6.25vw; white-space: nowrap; width: 92vw; margin: 0 auto; overflow: hidden; position: relative; z-index: 1; } /* 農曆與節氣行 */
-		.lunar-date-static-text { flex-shrink: 0; text-align: right; } /* 農曆靜態文字 */
-		.lunar-date-static-text span { cursor: pointer; } /* 農曆部分可點擊 */
+		.lunar-date-static-text span, .lunar-date-static-text .lunar-month-target-group { margin-right: 0; } /* 農曆項目間距 */
+		.lunar-date-static-text span:last-child { margin-right: 0; } /* 最後一個農曆項目無間距 */
 		.lunar-month-text-target, .moon-phase-icon-target, .lunar-year-target { cursor: pointer; } /* 農曆月、月相、年可點擊 */
 		.moon-phase-icon-target { margin-left: 0; } /* 月相圖示 */
 		.weather-marquee-container, .jieqi-holiday-marquee-container { flex-grow: 1; overflow: hidden; position: relative; text-align: left; min-width: 0; cursor: pointer; } /* 跑馬燈容器 */
@@ -194,8 +188,8 @@
 		#background-scanline-overlay.active.pattern-b { display: block; background-image: repeating-linear-gradient(to bottom, rgba(0,0,0,0.3) 0, rgba(0,0,0,0.3) 2px, transparent 2px, transparent 4px); } /* 背景掃描線樣式 B */
 		#text-scanline-overlay.active.pattern-a { display: block; background-image: repeating-linear-gradient(to bottom, transparent, transparent 2px, var(--page-background-color) 2px, var(--page-background-color) 4px); } /* 文字掃描線樣式 A */
 		#text-scanline-overlay.active.pattern-b { display: block; background-image: repeating-linear-gradient(to bottom, var(--page-background-color) 0, var(--page-background-color) 2px, transparent 2px, transparent 4px); } /* 文字掃描線樣式 B */
-		.weather-svg-icon, .zodiac-svg-icon { display: inline-block; vertical-align: middle; transform: translateY(-25%); } /* SVG 通用樣式 */
-
+		.weather-svg-icon { display: inline-block; vertical-align: middle; transform: translateY(-10%); } /* SVG 天氣圖示通用樣式 */
+		.zodiac-svg-icon { display: inline-block; vertical-align: middle; transform: translateY(-15%); } /* SVG 生肖圖示通用樣式 */
 		#analog-layout-wrapper {
 			display: flex; /* 使用 flexbox 佈局 */
 			flex-direction: column; /* 垂直排列 (手機) */
@@ -238,17 +232,14 @@
 			transition: transform 0.2s ease; /* 動畫 */
 		}
 		.clock-center-dot:hover { transform: scale(1.1); } /* 中心點懸停效果 */
-
 		.hand { position: absolute; height: 100%; width: 100%; z-index: 10; } /* 指針容器 */
 		.hour-hand i { position: absolute; top: 25%; left: 50%; width: 10px; height: 25%; background-color: var(--hour-hand-color); transform: translateX(-50%); border-radius: 2px; } /* 時針 */
 		.minute-hand i { position: absolute; top: 15%; left: 50%; width: 6px; height: 35%; background-color: var(--minute-hand-color); transform: translateX(-50%); border-radius: 2px; } /* 分針 */
 		.second-hand i { position: absolute; top: 10%; left: 50%; width: 2px; height: 40%; background-color: var(--second-hand-color); transform: translateX(-50%); border-radius: 1px; } /* 秒針 */
-		
 		.tick-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; } /* 刻度容器 */
 		.tick { position: absolute; background: var(--tick-color); left: 50%; transform: translateX(-50%); } /* 刻度 */
 		.tick-hour { height: 12px; width: 3px; top: 0; } /* 小時刻度 */
 		.tick-minute { height: 6px; width: 1px; top: 0; opacity: 0.7; } /* 分鐘刻度 */
-
 		.number {
 			position: absolute; /* 絕對定位 */
 			top: 25px; left: 50%; /* 位置 */
@@ -295,7 +286,6 @@
 		}
 		.calendar-container .calendar-day:hover { background-color: #333; } /* 日期懸停效果 */
 		.calendar-container .calendar-day.is-today { background-color: transparent; } /* 今天樣式 */
-
 		.analog-day-main {
 			display: flex; flex-direction: column; /* 垂直排列 */
 			justify-content: center; align-items: center; /* 居中 */
@@ -313,7 +303,6 @@
 		}
 		.analog-day-events:empty { visibility: hidden; } /* 無事件時隱藏 */
 		.analog-day-events .event-indicator { padding: 2px 0; margin: 0; border-radius: 3px; } /* 事件標記 */
-
 		.calendar-container .calendar-day .gregorian-day { font-size: clamp(0.9rem, 1.5vw, 1.2rem); font-weight: bold; } /* 類比日曆公曆日期 */
 		.calendar-container .calendar-day .lunar-day { font-size: clamp(0.7rem, 1vw, 0.9rem); color: var(--calendar-lunar-color); } /* 類比日曆農曆日期 */
 		
@@ -751,7 +740,7 @@
 			if(jieQiText) marqueeParts.push(`<span style="color: ${settings.jieqiColor};">${jieQiText}</span>`);
 			if(holidayText) marqueeParts.push(`<span style="color: ${settings.holidayColor};">${holidayText}</span>`);
 			combinedJieqiHolidayText = marqueeParts.join(' ');
-			document.getElementById('lunarDateDisplay').innerHTML = lunarParts.join(' ');
+			document.getElementById('lunarDateDisplay').innerHTML = lunarParts.join('');
 			document.getElementById('lunarDateDisplay').style.display = lunarParts.length > 0 ? 'inline-block' : 'none';
 			const jieqiMarqueeIsVisible = settings.showJieqi || settings.showHolidays;
 			document.getElementById('jieqiHolidayMarqueeContainer').style.display = jieqiMarqueeIsVisible ? 'block' : 'none';
@@ -863,7 +852,7 @@
 			}
 			if (settings.showLunarDay) { lunarParts.push(`<span class="analog-marquee-clickable analog-lunar-day-target" style="color: ${settings.lunarDayColor};">${s2t(lunar.getDayInChinese())}</span>`); }
 			if (settings.showLunarShiChen) { lunarParts.push(`<span class="analog-marquee-clickable analog-shichen-target" style="color: ${settings.lunarShiChenColor};">${getShiChen(now.getHours())}時</span>`); }
-			const lunarText = lunarParts.join(' ');
+			const lunarText = lunarParts.join('');
 			let weatherText = '';
 			const marqueeContainer = document.getElementById('analog-weather-display');
 			if (settings.showWeather) {
