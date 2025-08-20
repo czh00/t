@@ -87,7 +87,8 @@
 		body.layout-analog .calendar-weekdays div { color: var(--calendar-weekday-color); } /* 類比版星期顏色 */
 		.calendar-day { background-color: #444; border-radius: 5px; padding: 5px; min-height: 80px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; font-size: 0.9em; border: 1px solid #555; cursor: pointer; transition: background-color: 0.3s; } /* 月曆每日格子 */
 		.calendar-day:hover { background-color: #5e5e5e; } /* 日期懸停效果 */
-		.calendar-day.other-month { color: #777; background-color: #3a3a3a; cursor: default; } /* 非本月日期 */
+		.calendar-day.other-month { color: #777; background-color: #3a3a3a; } /* 非本月日期 */
+		.calendar-day.other-month:hover { background-color: #4a4a4a; } /* 非本月日期懸停效果 */
 		.calendar-day.is-today { border-color: #00FF00; box-shadow: 0 0 5px #00FF00; } /* 今天 (數位) */
 		body.layout-analog .calendar-day.is-today { border-color: var(--highlight-color); box-shadow: 0 0 5px var(--highlight-color); } /* 今天 (類比) */
 		.calendar-day .gregorian-day { font-size: 1.2em; font-weight: bold; } /* 公曆日期 */
@@ -810,29 +811,39 @@
 			const todayCell = document.querySelector('#analog-calendar-grid .is-today .gregorian-day');
 			if (!todayCell || new Date().getDate() !== parseInt(todayCell.textContent)) { createAnalogCalendar(); }
 		}
-		function createAnalogCalendar() { // 建立類比版面主日曆
-			const now = new Date(), year = now.getFullYear(), month = now.getMonth(), today = now.getDate();
+		function createAnalogCalendar() { // 建立類比版面主日曆 (6x7 版)
+			const now = new Date(), year = now.getFullYear(), month = now.getMonth();
 			document.getElementById('analog-calendar-header').textContent = `${month + 1}月`;
 			const gridEl = document.getElementById('analog-calendar-grid');
 			gridEl.innerHTML = '';
 			['日', '一', '二', '三', '四', '五', '六'].forEach(day => { const el = document.createElement('div'); el.textContent = day; el.classList.add('weekday-header'); gridEl.appendChild(el); });
 			if (yearlyDataCache.year !== year) { getHolidaysForYear(year); getJieqiForYear(year); }
 			const holidays = yearlyDataCache.holidays, jieqi = yearlyDataCache.jieqi;
-			const firstDayOfMonth = new Date(year, month, 1).getDay(), daysInMonth = new Date(year, month + 1, 0).getDate();
-			for (let i = 0; i < firstDayOfMonth; i++) { const emptyCell = document.createElement('div'); emptyCell.classList.add('calendar-day'); gridEl.appendChild(emptyCell); }
-			for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) {
-				const cell = document.createElement('div'); cell.className = 'calendar-day';
-				const date = new Date(year, month, dayNum); cell.dataset.date = date.toISOString();
-				cell.onclick = () => showDateDetails(date);
-				const lunar = Solar.fromDate(date).getLunar();
+			const firstDayOfMonth = new Date(year, month, 1).getDay();
+			const startDate = new Date(year, month, 1 - firstDayOfMonth);
+			for (let i = 0; i < 42; i++) {
+				const currentDate = new Date(startDate);
+				currentDate.setDate(startDate.getDate() + i);
+				const cell = document.createElement('div');
+				cell.className = 'calendar-day';
+				if (currentDate.getMonth() !== month) {
+					cell.classList.add('other-month');
+				}
+				cell.dataset.date = currentDate.toISOString();
+				cell.onclick = () => showDateDetails(new Date(cell.dataset.date));
+				const lunar = Solar.fromDate(currentDate).getLunar();
 				const lunarDayText = lunar.getDay() === 1 ? s2t(lunar.getMonthInChinese()) + '月' : s2t(lunar.getDayInChinese());
 				let eventHtml = '';
-				const holiday = holidays.find(h => h.date.toDateString() === date.toDateString());
-				if (holiday) eventHtml += `<span class="event-indicator holiday">${holiday.name}</span>`;
-				const jq = jieqi.find(j => j.date.toDateString() === date.toDateString());
-				if (jq) eventHtml += `<span class="event-indicator jieqi">${jq.name}</span>`;
-				cell.innerHTML = `<div class="analog-day-main"><div class="gregorian-day">${dayNum}</div><div class="lunar-day">${lunarDayText}</div></div><div class="analog-day-events">${eventHtml}</div>`;
-				if (dayNum === today) { cell.classList.add('is-today'); }
+				if (currentDate.getMonth() === month) {
+					const holiday = holidays.find(h => h.date.toDateString() === currentDate.toDateString());
+					if (holiday) eventHtml += `<span class="event-indicator holiday">${holiday.name}</span>`;
+					const jq = jieqi.find(j => j.date.toDateString() === currentDate.toDateString());
+					if (jq) eventHtml += `<span class="event-indicator jieqi">${jq.name}</span>`;
+				}
+				cell.innerHTML = `<div class="analog-day-main"><div class="gregorian-day">${currentDate.getDate()}</div><div class="lunar-day">${lunarDayText}</div></div><div class="analog-day-events">${eventHtml}</div>`;
+				if (currentDate.toDateString() === now.toDateString()) {
+					cell.classList.add('is-today');
+				}
 				gridEl.appendChild(cell);
 			}
 		}
@@ -940,28 +951,39 @@
 			if (selectedDayEl) { selectedDayEl.classList.add('is-selected'); }
 		}
 
-		function generateMoonPhaseCalendar(year, month, selectedDate) { // 產生月相彈窗中的月曆
+		function generateMoonPhaseCalendar(year, month, selectedDate) { // 產生月相彈窗中的月曆 (6x7 版)
 			const grid = document.getElementById('moonCalendarGrid'), monthYear = document.getElementById('moonCalendarMonthYear'), weekdaysEl = document.getElementById('moonCalendarWeekdays');
 			if (!grid || !monthYear || !weekdaysEl) return;
 			grid.innerHTML = '';
 			weekdaysEl.innerHTML = '';
 			['日', '一', '二', '三', '四', '五', '六'].forEach(day => { const el = document.createElement('div'); el.textContent = day; weekdaysEl.appendChild(el); });
 			monthYear.textContent = `${year}年 ${month + 1}月`;
-			const firstDay = new Date(year, month, 1).getDay(), daysInMonth = new Date(year, month + 1, 0).getDate(), today = new Date();
-			for (let i = 0; i < firstDay; i++) { grid.appendChild(document.createElement('div')).classList.add('calendar-day', 'other-month'); }
-			for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) {
+			const firstDayOfMonth = new Date(year, month, 1).getDay();
+			const startDate = new Date(year, month, 1 - firstDayOfMonth);
+			const today = new Date();
+			for (let i = 0; i < 42; i++) {
+				const currentDate = new Date(startDate);
+				currentDate.setDate(startDate.getDate() + i);
 				const cell = document.createElement('div');
 				cell.classList.add('calendar-day');
-				const date = new Date(year, month, dayNum, 12, 0, 0); // 設定為中午以確保日期計算一致性
+				if (currentDate.getMonth() !== month) {
+					cell.classList.add('other-month');
+				}
+				const date = new Date(currentDate);
+				date.setHours(12, 0, 0, 0); // 標準化以確保日期計算一致性
 				cell.dataset.date = date.toISOString();
 				cell.dataset.dateString = date.toDateString();
 				cell.onclick = () => { const clickedDate = new Date(date); moonCalendarDate = clickedDate; updateMainMoonPhaseDisplay(clickedDate); };
 				const lunar = Solar.fromDate(date).getLunar();
 				const moonIcon = getMoonPhaseSVG(lunar.getDay(), '24px');
 				const lunarDayText = lunar.getDay() === 1 ? s2t(lunar.getMonthInChinese()) + '月' : s2t(lunar.getDayInChinese());
-				cell.innerHTML = `<div class="gregorian-day">${dayNum}</div><div class="moon-phase-icon-small">${moonIcon}</div><div class="lunar-day">${lunarDayText}</div>`;
-				if (today.getFullYear() === year && today.getMonth() === month && dayNum === today.getDate()) { cell.classList.add('is-today'); }
-				if (selectedDate.toDateString() === date.toDateString()) { cell.classList.add('is-selected'); }
+				cell.innerHTML = `<div class="gregorian-day">${date.getDate()}</div><div class="moon-phase-icon-small">${moonIcon}</div><div class="lunar-day">${lunarDayText}</div>`;
+				if (today.getFullYear() === year && today.getMonth() === month && date.getDate() === today.getDate()) {
+					cell.classList.add('is-today');
+				}
+				if (selectedDate.toDateString() === date.toDateString()) {
+					cell.classList.add('is-selected');
+				}
 				grid.appendChild(cell);
 			}
 		}
@@ -1005,7 +1027,43 @@
 			document.getElementById('dateDetailsModal').classList.add('is-active');
 		}
 		function updateShiChenDetailsView(date) { shichenDetailDate = new Date(date); const lunar = Solar.fromDate(shichenDetailDate).getLunar(); const currentHour = shichenDetailDate.getHours(); const shiChenName = getShiChen(currentHour); const shiChenTimeRange = getShiChenTimeRange(shiChenName); document.getElementById('shichenDetailsModalTitle').textContent = `${shichenDetailDate.getMonth() + 1}月${shichenDetailDate.getDate()}日 ${shiChenName}時`; const currentLunarTime = lunar.getTimes().find(lt => lt.getZhi() === shiChenName); if (currentLunarTime) { const shiChenGanZhi = s2t(currentLunarTime.getGan() + currentLunarTime.getZhi()); const yi = s2t(currentLunarTime.getYi()).join('、') || '無'; const ji = s2t(currentLunarTime.getJi()).join('、') || '無'; const detailsHtml = `<p><strong>時辰：</strong>${shiChenName}時 (${shiChenGanZhi}) <span style="font-size: 0.9em; color: #ccc;">${shiChenTimeRange}</span></p><div class="yi-ji-grid"><strong>宜：</strong><span>${yi}</span><strong>忌：</strong><span>${ji}</span></div><p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">時辰宜忌僅供參考。</p>`; document.getElementById('shichenDetailsModalContent').innerHTML = detailsHtml; } else { document.getElementById('shichenDetailsModalContent').innerHTML = `<p>找不到 ${shiChenName}時 的詳細資訊。</p>`; } document.getElementById('shichenDetailsModal').classList.add('is-active'); } // 更新並顯示時辰詳情彈窗
-		function generateCalendarPopup(year, month) { const grid = document.getElementById('calendarGrid'), monthYear = document.getElementById('calendarMonthYear'), weekdaysEl = document.getElementById('calendarWeekdays'); if(!grid || !monthYear || !weekdaysEl) return; grid.innerHTML = ''; weekdaysEl.innerHTML = ''; ['日', '一', '二', '三', '四', '五', '六'].forEach(day => { const el = document.createElement('div'); el.textContent = day; weekdaysEl.appendChild(el); }); monthYear.textContent = `${year}年 ${month + 1}月`; monthYear.dataset.year = year; monthYear.dataset.month = month; const firstDay = new Date(year, month, 1).getDay(), daysInMonth = new Date(year, month + 1, 0).getDate(), today = new Date(); if (yearlyDataCache.year !== year) { getHolidaysForYear(year); getJieqiForYear(year); } const holidays = yearlyDataCache.holidays, jieqi = yearlyDataCache.jieqi; for (let i = 0; i < firstDay; i++) { grid.appendChild(document.createElement('div')).classList.add('calendar-day', 'other-month'); } for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) { const cell = document.createElement('div'); cell.classList.add('calendar-day'); const date = new Date(year, month, dayNum); cell.dataset.date = date.toISOString(); cell.onclick = () => showDateDetails(new Date(cell.dataset.date)); const lunar = Solar.fromDate(date).getLunar(); cell.innerHTML = `<div class="gregorian-day">${dayNum}</div><div class="lunar-day">${lunar.getDay() === 1 ? s2t(lunar.getMonthInChinese()) + '月' : s2t(lunar.getDayInChinese())}</div>`; if (today.getFullYear() === year && today.getMonth() === month && dayNum === today.getDate()) { cell.classList.add('is-today'); } const holiday = holidays.find(h => h.date.toDateString() === date.toDateString()); if (holiday) cell.innerHTML += `<span class="event-indicator holiday">${holiday.name}</span>`; const jq = jieqi.find(j => j.date.toDateString() === date.toDateString()); if (jq) cell.innerHTML += `<span class="event-indicator jieqi">${jq.name}</span>`; grid.appendChild(cell); } const remainingCells = 42 - firstDay - daysInMonth; for (let i = 0; i < remainingCells; i++) { grid.appendChild(document.createElement('div')).classList.add('calendar-day', 'other-month'); } } // 產生月曆彈窗
+		function generateCalendarPopup(year, month) { // 產生月曆彈窗 (6x7 版)
+			const grid = document.getElementById('calendarGrid'), monthYear = document.getElementById('calendarMonthYear'), weekdaysEl = document.getElementById('calendarWeekdays');
+			if (!grid || !monthYear || !weekdaysEl) return;
+			grid.innerHTML = '';
+			weekdaysEl.innerHTML = '';
+			['日', '一', '二', '三', '四', '五', '六'].forEach(day => { const el = document.createElement('div'); el.textContent = day; weekdaysEl.appendChild(el); });
+			monthYear.textContent = `${year}年 ${month + 1}月`;
+			monthYear.dataset.year = year;
+			monthYear.dataset.month = month;
+			if (yearlyDataCache.year !== year) { getHolidaysForYear(year); getJieqiForYear(year); }
+			const holidays = yearlyDataCache.holidays, jieqi = yearlyDataCache.jieqi;
+			const firstDayOfMonth = new Date(year, month, 1).getDay();
+			const startDate = new Date(year, month, 1 - firstDayOfMonth);
+			for (let i = 0; i < 42; i++) {
+				const currentDate = new Date(startDate);
+				currentDate.setDate(startDate.getDate() + i);
+				const cell = document.createElement('div');
+				cell.classList.add('calendar-day');
+				if (currentDate.getMonth() !== month) {
+					cell.classList.add('other-month');
+				}
+				cell.dataset.date = currentDate.toISOString();
+				cell.onclick = () => showDateDetails(new Date(cell.dataset.date));
+				const lunar = Solar.fromDate(currentDate).getLunar();
+				cell.innerHTML = `<div class="gregorian-day">${currentDate.getDate()}</div><div class="lunar-day">${lunar.getDay() === 1 ? s2t(lunar.getMonthInChinese()) + '月' : s2t(lunar.getDayInChinese())}</div>`;
+				if (currentDate.toDateString() === new Date().toDateString()) {
+					cell.classList.add('is-today');
+				}
+				if (currentDate.getMonth() === month) {
+					const holiday = holidays.find(h => h.date.toDateString() === currentDate.toDateString());
+					if (holiday) cell.innerHTML += `<span class="event-indicator holiday">${holiday.name}</span>`;
+					const jq = jieqi.find(j => j.date.toDateString() === currentDate.toDateString());
+					if (jq) cell.innerHTML += `<span class="event-indicator jieqi">${jq.name}</span>`;
+				}
+				grid.appendChild(cell);
+			}
+		}
 		function generateWeekCalendar(baseDate) { const grid = document.getElementById('weeklyCalendarGrid'), title = document.getElementById('weeklyCalendarTitle'); if (!grid || !title) return; grid.innerHTML = ''; const today = new Date(), startOfWeek = new Date(baseDate); startOfWeek.setDate(baseDate.getDate() - baseDate.getDay()); const endOfWeek = new Date(startOfWeek); endOfWeek.setDate(startOfWeek.getDate() + 6); title.textContent = `${startOfWeek.getFullYear()}年${startOfWeek.getMonth() + 1}月${startOfWeek.getDate()}日 - ${endOfWeek.getFullYear()}年${endOfWeek.getMonth() + 1}月${endOfWeek.getDate()}日`; const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']; const holidays = getHolidaysForYear(baseDate.getFullYear()), jieqi = getJieqiForYear(baseDate.getFullYear()); for (let i = 0; i < 7; i++) { const day = new Date(startOfWeek); day.setDate(startOfWeek.getDate() + i); const cell = document.createElement('div'); cell.classList.add('weekly-calendar-day'); cell.dataset.date = day.toISOString(); cell.onclick = () => showDateDetails(new Date(cell.dataset.date)); if (day.toDateString() === today.toDateString()) { cell.classList.add('is-today'); } const lunar = Solar.fromDate(day).getLunar(); cell.innerHTML = `<div class="weekly-day-header">${weekdays[i]}</div><div class="weekly-gregorian-day">${day.getDate()}</div><div class="weekly-lunar-day">${lunar.getDay() === 1 ? s2t(lunar.getMonthInChinese()) + '月' : s2t(lunar.getDayInChinese())}</div>`; const holiday = holidays.find(h => h.date.toDateString() === day.toDateString()); if (holiday) cell.innerHTML += `<span class="event-indicator holiday">${holiday.name}</span>`; const jq = jieqi.find(j => j.date.toDateString() === day.toDateString()); if (jq) cell.innerHTML += `<span class="event-indicator jieqi">${jq.name}</span>`; grid.appendChild(cell); } } // 產生週曆彈窗
 		function generateYearCalendar(year) { const grid = document.getElementById('yearlyCalendarGrid'), title = document.getElementById('yearlyCalendarTitle'); if (!grid || !title) return; grid.innerHTML = ''; title.textContent = `${year}年`; const today = new Date(), weekdays = ['日', '一', '二', '三', '四', '五', '六']; const holidays = getHolidaysForYear(year), jieqi = getJieqiForYear(year); for (let month = 0; month < 12; month++) { const monthContainer = document.createElement('div'); monthContainer.classList.add('yearly-month-container'); const monthHeader = document.createElement('div'); monthHeader.className = 'yearly-month-header'; monthHeader.textContent = `${month + 1}月`; monthHeader.title = `查看 ${month + 1}月 月曆`; monthHeader.onclick = () => { document.getElementById('yearlyCalendarModal').classList.remove('is-active'); calendarDate.setFullYear(year, month, 1); generateCalendarPopup(calendarDate.getFullYear(), calendarDate.getMonth()); document.getElementById('calendarModal').classList.add('is-active'); }; monthContainer.appendChild(monthHeader); const weekdaysDiv = document.createElement('div'); weekdaysDiv.classList.add('yearly-weekdays'); weekdays.forEach(day => { const el = document.createElement('div'); el.textContent = day; weekdaysDiv.appendChild(el); }); monthContainer.appendChild(weekdaysDiv); const dayGrid = document.createElement('div'); dayGrid.classList.add('yearly-day-grid'); const firstDay = new Date(year, month, 1).getDay(), daysInMonth = new Date(year, month + 1, 0).getDate(); for (let i = 0; i < firstDay; i++) { dayGrid.appendChild(document.createElement('div')); } for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) { const cell = document.createElement('div'); cell.classList.add('yearly-day'); const date = new Date(year, month, dayNum); cell.dataset.date = date.toISOString(); cell.onclick = () => showDateDetails(new Date(cell.dataset.date)); cell.textContent = dayNum; if (today.getFullYear() === year && today.getMonth() === month && dayNum === today.getDate()) { cell.classList.add('is-today'); } const holiday = holidays.find(h => h.date.toDateString() === date.toDateString()); const jq = jieqi.find(j => j.date.toDateString() === date.toDateString()); if(holiday || jq) { const indicators = document.createElement('div'); indicators.className = 'yearly-indicators'; if(holiday) indicators.innerHTML += '<span class="dot holiday"></span>'; if(jq) indicators.innerHTML += '<span class="dot jieqi"></span>'; cell.appendChild(indicators); } dayGrid.appendChild(cell); } monthContainer.appendChild(dayGrid); grid.appendChild(monthContainer); } } // 產生年曆彈窗
 		function showWeatherForecast() { if (!weatherDataCache) { const weatherContainer = settings.layoutMode === 'digital' ? document.getElementById('weatherMarqueeContainer') : document.getElementById('analog-weather-display'); if(weatherContainer) { weatherContainer.style.backgroundColor = '#552222'; setTimeout(() => { weatherContainer.style.backgroundColor = '' }, 500); } return; } const grid = document.getElementById('weatherForecastGrid'); const title = document.getElementById('weatherForecastModalTitle'); grid.innerHTML = ''; const displayName = getChineseLocationName(settings.weatherLocation); title.textContent = `${displayName} 一週預報`; for (let i = 0; i < 7; i++) { const date = new Date(weatherDataCache.daily.time[i]); const dayName = i === 0 ? '今天' : `周${['日', '一', '二', '三', '四', '五', '六'][date.getDay()]}`; const { desc } = getWeatherDescriptionAndEmoji(weatherDataCache.daily.weather_code[i]); const svgIcon = getWeatherSVGIcon(weatherDataCache.daily.weather_code[i], '2.5em'); const tempMax = Math.round(weatherDataCache.daily.temperature_2m_max[i]); const tempMin = Math.round(weatherDataCache.daily.temperature_2m_min[i]); const dayCell = document.createElement('div'); dayCell.classList.add('forecast-day'); dayCell.innerHTML = `<p class="day-name">${dayName}</p><p>${date.getMonth() + 1}/${date.getDate()}</p><div class="weather-icon">${svgIcon}</div><p>${desc}</p><p><span class="temp-high">${tempMax}°</span> / <span class="temp-low">${tempMin}°</span></p>`; dayCell.onclick = () => showHourlyWeather(i); grid.appendChild(dayCell); } document.getElementById('weatherForecastModal').classList.add('is-active'); } // 顯示天氣預報彈窗
