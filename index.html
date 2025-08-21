@@ -17,7 +17,7 @@
 			--second-hand-color: #ff5b3f; /* 秒針顏色 */
 			--tick-color: #fff; /* 刻度顏色 */
 			--calendar-header-color: #ff5b3f; /* 類比日曆標題顏色 */
-			--calendar-weekday-color: #888; /* 類比日曆星期顏色 */
+			--calendar-weekday-color: #00ffff; /* 類比日曆星期顏色 */
 			--calendar-day-color: #fff; /* 類比日曆日期顏色 */
 			--calendar-lunar-color: #aaa; /* 類比日曆農曆顏色 */
 		}
@@ -277,6 +277,9 @@
 			font-weight: bold; /* 字重 */
 			color: var(--calendar-weekday-color); /* 顏色 */
 			padding-bottom: 5px; /* 內邊距 */
+			text-align: center; /* 確保文字在格子內水平居中 */
+			position: relative; /* 添加相對定位以便微調 */
+			left: -12px; /* 在這裡調整數值，正數往右移，負數往左移 */
 		}
 		.calendar-container .calendar-day {
 			background-color: transparent; border-color: transparent; /* 背景與邊框 */
@@ -513,7 +516,7 @@
 			enableTextScanline: false, enableBackgroundScanline: false, // 掃描線效果
 			scanlineIntervalMinutes: 0, scanlineIntervalSeconds: 10, // 掃描線間隔
 			hourHandColor: '#ffffff', minuteHandColor: '#ffffff', secondHandColor: '#ff5b3f', tickColor: '#ffffff', // 類比版時鐘顏色
-			calendarHeaderColor: '#ff5b3f', calendarWeekdayColor: '#888888', calendarDayColor: '#ffffff', calendarLunarColor: '#aaaaaa', // 類比版日曆顏色
+			calendarHeaderColor: '#ff5b3f', calendarWeekdayColor: '#00ffff', calendarDayColor: '#ffffff', calendarLunarColor: '#aaaaaa', // 類比版日曆顏色
 		};
 
 		function saveSettings() { try { localStorage.setItem('mergedClockSettings', JSON.stringify(settings)); } catch (e) { console.error("儲存設定失敗:", e); } } // 儲存設定到 localStorage
