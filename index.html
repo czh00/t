@@ -78,6 +78,11 @@
 		.calendar-content, .weekly-calendar-content { background-color: #2c2c2c; margin: auto; padding: 20px; border: 1px solid #888; border-radius: 10px; width: 95%; max-width: 900px; } /* 月曆/週曆內容 */
 		.yearly-calendar-content { background-color: #2c2c2c; margin: auto; padding: 20px; border: 1px solid #888; border-radius: 10px; width: 95%; max-width: 1400px; } /* 年曆內容 */
 		.calendar-weekdays, .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; } /* 星期與日期網格 */
+		/* --- 修復：增加月曆彈窗的捲動 --- */
+		#calendarModal .calendar-grid {
+			max-height: 65vh; /* 設定最大高度 */
+			overflow-y: auto; /* 內容超出時顯示捲軸 */
+		}
 		.calendar-weekdays div { font-weight: bold; padding-bottom: 5px; text-align: center; color: #aaa; } /* 星期標題 */
 		.calendar-day { border-radius: 5px; padding: 5px; min-height: 80px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; font-size: 0.9em; border: 1px solid #555; cursor: pointer; transition: background-color: 0.3s; } /* 月曆每日格子 */
 		.calendar-day.is-today { border-color: #00FF00; box-shadow: 0 0 5px #00FF00; } /* 今天 (數位) */
@@ -253,7 +258,8 @@
 		
 		/* --- Analog Calendar Widget --- */
 		.calendar-container {
-			width: clamp(280px, 45vmin, 500px); /* 響應式寬度 */
+			/* --- 修復：增加主畫面月曆寬度 --- */
+			width: clamp(280px, 85vw, 500px); /* 響應式寬度 */
 			text-align: center; /* 文字居中 */
 			z-index: 10; /* 層級 */
 			display: flex; flex-direction: column; /* 垂直排列 */
@@ -277,6 +283,8 @@
 			color: var(--calendar-weekday-color); /* 顏色 */
 			padding-bottom: 5px; /* 內邊距 */
 			text-align: center; /* 確保文字在格子內水平居中 */
+			position: relative; /* 添加相對定位以便微調 */
+			left: -12px; /* 在這裡調整數值，正數往右移，負數往左移 */
 		}
 		.calendar-container .calendar-day {
 			border-color: transparent; /* 邊框 */
