@@ -10,538 +10,312 @@
 	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
 	<style>
 		:root {
-			--page-background-color: #000; /* 頁面背景色 */
-			--highlight-color: #ff5b3f; /* 類比版主色調 */
-			--hour-hand-color: #fff; /* 時針顏色 */
-			--minute-hand-color: #fff; /* 分針顏色 */
-			--second-hand-color: #ff5b3f; /* 秒針顏色 */
-			--tick-color: #fff; /* 刻度顏色 */
-			--calendar-header-color: #ff5b3f; /* 類比日曆標題顏色 */
-			--calendar-weekday-color: #00ffff; /* 類比日曆星期顏色 */
-			--calendar-day-color: #fff; /* 類比日曆日期顏色 */
-			--calendar-lunar-color: #aaa; /* 類比日曆農曆顏色 */
+			--page-background-color: #000; --highlight-color: #ff5b3f; --hour-hand-color: #fff; --minute-hand-color: #fff;
+			--second-hand-color: #ff5b3f; --tick-color: #fff; --number-color: #fff; --calendar-header-color: #ff5b3f;
+			--calendar-weekday-color: #00ffff; --calendar-day-color: #fff; --calendar-lunar-color: #aaa;
 		}
 		*, *::before, *::after { box-sizing: border-box; }
-		body {
-			margin: 0; overflow: hidden; display: flex; /* 基本樣式重設 */
-			justify-content: center; align-items: center; /* 垂直水平居中 */
-			min-height: 100vh; width: 100vw; /* 佔滿整個視窗 */
-			position: relative; /* 相對定位，供子元素使用 */
-			font-family: 'Noto Sans TC', sans-serif; /* 主要字型 */
-			background-color: var(--page-background-color); /* 背景色 */
-			color: #fff; /* 預設文字顏色 */
-		}
-
-		.modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); } /* 彈出視窗背景 */
-		.modal.is-active { display: flex; justify-content: center; align-items: center; } /* 顯示彈出視窗 */
-		#calendarModal, #weeklyCalendarModal, #yearlyCalendarModal { z-index: 110; } /* 日曆彈窗層級 */
-		#dateDetailsModal, #shichenDetailsModal, #weatherForecastModal, #hourlyWeatherModal, #moonPhaseModal, #zodiacModal { z-index: 120; } /* 詳情彈窗層級 */
-		#settingsModal { z-index: 130; } /* 設定彈窗層級 */
-		.modal-content { background-color: #333; margin: auto; padding: 20px; border: 1px solid #888; width: 90%; max-width: 600px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); color: #e0e0e0; text-align: center; display: flex; flex-direction: column; gap: 0px; max-height: 90vh; overflow-y: auto; position: relative; } /* 彈窗內容 */
-		.modal-header { display: flex; justify-content: space-between; align-items: center; padding: 0 10px; width: 100%; } /* 彈窗標題 */
-		.modal-header h2, .modal-header h3 { margin: 0; font-size: 1.5em; color: #00FF00; flex-grow: 1; text-align: center; } /* 彈窗標題文字 */
-		.modal-header button { background: none; border: none; color: #00FF00; font-size: 2em; cursor: pointer; flex-shrink: 0; } /* 彈窗標題按鈕 */
-		.close-icon { position: absolute; top: 8px; right: 12px; font-size: 1.25rem; font-weight: bold; color: #fff; cursor: pointer; line-height: 1; transition: color 0.3s; z-index: 10; user-select: none; } /* 關閉圖示 */
+		body { margin: 0; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; width: 100vw; position: relative; font-family: 'Noto Sans TC', sans-serif; background-color: var(--page-background-color); color: #fff; }
+		.modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); }
+		.modal.is-active { display: flex; justify-content: center; align-items: center; }
+		#calendarModal, #weeklyCalendarModal, #yearlyCalendarModal { z-index: 110; }
+		#dateDetailsModal, #shichenDetailsModal, #weatherForecastModal, #hourlyWeatherModal, #moonPhaseModal, #zodiacModal { z-index: 120; }
+		#settingsModal { z-index: 130; }
+		.modal-content { background-color: #333; margin: auto; padding: 20px; border: 1px solid #888; width: 90%; max-width: 600px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); color: #e0e0e0; text-align: center; display: flex; flex-direction: column; gap: 0px; max-height: 90vh; overflow-y: auto; position: relative; }
+		.modal-header { display: flex; justify-content: space-between; align-items: center; padding: 0 10px; width: 100%; }
+		.modal-header h2, .modal-header h3 { margin: 0; font-size: 1.5em; color: #00FF00; flex-grow: 1; text-align: center; }
+		.modal-header button { background: none; border: none; color: #00FF00; font-size: 2em; cursor: pointer; flex-shrink: 0; }
+		.close-icon { position: absolute; top: 8px; right: 12px; font-size: 1.25rem; font-weight: bold; color: #fff; cursor: pointer; line-height: 1; transition: color 0.3s; z-index: 10; user-select: none; }
 		.close-icon:hover { color: var(--highlight-color); }
-		.action-button { background-color: #555; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1em; margin-top: 0px; } /* 操作按鈕 */
-		.action-button:hover { background-color: #777; } /* 按鈕懸停效果 */
-		.button-group { display: flex; justify-content: center; gap: 10px; margin-top: 20px; white-space: nowrap; flex-wrap: wrap; } /* 按鈕群組 */
-		.calendar-footer { display: flex; justify-content: center; gap: 10px; width: 100%; margin-top: 10px; } /* 日曆底部 */
-		.control-icon { position: fixed; bottom: 20px; width: 32px; height: 32px; cursor: pointer; z-index: 200; opacity: 0.5; transition: opacity 0.3s ease; } /* 控制圖示 */
-		.control-icon svg { width: 100%; height: 100%; fill: #fff; } /* 圖示 SVG */
-		.control-icon:hover { opacity: 1; } /* 圖示懸停效果 */
-		#settings-icon { right: 62px; } /* 設定圖示位置 */
-		#fullscreen-icon { right: 20px; } /* 全螢幕圖示位置 */
-		#settingsModal .modal-content { max-width: 850px; } /* 設定彈窗最大寬度 */
-		.setting-item { margin-bottom: 6px; display: flex; align-items: center; flex-wrap: wrap; gap: 10px;} /* 設定項目 */
-		.setting-item label:first-child { margin-right: 10px; flex-shrink: 0;} /* 設定項目標籤 */
-		.switch { position: relative; display: inline-block; width: 60px; height: 34px; flex-shrink: 0; } /* 開關按鈕容器 */
-		.switch input { opacity: 0; width: 0; height: 0; } /* 隱藏原生 checkbox */
-		.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; } /* 開關滑塊 */
-		.slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; } /* 滑塊圓點 */
-		input:checked + .slider { background-color: #00FF00; } /* 開啟狀態顏色 (數位) */
-		input:focus + .slider { box-shadow: 0 0 1px #00FF00; } /* 焦點效果 */
-		input:checked + .slider:before { transform: translateX(26px); } /* 開啟時圓點位移 */
-		.setting-item input[type="color"] { width: 40px; height: 34px; border: none; padding: 0; background: none; cursor: pointer; flex-shrink: 0; } /* 顏色選擇器 */
-		.setting-item input[type="text"] { background-color: #555; color: white; border: 1px solid #888; border-radius: 4px; padding: 5px; font-size: 0.9em; max-width: 100px; } /* 文字輸入框 */
-		.setting-item button { background: none; border: none; cursor: pointer; padding: 0 5px; display: inline-flex; align-items: center; } /* 設定中的按鈕 */
-		.setting-item button svg { width: 24px; height: 24px; stroke: white; } /* 按鈕中的 SVG */
-		.setting-controls { margin-left: auto; display: flex; align-items: center; gap: 10px; } /* 設定控制項群組 */
-		.interval-selector-group { display: flex; align-items: center; gap: 5px; } /* 間隔選擇器群組 */
-		.interval-select { background-color: #555; color: white; border: 1px solid #888; border-radius: 4px; padding: 5px; font-size: 0.9em; } /* 下拉選擇器 */
-		.interval-select-label { color: #ccc; font-size: 0.9em; margin-left: 2px; margin-right: 5px; } /* 選擇器標籤 */
-		.location-input-group { display: flex; align-items: center; gap: 5px; flex-grow: 1; } /* 地區輸入群組 */
-		.location-controls-group { display: flex; align-items: center; gap: 5px; margin-left: auto; } /* 地區控制項群組 */
-		.settings-columns-container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-around; width: 100%; } /* 設定欄位容器 */
-		.settings-column { flex: 1; min-width: 200px; padding: 10px; border: 1px solid #555; border-radius: 8px; background-color: #444; text-align: left; } /* 設定欄位 */
-		.settings-column h3 { text-align: center; margin-top: 0; color: #00FF00; } /* 欄位標題 */
-		.calendar-content, .weekly-calendar-content { background-color: #2c2c2c; margin: auto; padding: 20px; border: 1px solid #888; border-radius: 10px; width: 95%; max-width: 900px; } /* 月曆/週曆內容 */
-		.yearly-calendar-content { background-color: #2c2c2c; margin: auto; padding: 20px; border: 1px solid #888; border-radius: 10px; width: 95%; max-width: 1400px; } /* 年曆內容 */
-		.calendar-weekdays, .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; } /* 星期與日期網格 */
-		/* --- 修復：增加月曆彈窗的捲動 --- */
-		#calendarModal .calendar-grid {
-			max-height: 65vh; /* 設定最大高度 */
-			overflow-y: auto; /* 內容超出時顯示捲軸 */
-		}
-		.calendar-weekdays div { font-weight: bold; padding-bottom: 5px; text-align: center; color: #aaa; } /* 星期標題 */
-		.calendar-day { border-radius: 5px; padding: 5px; min-height: 80px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; font-size: 0.9em; border: 1px solid #555; cursor: pointer; transition: background-color: 0.3s; } /* 月曆每日格子 */
-		.calendar-day.is-today { border-color: #00FF00; box-shadow: 0 0 5px #00FF00; } /* 今天 (數位) */
-		.calendar-day .gregorian-day { font-size: 1.2em; font-weight: bold; } /* 公曆日期 */
-		.calendar-day .lunar-day { font-size: 0.8em; color: #ccc; white-space:nowrap; } /* 農曆日期 */
-		.calendar-day .event-indicator { font-size: 1em; padding: 1px 4px; border-radius: 3px; margin-top: 3px; display: block; text-align: center; width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin: 0; } /* 事件標記 */
-		.event-indicator.holiday { background-color: #007bff; color: white; } /* 節日標記 */
-		.event-indicator.jieqi { background-color: #28a745; color: white; } /* 節氣標記 */
-		.weekly-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; } /* 週曆網格 */
-		.weekly-calendar-day { border-radius: 8px; padding: 10px; min-height: 100px; display: flex; flex-direction: column; align-items: center; border: 1px solid #555; cursor: pointer; transition: background-color: 0.3s; } /* 週曆日期格子 */
-		.weekly-calendar-day.is-today { border-color: #00FF00; box-shadow: 0 0 5px #00FF00; } /* 週曆今天 */
-		.weekly-day-header { font-weight: bold; font-size: 1.1em; margin-bottom: 5px; } /* 週曆星期標題 */
-		.weekly-gregorian-day { font-size: 1.5em; font-weight: bold; } /* 週曆公曆日期 */
-		.weekly-lunar-day { font-size: 0.9em; color: #ccc; margin-top: 5px; } /* 週曆農曆日期 */
-		.weekly-calendar-day .event-indicator { font-size: 0.8em; padding: 2px 5px; border-radius: 4px; margin-top: 5px; display: block; text-align: center; width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;} /* 週曆事件標記 */
-		.yearly-calendar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; overflow-y: auto; padding: 10px; max-height: 75vh; } /* 年曆網格 */
-		.yearly-month-header { font-size: 1.2em; font-weight: bold; text-align: center; margin-bottom: 10px; color: #00FF00; cursor: pointer; } /* 年曆月份標題 */
-		.yearly-weekdays, .yearly-day-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; text-align: center; } /* 年曆星期與日期網格 */
-		.yearly-weekdays div { font-size: 0.8em; color: #aaa; } /* 年曆星期標題 */
-		.yearly-day { font-size: 0.9em; padding: 2px; border-radius: 3px; position: relative; cursor: pointer; transition: background-color: 0.3s; min-height: 24px; } /* 年曆日期格子 */
-		.yearly-day.is-today { background-color: #00FF00; color: #000; font-weight: bold; } /* 年曆今天 (數位) */
-		.yearly-indicators { position: absolute; bottom: 1px; left: 50%; transform: translateX(-50%); display: flex; gap: 2px; } /* 年曆事件點容器 */
-		.yearly-indicators .dot { width: 4px; height: 4px; border-radius: 50%; } /* 年曆事件點 */
-		.yearly-indicators .holiday { background-color: #007bff; } /* 節日點 */
-		.yearly-indicators .jieqi { background-color: #28a745; } /* 節氣點 */
-		.details-content { max-width: 800px; text-align: left;} /* 詳情內容 */
-		.details-content p { margin-bottom: 10px; font-size: 1.2em; line-height: 1.6; } /* 詳情段落 */
-		.details-content strong { color: #FFD700; } /* 詳情強調文字 */
-		.details-content .yi-ji-grid { display: grid; grid-template-columns: 40px 1fr; gap: 5px 10px; text-align: left;} /* 宜忌網格 */
-		.details-content .yi-ji-grid strong { grid-column: 1; color: #FFD700; } /* 宜忌標題 */
-		.details-content .yi-ji-grid span { grid-column: 2; } /* 宜忌內容 */
-		.details-content .countdown-section { border-top: 1px solid #555; margin-top: 15px; padding-top: 15px; font-size: 1em; } /* 倒數區塊 */
-		#weatherForecastModal .modal-content, #hourlyWeatherModal .modal-content { max-width: 1000px; } /* 天氣彈窗 */
-		.weather-forecast-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 10px; width: 100%; text-align: center; } /* 週預報網格 */
-		.forecast-day { background-color: #444; padding: 10px; border-radius: 8px; border: 1px solid #555; cursor: pointer; transition: background-color: 0.3s; } /* 預報日 */
-		.forecast-day:hover { background-color: #5e5e5e; } /* 預報日懸停 */
-		.forecast-day p { margin: 2px 0; font-size: 1em; line-height: 1.4; } /* 預報日段落 */
-		.forecast-day .day-name { font-weight: bold; color: #FFD700; } /* 星期名稱 */
-		.forecast-day .weather-icon { margin: 5px 0; height: 2.5em; } /* SVG 容器高度 */
-		.forecast-day .temp-high { color: #FFA07A; } /* 最高溫 */
-		.forecast-day .temp-low { color: #87CEFA; } /* 最低溫 */
-		.hourly-weather-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 10px; width: 100%; text-align: center; } /* 每小時預報網格 */
-		.hourly-item { background-color: #444; padding: 10px; border-radius: 8px; border: 1px solid #555; } /* 每小時項目 */
-		.hourly-item p { margin: 2px 0; font-size: 0.9em; line-height: 1.3; } /* 每小時段落 */
-		.hourly-item .hour-time { font-weight: bold; color: #FFD700; } /* 小時 */
-		.hourly-item .weather-icon { margin: 4px 0; height: 2em; } /* SVG 容器高度 */
-		.hourly-item.is-now { border-color: #00FF00; box-shadow: 0 0 8px #00FF00; } /* 當前小時高亮 */
-		#moonPhaseModal .modal-content { max-width: 500px; } /* 月相彈窗最大寬度 */
-		#moonPhaseModalContent { display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center; } /* 月相彈窗內容 */
-		#moonPhaseDisplay { display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%; } /* 月相主要顯示區 */
-		#moonPhaseDisplay .moon-phase-icon-large { line-height: 1; } /* 大月相圖示容器 */
-		#moonPhaseDisplay p { font-size: 1.1em; line-height: 1.6; max-width: 400px; margin: 0; } /* 月相說明 */
-		.moon-calendar-container { width: 100%; max-width: 400px; margin-top: 15px; border-top: 1px solid #555; padding-top: 15px; } /* 月相月曆容器 */
-		#moonCalendarGrid .calendar-day { min-height: 65px; padding: 2px; font-size: 0.8em; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2px; } /* 月相月曆每日格子 */
-		#moonCalendarGrid .calendar-day .gregorian-day { font-size: 1.1em; } /* 月相月曆公曆日期 */
-		#moonCalendarGrid .moon-phase-icon-small svg, #moonCalendarGrid .moon-phase-icon-small img { width: 24px; height: 24px; } /* 月相月曆圖示大小 */
-		#moonCalendarGrid .calendar-day.is-selected { border-color: #FFD700; box-shadow: 0 0 8px #FFD700; background-color: #5a5a5a; } /* 月相月曆選中日 */
+		.action-button { background-color: #555; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1em; margin-top: 0px; }
+		.action-button:hover { background-color: #777; }
+		.button-group { display: flex; justify-content: center; gap: 10px; margin-top: 20px; white-space: nowrap; flex-wrap: wrap; }
+		.calendar-footer { display: flex; justify-content: center; gap: 10px; width: 100%; margin-top: 10px; }
+		.control-icon { position: fixed; bottom: 20px; width: 32px; height: 32px; cursor: pointer; z-index: 200; opacity: 0.5; transition: opacity 0.3s ease; }
+		.control-icon svg { width: 100%; height: 100%; fill: #fff; }
+		.control-icon:hover { opacity: 1; }
+		#edit-mode-icon { right: 104px; }
+		#settings-icon { right: 62px; }
+		#fullscreen-icon { right: 20px; }
+		#settingsModal .modal-content { max-width: 850px; }
+		.setting-item { margin-bottom: 6px; display: flex; align-items: center; flex-wrap: nowrap; gap: 10px; transition: opacity 0.3s ease; }
+		.setting-item label:first-child { margin-right: auto; flex-shrink: 0;}
+		.setting-item.disabled { opacity: 0.5; pointer-events: none; }
+		.setting-item.disabled input, .setting-item.disabled select, .setting-item.disabled button { pointer-events: none; }
+		.switch { position: relative; display: inline-block; width: 48px; height: 27px; flex-shrink: 0; }
+		.switch input { opacity: 0; width: 0; height: 0; }
+		.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 27px; }
+		.slider:before { position: absolute; content: ""; height: 21px; width: 21px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+		input:checked + .slider { background-color: #00FF00; }
+		input:focus + .slider { box-shadow: 0 0 1px #00FF00; }
+		input:checked + .slider:before { transform: translateX(21px); }
+		.setting-item input[type="color"] { width: 32px; height: 27px; border: none; padding: 0; background: none; cursor: pointer; flex-shrink: 0; }
+		.setting-item input[type="text"] { background-color: #555; color: white; border: 1px solid #888; border-radius: 4px; padding: 5px; font-size: 0.9em; max-width: 100px; }
+		.setting-item button { background: none; border: none; cursor: pointer; padding: 0 5px; display: inline-flex; align-items: center; }
+		.setting-item button svg { width: 24px; height: 24px; stroke: white; }
+		.setting-controls { display: flex; align-items: center; gap: 5px; }
+		.interval-selector-group { display: flex; align-items: center; gap: 2px; }
+		.interval-select { background-color: #555; color: white; border: 1px solid #888; border-radius: 4px; padding: 5px; font-size: 0.9em; }
+		.interval-select-label { color: #ccc; font-size: 0.9em; margin: 0; padding: 0 2px; }
+		.random-color-btn { background: #555; border: 1px solid #888; border-radius: 5px; cursor: pointer; padding: 0; font-size: 1.2em; line-height: 1; }
+		.random-color-btn:hover { background: #777; }
+		.location-input-group { display: flex; align-items: center; gap: 5px; flex-grow: 1; }
+		.location-controls-group { display: flex; align-items: center; gap: 5px; margin-left: auto; }
+		.settings-columns-container { display: flex; flex-wrap: wrap; gap: 0px; justify-content: space-around; width: 100%; }
+		.settings-column { flex: 1; min-width: 200px; padding: 10px; border: 1px solid #555; border-radius: 8px; background-color: #444; text-align: left; }
+		.settings-column h3 { text-align: center; margin: 0; color: #00FF00; }
+		.calendar-content, .weekly-calendar-content { background-color: #2c2c2c; margin: auto; padding: 20px; border: 1px solid #888; border-radius: 10px; width: 95%; max-width: 900px; }
+		.yearly-calendar-content { background-color: #2c2c2c; margin: auto; padding: 20px; border: 1px solid #888; border-radius: 10px; width: 95%; max-width: 1400px; }
+		.calendar-weekdays, .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+		#calendarModal .calendar-grid { max-height: 65vh; overflow-y: auto; }
+		.calendar-weekdays div { font-weight: bold; padding-bottom: 5px; text-align: center; color: #aaa; }
+		.calendar-day { border-radius: 5px; padding: 5px; min-height: 80px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; font-size: 0.9em; border: 1px solid #555; cursor: pointer; transition: background-color: 0.3s; }
+		.calendar-day.is-today { border-color: #00FF00; box-shadow: 0 0 5px #00FF00; }
+		.calendar-day .gregorian-day { font-size: 1.2em; font-weight: bold; }
+		.calendar-day .lunar-day { font-size: 0.8em; color: #ccc; white-space:nowrap; }
+		.calendar-day .event-indicator { font-size: 1em; padding: 1px 4px; border-radius: 3px; margin-top: 3px; display: block; text-align: center; width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin: 0; }
+		.event-indicator.holiday { background-color: #007bff; color: white; }
+		.event-indicator.jieqi { background-color: #28a745; color: white; }
+		.weekly-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+		.weekly-calendar-day { border-radius: 8px; padding: 10px; min-height: 100px; display: flex; flex-direction: column; align-items: center; border: 1px solid #555; cursor: pointer; transition: background-color: 0.3s; }
+		.weekly-calendar-day.is-today { border-color: #00FF00; box-shadow: 0 0 5px #00FF00; }
+		.weekly-day-header { font-weight: bold; font-size: 1.1em; margin-bottom: 5px; }
+		.weekly-gregorian-day { font-size: 1.5em; font-weight: bold; }
+		.weekly-lunar-day { font-size: 0.9em; color: #ccc; margin-top: 5px; }
+		.weekly-calendar-day .event-indicator { font-size: 0.8em; padding: 2px 5px; border-radius: 4px; margin-top: 5px; display: block; text-align: center; width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+		.yearly-calendar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; overflow-y: auto; padding: 10px; max-height: 75vh; }
+		.yearly-month-header { font-size: 1.2em; font-weight: bold; text-align: center; margin-bottom: 10px; color: #00FF00; cursor: pointer; }
+		.yearly-weekdays, .yearly-day-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; text-align: center; }
+		.yearly-weekdays div { font-size: 0.8em; color: #aaa; }
+		.yearly-day { font-size: 0.9em; padding: 2px; border-radius: 3px; position: relative; cursor: pointer; transition: background-color: 0.3s; min-height: 24px; }
+		.yearly-day.is-today { background-color: #00FF00; color: #000; font-weight: bold; }
+		.yearly-indicators { position: absolute; bottom: 1px; left: 50%; transform: translateX(-50%); display: flex; gap: 2px; }
+		.yearly-indicators .dot { width: 4px; height: 4px; border-radius: 50%; }
+		.yearly-indicators .holiday { background-color: #007bff; }
+		.yearly-indicators .jieqi { background-color: #28a745; }
+		.details-content { max-width: 800px; text-align: left;}
+		.details-content p { margin-bottom: 10px; font-size: 1.2em; line-height: 1.6; }
+		.details-content strong { color: #FFD700; }
+		.details-content .yi-ji-grid { display: grid; grid-template-columns: 40px 1fr; gap: 5px 10px; text-align: left;}
+		.details-content .yi-ji-grid strong { grid-column: 1; color: #FFD700; }
+		.details-content .yi-ji-grid span { grid-column: 2; }
+		.details-content .countdown-section { border-top: 1px solid #555; margin-top: 15px; padding-top: 15px; font-size: 1em; }
+		#weatherForecastModal .modal-content, #hourlyWeatherModal .modal-content { max-width: 1000px; }
+		.weather-forecast-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 10px; width: 100%; text-align: center; }
+		.forecast-day { background-color: #444; padding: 10px; border-radius: 8px; border: 1px solid #555; cursor: pointer; transition: background-color: 0.3s; }
+		.forecast-day:hover { background-color: #5e5e5e; }
+		.forecast-day p { margin: 2px 0; font-size: 1em; line-height: 1.4; }
+		.forecast-day .day-name { font-weight: bold; color: #FFD700; }
+		.forecast-day .weather-icon { margin: 5px 0; height: 2.5em; }
+		.forecast-day .temp-high { color: #FFA07A; }
+		.forecast-day .temp-low { color: #87CEFA; }
+		.hourly-weather-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 10px; width: 100%; text-align: center; }
+		.hourly-item { background-color: #444; padding: 10px; border-radius: 8px; border: 1px solid #555; }
+		.hourly-item p { margin: 2px 0; font-size: 0.9em; line-height: 1.3; }
+		.hourly-item .hour-time { font-weight: bold; color: #FFD700; }
+		.hourly-item .weather-icon { margin: 4px 0; height: 2em; }
+		.hourly-item.is-now { border-color: #00FF00; box-shadow: 0 0 8px #00FF00; }
+		#moonPhaseModal .modal-content { max-width: 500px; }
+		#moonPhaseModalContent { display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center; }
+		#moonPhaseDisplay { display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%; }
+		#moonPhaseDisplay .moon-phase-icon-large { line-height: 1; }
+		#moonPhaseDisplay p { font-size: 1.1em; line-height: 1.6; max-width: 400px; margin: 0; }
+		.moon-calendar-container { width: 100%; max-width: 400px; margin-top: 15px; border-top: 1px solid #555; padding-top: 15px; }
+		#moonCalendarGrid .calendar-day { min-height: 65px; padding: 2px; font-size: 0.8em; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2px; }
+		#moonCalendarGrid .calendar-day .gregorian-day { font-size: 1.1em; }
+		#moonCalendarGrid .moon-phase-icon-small svg, #moonCalendarGrid .moon-phase-icon-small img { width: 24px; height: 24px; }
+		#moonCalendarGrid .calendar-day.is-selected { border-color: #FFD700; box-shadow: 0 0 8px #FFD700; background-color: #5a5a5a; }
 		#moonCalendarGrid .lunar-day { font-size: 0.75em; color: #ccc; }
-		#zodiacModal .modal-content { max-width: 800px; } /* 生肖彈窗最大寬度 */
-		.zodiac-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 15px; width: 100%; text-align: center; } /* 生肖網格 */
-		.zodiac-item { background-color: #444; padding: 10px; border-radius: 8px; border: 1px solid #555; } /* 生肖項目 */
-		.zodiac-item .zodiac-icon { height: 4em; margin-bottom: 5px; } /* 生肖圖示 */
-		.zodiac-item p { margin: 0; font-weight: bold; } /* 生肖名稱 */
-		
-		/* --- Layout & Widget Wrappers --- */
-		#master-layout {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			transition: transform 1s ease-in-out;
-			will-change: transform;
-			/* This container has no visible properties, it's just for grouping and moving */
-		}
-		.widget-wrapper {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%); /* 預設居中 */
-			transition: transform 1s ease-in-out;
-			will-change: transform;
-			z-index: 10;
-			display: inline-flex; /* 讓 wrapper 緊貼內容大小 */
-			justify-content: center;
-			align-items: center;
-		}
-		body.edit-mode .widget-wrapper {
-			cursor: grab;
-		}
-
-		/* --- Digital Clock Specific --- */
-		#dateTimeDisplay {
-			font-family: 'Digital Dismay', 'Noto Sans TC', sans-serif;
-			font-weight: bold; text-align: center; padding: 10px;
-			text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-			cursor: default; z-index: 10;
-		}
-		.time-text { font-size: 36vw; font-weight: normal; margin-bottom: -10vw; position: relative; display: inline-block; white-space: nowrap; padding-right: 8vw; } /* 時間文字 */
-		.time-seconds { font-size: 8vw; font-weight: normal; position: absolute; right: 0; bottom: 8vw; text-align: right; width: 6vw; } /* 秒數 */
-		.time-ampm { font-size: 5vw; font-weight: bold; position: absolute; top: 8vw; right: 0; text-align: right; width: 8vw; } /* 上下午/時段 */
-		.gregorian-date-text, .lunar-and-jieqi-line { 
-			font-family: 'Noto Sans TC', 'Inter', sans-serif; 
-			display: flex; 
-			justify-content: center; 
-			align-items: center; 
-			white-space: nowrap; 
-			cursor: default; 
-			position: relative; 
-			z-index: 1; 
-			width: 92vw; /* 預設寬度 */
-			font-weight: 1000;
-		}
+		#zodiacModal .modal-content { max-width: 800px; }
+		.zodiac-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 15px; width: 100%; text-align: center; }
+		.zodiac-item { background-color: #444; padding: 10px; border-radius: 8px; border: 1px solid #555; }
+		.zodiac-item .zodiac-icon { height: 4em; margin-bottom: 5px; }
+		.zodiac-item p { margin: 0; font-weight: bold; }
+		#master-layout { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); transition: transform 1s ease-in-out; will-change: transform; }
+		.widget-wrapper { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); transition: transform 1s ease-in-out; will-change: transform; z-index: 10; display: inline-flex; justify-content: center; align-items: center; }
+		body.edit-mode .widget-wrapper { cursor: grab; }
+		#dateTimeDisplay { font-family: 'Digital Dismay', 'Noto Sans TC', sans-serif; font-weight: bold; text-align: center; padding: 10px; text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); cursor: default; z-index: 10; }
+		.time-text { font-size: 36vw; font-weight: normal; margin-bottom: -10vw; position: relative; display: inline-flex; align-items: baseline; gap: 0; white-space: nowrap; padding-right: 8vw; }
+		.time-colon { line-height: 1; display: inline-flex; align-items: center; justify-content: center; }
+		.time-colon svg { fill: currentColor; position: relative; top: 0.05em; height: 0.6em; }
+		.time-seconds { font-size: 8vw; font-weight: normal; position: absolute; right: 0; bottom: 8vw; text-align: right; width: 6vw; }
+		.time-ampm { font-size: 5vw; font-weight: bold; position: absolute; top: 8vw; right: 0; text-align: right; width: 8vw; }
+		.gregorian-date-text, .lunar-and-jieqi-line { font-family: 'Noto Sans TC', 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; white-space: nowrap; cursor: default; position: relative; z-index: 1; width: 92vw; font-weight: 1000; }
 		.gregorian-date-text { font-size: 6.5vw; }
 		.lunar-and-jieqi-line { font-size: 6.25vw; }
-		.gregorian-date-parts, .lunar-date-static-text { flex-shrink: 0; } /* 日期部分不壓縮 */
+		.gregorian-date-parts, .lunar-date-static-text { flex-shrink: 0; }
 		.gregorian-date-parts span, .lunar-date-static-text span, .lunar-date-static-text .lunar-month-target-group { cursor: pointer; }
 		.lunar-date-static-text span:last-child { margin-right: 0; }
 		.moon-phase-icon-target { margin-left: 0; }
-		.weather-marquee-container, .jieqi-holiday-marquee-container { flex-grow: 1; overflow: hidden; position: relative; text-align: left; min-width: 0; cursor: pointer; } /* 跑馬燈容器 */
-		.weather-marquee-inner, .jieqi-holiday-marquee-inner { display: flex; flex-wrap: nowrap; width: fit-content; will-change: transform; } /* 跑馬燈內部 */
-		.weather-marquee-content, .weather-marquee-content-duplicate, .jieqi-holiday-marquee-content, .jieqi-holiday-marquee-content-duplicate { display: inline-flex; align-items: center; white-space: nowrap; flex-shrink: 0; } /* 跑馬燈內容 */
-		.weather-marquee-container.scrolling .weather-marquee-inner, .jieqi-holiday-marquee-container.scrolling .jieqi-holiday-marquee-inner { animation-name: marquee; animation-timing-function: linear; animation-iteration-count: infinite; } /* 跑馬燈滾動動畫 */
-		@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } } /* 跑馬燈動畫定義 */
-		#background-scanline-overlay, #text-scanline-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; background-color: transparent; display: none; } /* 掃描線覆蓋層 */
-		#background-scanline-overlay { z-index: -1; } /* 背景掃描線層級 */
-		#text-scanline-overlay { z-index: 50; } /* 文字掃描線層級 */
-		#background-scanline-overlay.active.pattern-a { display: block; background-image: repeating-linear-gradient(to bottom, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px); } /* 背景掃描線樣式 A */
-		#background-scanline-overlay.active.pattern-b { display: block; background-image: repeating-linear-gradient(to bottom, rgba(255,255,255,0.1) 0, rgba(255,255,255,0.1) 2px, transparent 2px, transparent 4px); } /* 背景掃描線樣式 B */
-		#text-scanline-overlay.active.pattern-a { display: block; background-image: repeating-linear-gradient(to bottom, transparent, transparent 2px, var(--page-background-color) 2px, var(--page-background-color) 4px); } /* 文字掃描線樣式 A */
-		#text-scanline-overlay.active.pattern-b { display: block; background-image: repeating-linear-gradient(to bottom, var(--page-background-color) 0, var(--page-background-color) 2px, transparent 2px, transparent 4px); } /* 文字掃描線樣式 B */
-		.weather-svg-icon { display: inline-block; vertical-align: middle; transform: translateY(-10%); } /* SVG 天氣圖示通用樣式 */
-		.zodiac-svg-icon { display: inline-block; vertical-align: middle; transform: translateY(-15%); } /* SVG 生肖圖示通用樣式 */
-		
-		/* --- Analog Clock Widget --- */
-		.clock-container {
-			width: clamp(250px, 40vmin, 500px); /* 響應式寬度 */
-			aspect-ratio: 1 / 1; /* 保持正方形 */
-			position: relative; /* 相對定位 */
-			border-radius: 50%; /* 圓形 */
-			display: flex; justify-content: center; align-items: center; /* 居中 */
-			background-color: transparent; /* 背景透明 */
-			box-shadow: 0 0 0 0px var(--tick-color); /* 外框陰影 */
-			flex-shrink: 0; /* 不壓縮 */
-		}
-		.clock-center-dot {
-			position: absolute; /* 絕對定位 */
-			width: 15px; height: 15px; /* 大小 */
-			background-color: var(--tick-color); /* 顏色 */
-			border-radius: 50%; /* 圓形 */
-			z-index: 11; /* 層級 */
-			cursor: pointer; /* 可點擊 */
-			transition: transform 0.2s ease; /* 動畫 */
-		}
-		.clock-center-dot:hover { transform: scale(1.1); } /* 中心點懸停效果 */
-		.hand { position: absolute; height: 100%; width: 100%; z-index: 10; } /* 指針容器 */
-		.hour-hand i { position: absolute; top: 25%; left: 50%; width: 10px; height: 25%; background-color: var(--hour-hand-color); transform: translateX(-50%); border-radius: 2px; } /* 時針 */
-		.minute-hand i { position: absolute; top: 15%; left: 50%; width: 6px; height: 35%; background-color: var(--minute-hand-color); transform: translateX(-50%); border-radius: 2px; } /* 分針 */
-		.second-hand i { position: absolute; top: 10%; left: 50%; width: 2px; height: 40%; background-color: var(--second-hand-color); transform: translateX(-50%); border-radius: 1px; } /* 秒針 */
-		.tick-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; } /* 刻度容器 */
-		.tick { position: absolute; background: var(--tick-color); left: 50%; transform: translateX(-50%); } /* 刻度 */
-		.tick-hour { height: 12px; width: 3px; top: 0; } /* 小時刻度 */
-		.tick-minute { height: 6px; width: 1px; top: 0; opacity: 0.7; } /* 分鐘刻度 */
-		.number {
-			position: absolute; /* 絕對定位 */
-			top: 25px; left: 50%; /* 位置 */
-			transform: translateX(-50%); /* 居中 */
-			color: var(--tick-color); /* 顏色 */
-			font-family: 'Noto Sans TC', sans-serif; /* 字型 */
-			font-size: clamp(0.8rem, 2.2vw, 1.4rem); /* 響應式字體大小 */
-			font-weight: 700; /* 字重 */
-		}
-		.number div { transform: rotate(calc(-1 * var(--rotation))); } /* 將數字轉正 */
-		
-		/* --- Analog Calendar Widget --- */
-		.calendar-container {
-			/* --- 修復：增加主畫面月曆寬度 --- */
-			width: clamp(280px, 85vw, 500px); /* 響應式寬度 */
-			text-align: center; /* 文字居中 */
-			z-index: 10; /* 層級 */
-			display: flex; flex-direction: column; /* 垂直排列 */
-			flex-shrink: 0; /* 不壓縮 */
-			position: relative; /* 修正：確保定位上下文 */
-			padding: 10px;
-			background-color: rgba(30, 30, 30, 0.5);
-			border-radius: 10px;
-			overflow: hidden; /* 確保背景數字不溢出 */
-		}
-		#analog-calendar-grid {
-			display: grid; /* 使用網格佈局 */
-			grid-template-columns: repeat(7, 1fr); /* 七列 */
-			gap: 2px; /* 間距 */
-			background-color: transparent; /* 背景透明 */
-			width: 100%; /* 寬度 100% */
-			z-index: 1; /* 確保在背景數字之上 */
-		}
-		#analog-calendar-grid .weekday-header {
-			font-weight: bold; /* 字重 */
-			color: var(--calendar-weekday-color); /* 顏色 */
-			padding-bottom: 5px; /* 內邊距 */
-			text-align: center; /* 確保文字在格子內水平居中 */
-			position: relative; /* 添加相對定位以便微調 */
-			left: -12px; /* 在這裡調整數值，正數往右移，負數往左移 */
-		}
-		.calendar-container .calendar-day {
-			border-color: transparent; /* 邊框 */
-			min-height: 4vh; /* 修正：使用vh單位以適應螢幕高度 */
-			padding: 0.1em; /* 大小與內邊距 */
-			display: flex; flex-direction: row; /* 水平排列 */
-			justify-content: center; align-items: center; /* 居中 */
-			position: relative; /* 相對定位 */
-		}
-		.calendar-container .calendar-day.is-today { background-color: transparent !important; border: 1px solid var(--highlight-color); } /* 今天樣式 */
-		.analog-day-main {
-			display: flex; flex-direction: column; /* 垂直排列 */
-			justify-content: center; align-items: center; /* 居中 */
-			flex-grow: 1; /* 佔滿剩餘空間 */
-		}
-		.analog-day-events {
-			display: flex; flex-direction: column; /* 垂直排列 */
-			justify-content: space-around; align-items: center; /* 均分對齊 */
-			writing-mode: vertical-rl; /* 垂直書寫 */
-			text-orientation: mixed; /* 文字方向 */
-			white-space: nowrap; /* 不換行 */
-			font-size: clamp(0.65rem, 1.4vw, 0.8rem); /* 響應式字體 */
-			margin-left: 3px; min-width: 1.5em; /* 間距與寬度 */
-			text-align: center; /* 文字居中 */
-		}
-		.analog-day-events:empty { visibility: hidden; } /* 無事件時隱藏 */
-		.analog-day-events .event-indicator { padding: 2px 0; margin: 0; border-radius: 3px; } /* 事件標記 */
-		.calendar-container .calendar-day .gregorian-day { font-size: clamp(0.9rem, 1.5vw, 1.2rem); font-weight: bold; color: var(--calendar-day-color); } /* 類比日曆公曆日期 */
-		.calendar-container .calendar-day .lunar-day { font-size: clamp(0.7rem, 1vw, 0.9rem); color: var(--calendar-lunar-color); } /* 類比日曆農曆日期 */
-		
-		/* --- Calendar Background Month --- */
-		.calendar-bg-month, .analog-calendar-bg-month {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			font-weight: 900;
-			color: rgba(255, 255, 255, 0.12);
-			z-index: 0;
-			pointer-events: none;
-			font-family: 'Noto Sans TC', 'Inter', sans-serif;
-			line-height: 1;
-		}
+		.weather-marquee-container, .jieqi-holiday-marquee-container { flex-grow: 1; overflow: hidden; position: relative; text-align: left; min-width: 0; cursor: pointer; }
+		.weather-marquee-inner, .jieqi-holiday-marquee-inner { display: flex; flex-wrap: nowrap; width: fit-content; will-change: transform; }
+		.weather-marquee-content, .weather-marquee-content-duplicate, .jieqi-holiday-marquee-content, .jieqi-holiday-marquee-content-duplicate { display: inline-flex; align-items: center; white-space: nowrap; flex-shrink: 0; }
+		.weather-marquee-container.scrolling .weather-marquee-inner, .jieqi-holiday-marquee-container.scrolling .jieqi-holiday-marquee-inner { animation-name: marquee; animation-timing-function: linear; animation-iteration-count: infinite; }
+		@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+		#background-scanline-overlay, #text-scanline-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; background-color: transparent; display: none; }
+		#background-scanline-overlay { z-index: -1; }
+		#text-scanline-overlay { z-index: 50; }
+		#background-scanline-overlay.active.pattern-a { display: block; background-image: repeating-linear-gradient(to bottom, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px); }
+		#background-scanline-overlay.active.pattern-b { display: block; background-image: repeating-linear-gradient(to bottom, rgba(255,255,255,0.1) 0, rgba(255,255,255,0.1) 2px, transparent 2px, transparent 4px); }
+		#text-scanline-overlay.active.pattern-a { display: block; background-image: repeating-linear-gradient(to bottom, transparent, transparent 2px, var(--page-background-color) 2px, var(--page-background-color) 4px); }
+		#text-scanline-overlay.active.pattern-b { display: block; background-image: repeating-linear-gradient(to bottom, var(--page-background-color) 0, var(--page-background-color) 2px, transparent 2px, transparent 4px); }
+		.weather-svg-icon { display: inline-block; vertical-align: middle; transform: translateY(-10%); }
+		.zodiac-svg-icon { display: inline-block; vertical-align: middle; transform: translateY(-15%); }
+		.clock-container { width: clamp(250px, 40vmin, 500px); aspect-ratio: 1 / 1; position: relative; border-radius: 50%; display: flex; justify-content: center; align-items: center; background-color: transparent; box-shadow: 0 0 0 0px var(--tick-color); flex-shrink: 0; }
+		.clock-center-dot { position: absolute; width: 15px; height: 15px; background-color: var(--tick-color); border-radius: 50%; z-index: 11; cursor: pointer; transition: transform 0.2s ease; }
+		.clock-center-dot:hover { transform: scale(1.1); }
+		.hand { position: absolute; height: 100%; width: 100%; z-index: 10; }
+		.hour-hand i { position: absolute; top: 25%; left: 50%; width: 10px; height: 25%; background-color: var(--hour-hand-color); transform: translateX(-50%); border-radius: 2px; }
+		.minute-hand i { position: absolute; top: 15%; left: 50%; width: 6px; height: 35%; background-color: var(--minute-hand-color); transform: translateX(-50%); border-radius: 2px; }
+		.second-hand i { position: absolute; top: 10%; left: 50%; width: 2px; height: 40%; background-color: var(--second-hand-color); transform: translateX(-50%); border-radius: 1px; }
+		.tick-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+		.tick { position: absolute; background: var(--tick-color); left: 50%; transform: translateX(-50%); }
+		.tick-hour { height: 12px; width: 3px; top: 0; }
+		.tick-minute { height: 6px; width: 1px; top: 0; opacity: 0.7; }
+		.number { position: absolute; top: 25px; left: 50%; transform: translateX(-50%); color: var(--number-color); font-family: 'Noto Sans TC', sans-serif; font-size: clamp(0.8rem, 2.2vw, 1.4rem); font-weight: 700; }
+		.number div { transform: rotate(calc(-1 * var(--rotation))); }
+		.calendar-container { width: clamp(280px, 85vw, 600px); text-align: center; z-index: 10; display: flex; flex-direction: column; flex-shrink: 0; position: relative; padding: 10px; background-color: rgba(30, 30, 30, 0.5); border-radius: 10px; overflow: hidden; }
+		#analog-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; background-color: transparent; width: 100%; z-index: 1; }
+		#analog-calendar-grid .weekday-header { font-weight: bold; color: var(--calendar-weekday-color); padding-bottom: 5px; text-align: center; }
+		.calendar-container .calendar-day { border-color: transparent; min-height: 4vh; padding: 0.1em; display: flex; flex-direction: row; justify-content: center; align-items: center; position: relative; }
+		.calendar-container .calendar-day.is-today { background-color: transparent !important; border: 1px solid var(--highlight-color); }
+		.analog-day-main { display: flex; flex-direction: column; justify-content: center; align-items: center; flex-grow: 1; }
+		.analog-day-events { display: flex; flex-direction: column; justify-content: space-around; align-items: center; writing-mode: vertical-rl; text-orientation: mixed; white-space: nowrap; font-size: clamp(0.65rem, 1.4vw, 0.8rem); margin-left: 3px; min-width: 1.5em; text-align: center; }
+		.analog-day-events:empty { visibility: hidden; }
+		.analog-day-events .event-indicator { padding: 2px 0; margin: 0; border-radius: 3px; }
+		.calendar-container .calendar-day .gregorian-day { font-size: clamp(0.9rem, 1.5vw, 1.2rem); font-weight: bold; color: var(--calendar-day-color); }
+		.calendar-container .calendar-day .lunar-day { font-size: clamp(0.7rem, 1vw, 0.9rem); color: var(--calendar-lunar-color); }
+		.calendar-bg-month, .analog-calendar-bg-month { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: 900; color: rgba(255, 255, 255, 0.12); z-index: 0; pointer-events: none; font-family: 'Noto Sans TC', 'Inter', sans-serif; line-height: 1; transition: color 0.4s ease; }
 		.calendar-content .calendar-bg-month { font-size: 20rem; top: 42%; }
 		.yearly-month-container .calendar-bg-month { font-size: 10rem; top: 52%; }
 		.analog-calendar-bg-month { font-size: 10rem; }
-
-		.calendar-content, .yearly-calendar-content {
-			position: relative;
-			overflow: hidden;
-		}
-		.yearly-month-container {
-			position: relative;
-			overflow: hidden;
-			background-color: transparent;
-			border: 1px solid #555;
-		}
-		.calendar-day, .weekly-calendar-day {
-			background-color: transparent !important;
-			z-index: 1;
-		}
+		.calendar-content, .yearly-calendar-content { position: relative; overflow: hidden; }
+		.yearly-month-container { position: relative; overflow: hidden; background-color: transparent; border: 1px solid #555; }
+		.calendar-day, .weekly-calendar-day { background-color: transparent !important; z-index: 1; }
 		.calendar-day.other-month { color: #777; }
 		.calendar-day:hover, .weekly-calendar-day:hover, .calendar-container .calendar-day:hover { background-color: rgba(94, 94, 94, 0.5) !important; }
 		.calendar-day.other-month:hover { background-color: rgba(74, 74, 74, 0.5) !important; }
 		.yearly-day:hover { background-color: rgba(85, 85, 85, 0.7); }
-
-		/* --- Edit Mode --- */
-		.edit-controls-wrapper {
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			border: 2px dashed rgba(0, 255, 255, 0.5);
-			display: none;
-			pointer-events: none; /* 容器本身不接收事件 */
-			z-index: 99;
-		}
-		body.edit-mode .edit-controls-wrapper {
-			display: block;
-		}
-		.move-handle {
-			position: absolute;
-			background-color: rgba(0, 255, 255, 0.8);
-			border: 1px solid #fff;
-			border-radius: 50%;
-			pointer-events: auto; /* 只有控制點接收事件 */
-			z-index: 100;
-			box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
-			width: 40px;
-			height: 40px;
-			top: 50%;
-			left: 50%;
-			cursor: move;
-		}
-		.move-handle::before, .move-handle::after {
-			content: '';
-			position: absolute;
-			background-color: #000;
-		}
-		.move-handle::before {
-			width: 60%;
-			height: 10%;
-			top: 45%;
-			left: 20%;
-		}
-		.move-handle::after {
-			width: 10%;
-			height: 60%;
-			top: 20%;
-			left: 45%;
-		}
-		.resize-handle-x {
-			position: absolute;
-			top: 50%;
-			right: -10px;
-			transform: translateY(-50%);
-			width: 10px;
-			height: 40px;
-			background-color: rgba(0, 255, 255, 0.8);
-			border: 1px solid #fff;
-			border-radius: 5px;
-			cursor: ew-resize;
-			pointer-events: auto;
-			z-index: 101;
-			display: none;
-		}
-		body.edit-mode .resize-handle-x {
-			display: block;
-		}
+		.edit-controls-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 2px dashed rgba(0, 255, 255, 0.5); display: none; pointer-events: none; z-index: 99; }
+		body.edit-mode .edit-controls-wrapper { display: block; }
+		.move-handle { position: absolute; background-color: rgba(0, 255, 255, 0.8); border: 1px solid #fff; border-radius: 50%; pointer-events: auto; z-index: 100; box-shadow: 0 0 10px rgba(0, 255, 255, 0.7); width: 40px; height: 40px; top: 50%; left: 50%; cursor: move; }
+		.move-handle::before, .move-handle::after { content: ''; position: absolute; background-color: #000; }
+		.move-handle::before { width: 60%; height: 10%; top: 45%; left: 20%; }
+		.move-handle::after { width: 10%; height: 60%; top: 20%; left: 45%; }
+		.resize-handle-x { position: absolute; top: 50%; right: -10px; transform: translateY(-50%); width: 10px; height: 40px; background-color: rgba(0, 255, 255, 0.8); border: 1px solid #fff; border-radius: 5px; cursor: ew-resize; pointer-events: auto; z-index: 101; display: none; }
+		body.edit-mode .resize-handle-x { display: block; }
 	</style>
 </head>
 <body>
 	<div id="background-scanline-overlay"></div>
 	<div id="text-scanline-overlay"></div>
-
 	<div id="master-layout">
 		<div id="digital-widget" class="widget-wrapper">
 			<div id="dateTimeDisplay">
 				<div class="time-text" id="timeTextContainer">
-					<span id="hoursMinutesDisplay"></span><span class="time-seconds" id="secondsDisplay"></span><span class="time-ampm" id="amPmDisplay"></span>
+					<span id="hoursDisplay"></span>
+					<span id="colonDisplay" class="time-colon">
+						<svg viewbox="0 0 60 250"><rect x="0" y="10" width="40" height="40" rx="10" ry="10"></rect><rect x="0" y="130" width="40" height="40" rx="10" ry="10"></rect></svg>
+					</span>
+					<span id="minutesDisplay"></span>
+					<span class="time-seconds" id="secondsDisplay"></span>
+					<span class="time-ampm" id="amPmDisplay"></span>
 				</div>
 			</div>
-			<div class="edit-controls-wrapper">
-				<div class="move-handle"></div>
-			</div>
+			<div class="edit-controls-wrapper"><div class="move-handle"></div></div>
 		</div>
-		
 		<div id="gregorian-date-widget" class="widget-wrapper">
 			<div class="gregorian-date-text" id="gregorianDateDisplay">
 				<span class="gregorian-date-parts" id="gregorianDateParts"></span>
 				<div class="weather-marquee-container" id="weatherMarqueeContainer">
-					<div class="weather-marquee-inner" id="weatherMarqueeInner">
-						<span class="weather-marquee-content"></span><span class="weather-marquee-content-duplicate"></span>
-					</div>
+					<div class="weather-marquee-inner" id="weatherMarqueeInner"><span class="weather-marquee-content"></span><span class="weather-marquee-content-duplicate"></span></div>
 				</div>
 			</div>
-			<div class="edit-controls-wrapper">
-				<div class="move-handle"></div>
-				<div class="resize-handle-x"></div>
-			</div>
+			<div class="edit-controls-wrapper"><div class="move-handle"></div><div class="resize-handle-x"></div></div>
 		</div>
-
 		<div id="lunar-date-widget" class="widget-wrapper">
 			<div class="lunar-and-jieqi-line" id="lunarAndJieqiLine">
 				<span class="lunar-date-static-text" id="lunarDateDisplay"></span>
 				<div class="jieqi-holiday-marquee-container" id="jieqiHolidayMarqueeContainer">
-					<div class="jieqi-holiday-marquee-inner" id="jieqiHolidayMarqueeInner">
-						<span class="jieqi-holiday-marquee-content"></span><span class="jieqi-holiday-marquee-content-duplicate"></span>
-					</div>
+					<div class="jieqi-holiday-marquee-inner" id="jieqiHolidayMarqueeInner"><span class="jieqi-holiday-marquee-content"></span><span class="jieqi-holiday-marquee-content-duplicate"></span></div>
 				</div>
 			</div>
-			<div class="edit-controls-wrapper">
-				<div class="move-handle"></div>
-				<div class="resize-handle-x"></div>
-			</div>
+			<div class="edit-controls-wrapper"><div class="move-handle"></div><div class="resize-handle-x"></div></div>
 		</div>
-
 		<div id="analog-clock-widget" class="widget-wrapper" style="display: none;">
 			<div class="clock-container">
-				<div class="hand hour-hand"><i></i></div>
-				<div class="hand minute-hand"><i></i></div>
-				<div class="hand second-hand"><i></i></div>
+				<div class="hand hour-hand"><i></i></div><div class="hand minute-hand"><i></i></div><div class="hand second-hand"><i></i></div>
 				<div class="clock-center-dot" id="clockCenterDot" title="查看時辰宜忌"></div>
 				<div id="ticks-container"></div>
 			</div>
-			<div class="edit-controls-wrapper">
-				<div class="move-handle"></div>
-			</div>
+			<div class="edit-controls-wrapper"><div class="move-handle"></div></div>
 		</div>
-
 		<div id="analog-calendar-widget" class="widget-wrapper" style="display: none;">
 			<div class="calendar-container">
 				<div class="analog-calendar-bg-month"></div>
 				<div id="analog-calendar-grid"></div>
 			</div>
-			<div class="edit-controls-wrapper">
-				<div class="move-handle"></div>
-			</div>
+			<div class="edit-controls-wrapper"><div class="move-handle"></div></div>
 		</div>
 	</div>
-
 	<div class="modal" id="settingsModal">
 		<div class="modal-content">
 			<span class="close-icon">&times;</span>
 			<div class="modal-header"><h2>顯示設定</h2></div>
 			<div class="settings-columns-container">
 				<div class="settings-column">
-					<h3>數位版面</h3>
-					<div class="setting-item"><label for="showDigitalTime">顯示時間</label><div class="setting-controls"><label class="switch"><input id="showDigitalTime" type="checkbox"><span class="slider"></span></label></div></div>
-					<div class="setting-item"><label for="showGregorianDate">顯示公曆</label><div class="setting-controls"><label class="switch"><input id="showGregorianDate" type="checkbox"><span class="slider"></span></label></div></div>
-					<div class="setting-item"><label for="showLunarDate">顯示農曆</label><div class="setting-controls"><label class="switch"><input id="showLunarDate" type="checkbox"><span class="slider"></span></label></div></div>
+					<h3>數位時間</h3>
+					<div class="setting-item"><label for="showDigitalTime">數位時間</label><div class="setting-controls"><label class="switch"><input id="showDigitalTime" type="checkbox"><span class="slider"></span></label></div></div>
+					<div class="setting-item"><label for="hourColor">時</label><div class="setting-controls"><input id="hourColor" type="color"><button class="random-color-btn" data-target="hourColor" title="隨機顏色">🎨</button></div></div>
+					<div class="setting-item"><label for="minuteColor">分</label><div class="setting-controls"><input id="minuteColor" type="color"><button class="random-color-btn" data-target="minuteColor" title="隨機顏色">🎨</button></div></div>
+					<div class="setting-item"><label for="secondColor">秒</label><div class="setting-controls"><input id="secondColor" type="color"><button class="random-color-btn" data-target="secondColor" title="隨機顏色">🎨</button></div></div>
+					<div class="setting-item"><label for="colonColor">冒號</label><div class="setting-controls"><input id="colonColor" type="color"><button class="random-color-btn" data-target="colonColor" title="隨機顏色">🎨</button></div></div>
+					<div class="setting-item"><label for="showAmPm">12/24小時</label><div class="setting-controls"><label class="switch" title="切換12/24小時格式"><input id="showAmPm" type="checkbox"><span class="slider"></span></label><input id="amPmColor" type="color"><button class="random-color-btn" data-target="amPmColor" title="隨機顏色">🎨</button></div></div>
 					<hr>
-					<div class="setting-item"><label for="textColor">時間格式/顏色</label><div class="setting-controls"><label class="switch" title="切換12/24小時格式"><input id="showAmPm" type="checkbox"><span class="slider"></span></label><input id="textColor" type="color"></div></div>
-					<div class="setting-item"><label for="showGregorianYear">公曆-年</label><div class="setting-controls"><label class="switch"><input id="showGregorianYear" type="checkbox"><span class="slider"></span></label><input id="gregorianYearColor" type="color"></div></div>
-					<div class="setting-item"><label for="showGregorianMonth">公曆-月</label><div class="setting-controls"><label class="switch"><input id="showGregorianMonth" type="checkbox"><span class="slider"></span></label><input id="gregorianMonthColor" type="color"></div></div>
-					<div class="setting-item"><label for="showGregorianDay">公曆-日</label><div class="setting-controls"><label class="switch"><input id="showGregorianDay" type="checkbox"><span class="slider"></span></label><input id="gregorianDayColor" type="color"></div></div>
-					<div class="setting-item"><label for="showGregorianWeekday">公曆-周</label><div class="setting-controls"><label class="switch"><input id="showGregorianWeekday" type="checkbox"><span class="slider"></span></label><input id="gregorianWeekdayColor" type="color"></div></div>
+					<h3>公曆</h3>
+					<div class="setting-item"><label for="showGregorianDate">公曆</label><div class="setting-controls"><label class="switch"><input id="showGregorianDate" type="checkbox"><span class="slider"></span></label></div></div>
+					<div class="setting-item"><label for="showGregorianYear">年</label><div class="setting-controls"><label class="switch"><input id="showGregorianYear" type="checkbox"><span class="slider"></span></label><input id="gregorianYearColor" type="color"><button class="random-color-btn" data-target="gregorianYearColor" title="隨機顏色">🎨</button></div></div>
+					<div class="setting-item"><label for="showGregorianMonth">月</label><div class="setting-controls"><label class="switch"><input id="showGregorianMonth" type="checkbox"><span class="slider"></span></label><input id="gregorianMonthColor" type="color"><button class="random-color-btn" data-target="gregorianMonthColor" title="隨機顏色">🎨</button></div></div>
+					<div class="setting-item"><label for="showGregorianDay">日</label><div class="setting-controls"><label class="switch"><input id="showGregorianDay" type="checkbox"><span class="slider"></span></label><input id="gregorianDayColor" type="color"><button class="random-color-btn" data-target="gregorianDayColor" title="隨機顏色">🎨</button></div></div>
+					<div class="setting-item"><label for="showGregorianWeekday">周</label><div class="setting-controls"><label class="switch"><input id="showGregorianWeekday" type="checkbox"><span class="slider"></span></label><input id="gregorianWeekdayColor" type="color"><button class="random-color-btn" data-target="gregorianWeekdayColor" title="隨機顏色">🎨</button></div></div>
+					<div class="setting-item"><label for="showWeather">天氣資訊</label><div class="setting-controls"><label class="switch"><input id="showWeather" type="checkbox"><span class="slider"></span></label><input id="weatherColor" type="color"><button class="random-color-btn" data-target="weatherColor" title="隨機顏色">🎨</button></div></div>
+					<div class="setting-item"><label for="showWeatherLocation">天氣地區</label><div class="setting-controls"><label class="switch"><input id="showWeatherLocation" type="checkbox"><span class="slider"></span></label><input id="weatherLocationColor" type="color"><button class="random-color-btn" data-target="weatherLocationColor" title="隨機顏色">🎨</button></div></div>
 				</div>
 				<div class="settings-column">
-					<h3>農曆細項</h3>
-					<div class="setting-item"><label for="showMinguoYear">年(生肖)</label><div class="setting-controls"><label class="switch"><input id="showMinguoYear" type="checkbox"><span class="slider"></span></label><input id="minguoYearColor" type="color"></div></div>
-					<div class="setting-item"><label for="showLunarMonth">月(月相)</label><div class="setting-controls"><label class="switch"><input id="showLunarMonth" type="checkbox"><span class="slider"></span></label><input id="lunarMonthColor" type="color"></div></div>
-					<div class="setting-item"><label for="showLunarDay">日</label><div class="setting-controls"><label class="switch"><input id="showLunarDay" type="checkbox"><span class="slider"></span></label><input id="lunarDayColor" type="color"></div></div>
-					<div class="setting-item"><label for="showLunarShiChen">時辰</label><div class="setting-controls"><label class="switch"><input id="showLunarShiChen" type="checkbox"><span class="slider"></span></label><input id="lunarShiChenColor" type="color"></div></div>
-					<div class="setting-item"><label for="showJieqi">節氣倒數</label><div class="setting-controls"><label class="switch"><input id="showJieqi" type="checkbox"><span class="slider"></span></label><input id="jieqiColor" type="color"></div></div>
-					<div class="setting-item"><label for="showHolidays">節日倒數</label><div class="setting-controls"><label class="switch"><input id="showHolidays" type="checkbox"><span class="slider"></span></label><input id="holidayColor" type="color"></div></div>
-				</div>
-				<div class="settings-column">
-					<h3>類比物件</h3>
-					<div class="setting-item"><label for="showAnalogClock">顯示時鐘</label><div class="setting-controls"><label class="switch"><input id="showAnalogClock" type="checkbox"><span class="slider"></span></label></div></div>
-					<div class="setting-item"><label for="hourHandColor">時針</label><div class="setting-controls"><input id="hourHandColor" type="color"></div></div>
-					<div class="setting-item"><label for="minuteHandColor">分針</label><div class="setting-controls"><input id="minuteHandColor" type="color"></div></div>
-					<div class="setting-item"><label for="secondHandColor">秒針</label><div class="setting-controls"><input id="secondHandColor" type="color"></div></div>
-					<div class="setting-item"><label for="tickColor">刻度</label><div class="setting-controls"><input id="tickColor" type="color"></div></div>
+					<h3>類比時鐘</h3>
+					<div class="setting-item"><label for="showAnalogClock">類比時鐘</label><div class="setting-controls"><label class="switch"><input id="showAnalogClock" type="checkbox"><span class="slider"></span></label></div></div>
+					<div class="setting-item"><label for="hourHandColor">時</label><div class="setting-controls"><input id="hourHandColor" type="color"><button class="random-color-btn" data-target="hourHandColor" title="隨機顏色">🎨</button></div></div>
+					<div class="setting-item"><label for="minuteHandColor">分</label><div class="setting-controls"><input id="minuteHandColor" type="color"><button class="random-color-btn" data-target="minuteHandColor" title="隨機顏色">🎨</button></div></div>
+					<div class="setting-item"><label for="secondHandColor">秒</label><div class="setting-controls"><input id="secondHandColor" type="color"><button class="random-color-btn" data-target="secondHandColor" title="隨機顏色">🎨</button></div></div>
+					<div class="setting-item"><label for="tickColor">刻度</label><div class="setting-controls"><input id="tickColor" type="color"><button class="random-color-btn" data-target="tickColor" title="隨機顏色">🎨</button></div></div>
+					<div class="setting-item"><label for="numberColor">時間數字</label><div class="setting-controls"><input id="numberColor" type="color"><button class="random-color-btn" data-target="numberColor" title="隨機顏色">🎨</button></div></div>
 					<hr>
-					<div class="setting-item"><label for="showAnalogCalendar">顯示月曆</label><div class="setting-controls"><label class="switch"><input id="showAnalogCalendar" type="checkbox"><span class="slider"></span></label></div></div>
-					<div class="setting-item"><label for="calendarHeaderColor">年月標題</label><div class="setting-controls"><input id="calendarHeaderColor" type="color"></div></div>
-					<div class="setting-item"><label for="calendarWeekdayColor">周標題</label><div class="setting-controls"><input id="calendarWeekdayColor" type="color"></div></div>
-					<div class="setting-item"><label for="calendarDayColor">日期</label><div class="setting-controls"><input id="calendarDayColor" type="color"></div></div>
-					<div class="setting-item"><label for="calendarLunarColor">農曆</label><div class="setting-controls"><input id="calendarLunarColor" type="color"></div></div>
+					<h3>農曆</h3>
+					<div class="setting-item"><label for="showLunarDate">農曆</label><div class="setting-controls"><label class="switch"><input id="showLunarDate" type="checkbox"><span class="slider"></span></label></div></div>
+					<div class="setting-item"><label for="showMinguoYear">年</label><div class="setting-controls"><label class="switch"><input id="showMinguoYear" type="checkbox"><span class="slider"></span></label><input id="minguoYearColor" type="color"><button class="random-color-btn" data-target="minguoYearColor" title="隨機顏色">🎨</button></div></div>
+					<div class="setting-item"><label for="showLunarMonth">月</label><div class="setting-controls"><label class="switch"><input id="showLunarMonth" type="checkbox"><span class="slider"></span></label><input id="lunarMonthColor" type="color"><button class="random-color-btn" data-target="lunarMonthColor" title="隨機顏色">🎨</button></div></div>
+					<div class="setting-item"><label for="showLunarDay">日</label><div class="setting-controls"><label class="switch"><input id="showLunarDay" type="checkbox"><span class="slider"></span></label><input id="lunarDayColor" type="color"><button class="random-color-btn" data-target="lunarDayColor" title="隨機顏色">🎨</button></div></div>
+					<div class="setting-item"><label for="showLunarShiChen">時辰</label><div class="setting-controls"><label class="switch"><input id="showLunarShiChen" type="checkbox"><span class="slider"></span></label><input id="lunarShiChenColor" type="color"><button class="random-color-btn" data-target="lunarShiChenColor" title="隨機顏色">🎨</button></div></div>
+					<div class="setting-item"><label for="showJieqi">節氣</label><div class="setting-controls"><label class="switch"><input id="showJieqi" type="checkbox"><span class="slider"></span></label><input id="jieqiColor" type="color"><button class="random-color-btn" data-target="jieqiColor" title="隨機顏色">🎨</button></div></div>
+					<div class="setting-item"><label for="showHolidays">節日</label><div class="setting-controls"><label class="switch"><input id="showHolidays" type="checkbox"><span class="slider"></span></label><input id="holidayColor" type="color"><button class="random-color-btn" data-target="holidayColor" title="隨機顏色">🎨</button></div></div>
 				</div>
 			</div>
 			<div class="settings-columns-container">
 				<div class="settings-column">
-					<h3>通用設定</h3>
-					<div class="setting-item"><label for="showWeather">天氣資訊</label><div class="setting-controls"><label class="switch"><input id="showWeather" type="checkbox"><span class="slider"></span></label><input id="weatherColor" type="color"></div></div>
-					<div class="setting-item"><label for="showWeatherLocation">天氣地區</label><div class="setting-controls"><label class="switch"><input id="showWeatherLocation" type="checkbox"><span class="slider"></span></label><input id="weatherLocationColor" type="color"></div></div>
-					<div class="setting-item"><div class="location-input-group"><select id="countySelect" class="interval-select" style="max-width: 85px;"></select><select id="districtSelect" class="interval-select" style="max-width: 85px;"></select><input id="weatherLocation" type="text" class="interval-select" title="可手動輸入英文地名" placeholder="手動輸入(英文)" style="width: 120px; margin-left: 5px;"></div><div class="location-controls-group"><button id="useCurrentLocationBtn" title="使用目前位置"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L12 6"/><path d="M12 18L12 22"/><path d="M20 12L22 12"/><path d="M2 12L4 12"/><circle cx="12" cy="12" r="2"/><path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/></svg></button></div></div>
+					<h3>月曆</h3>
+					<div class="setting-item"><label for="showAnalogCalendar">月曆</label><div class="setting-controls"><label class="switch"><input id="showAnalogCalendar" type="checkbox"><span class="slider"></span></label></div></div>
+					<div class="setting-item"><label for="calendarHeaderColor">月</label><div class="setting-controls"><input id="calendarHeaderColor" type="color"><button class="random-color-btn" data-target="calendarHeaderColor" title="隨機顏色">🎨</button></div></div>
+					<div class="setting-item"><label for="calendarWeekdayColor">周</label><div class="setting-controls"><input id="calendarWeekdayColor" type="color"><button class="random-color-btn" data-target="calendarWeekdayColor" title="隨機顏色">🎨</button></div></div>
+					<div class="setting-item"><label for="calendarDayColor">日</label><div class="setting-controls"><input id="calendarDayColor" type="color"><button class="random-color-btn" data-target="calendarDayColor" title="隨機顏色">🎨</button></div></div>
+					<div class="setting-item"><label for="calendarLunarColor">農曆</label><div class="setting-controls"><input id="calendarLunarColor" type="color"><button class="random-color-btn" data-target="calendarLunarColor" title="隨機顏色">🎨</button></div></div>
 				</div>
 				<div class="settings-column">
-					<h3>版面控制</h3>
-					<div class="setting-item"><label for="editMode">編輯模式</label><div class="setting-controls"><label class="switch"><input id="editMode" type="checkbox"><span class="slider"></span></label></div></div>
+					<h3>通用</h3>
+					<div class="setting-item"><div class="location-input-group"><select id="countySelect" class="interval-select" style="max-width: 85px;"></select><select id="districtSelect" class="interval-select" style="max-width: 85px;"></select><input id="weatherLocation" type="text" class="interval-select" title="可手動輸入英文地名" placeholder="手動輸入(英文)" style="width: 120px; margin-left: 5px;"></div><div class="location-controls-group"><button id="useCurrentLocationBtn" title="使用目前位置"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L12 6"/><path d="M12 18L12 22"/><path d="M20 12L22 12"/><path d="M2 12L4 12"/><circle cx="12" cy="12" r="2"/><path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/></svg></button></div></div>
 					<div class="setting-item"><label for="enableMovement">隨機移動</label><div class="setting-controls"><div class="interval-selector-group"><select id="movementIntervalMinutes" class="interval-select"></select><span class="interval-select-label">分</span><select id="movementIntervalSeconds" class="interval-select"></select><span class="interval-select-label">秒</span></div><label class="switch"><input id="enableMovement" type="checkbox"><span class="slider"></span></label></div></div>
-					<div class="setting-item"><label for="backgroundColor">背景顏色</label><div class="setting-controls"><input id="backgroundColor" type="color"></div></div>
-					<div class="setting-item"><label for="enableBackgroundScanline">背景掃描線</label><div class="setting-controls"><label class="switch"><input id="enableBackgroundScanline" type="checkbox"><span class="slider"></span></label></div></div>
 					<div class="setting-item"><label for="enableTextScanline">文字掃描線</label><div class="setting-controls"><div class="interval-selector-group"><select id="scanlineIntervalMinutes" class="interval-select"></select><span class="interval-select-label">分</span><select id="scanlineIntervalSeconds" class="interval-select"></select><span class="interval-select-label">秒</span></div><label class="switch"><input id="enableTextScanline" type="checkbox"><span class="slider"></span></label></div></div>
+					<div class="setting-item"><label for="enableBackgroundScanline">背景掃描線</label><div class="setting-controls"><label class="switch"><input id="enableBackgroundScanline" type="checkbox"><span class="slider"></span></label></div></div>
+					<div class="setting-item"><label for="backgroundColor">背景顏色</label><div class="setting-controls"><input id="backgroundColor" type="color"><button class="random-color-btn" data-target="backgroundColor" title="隨機顏色">🎨</button></div></div>
 				</div>
 			</div>
 			<div class="button-group"><button class="action-button" id="restoreDefaultsBtn">恢復預設</button><button class="action-button" id="randomColorsBtn">隨機顏色</button></div>
@@ -559,10 +333,7 @@
 			<span class="close-icon">&times;</span>
 			<div class="modal-header"><h2 id="moonPhaseModalTitle">月相詳情</h2></div>
 			<div id="moonPhaseModalContent">
-				<div id="moonPhaseDisplay">
-					<div class="moon-phase-icon-large" id="mainMoonIcon"></div>
-					<p id="mainMoonDescription"></p>
-				</div>
+				<div id="moonPhaseDisplay"><div class="moon-phase-icon-large" id="mainMoonIcon"></div><p id="mainMoonDescription"></p></div>
 				<div class="moon-calendar-container">
 					<div class="modal-header"><button id="prevMoonMonthBtn">&lt;</button><h3 id="moonCalendarMonthYear"></h3><button id="nextMoonMonthBtn">&gt;</button></div>
 					<div class="calendar-weekdays" id="moonCalendarWeekdays"></div>
@@ -579,205 +350,150 @@
 			<div class="zodiac-grid" id="zodiacGrid"></div>
 		</div>
 	</div>
-
-	<div id="settings-icon" class="control-icon" title="設定"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61-.25-1.17-.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg></div>
+	<div id="edit-mode-icon" class="control-icon" title="編輯模式">
+		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<g class="wrench-icon"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></g>
+			<g class="close-icon-svg" style="display: none;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></g>
+		</svg>
+	</div>
+	<div id="settings-icon" class="control-icon" title="設定"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61-.25-1.17-.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg></div>
 	<div id="fullscreen-icon" class="control-icon" title="全螢幕/退出全螢幕"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"></path></svg></div>
-
 	<script>
-		let settings = {}; // 儲存所有設定
-		let transformState = {}; // 儲存位置與縮放狀態
-		let timers = { main: null, movement: null, scanline: null, weather: null, analog: null }; // 統一管理計時器
-		let state = { // 統一管理狀態變數
-			scanlinePatternIsA: true,
-			lastMarqueeContent: '',
-			lastWeatherContent: '',
-			calendarDate: new Date(),
-			weeklyCalendarDate: new Date(),
-			yearlyCalendarDate: new Date(),
-			shichenDetailDate: new Date(),
-			moonCalendarDate: new Date(),
-			yearlyDataCache: { year: -1, holidays: [], jieqi: [] },
-			weatherDataCache: null,
-			isDragging: false,
-			dragTarget: null,
-			dragType: null, // 'move', 'scale', or 'resize-x'
-			startX: 0,
-			startY: 0,
-			initialX: 0,
-			initialY: 0,
-			initialScale: 1,
-			initialDist: 0,
-			initialWidth: 0,
+		let settings = {}, transformState = {};
+		let timers = { main: null, movement: null, scanline: null, weather: null, analog: null };
+		let state = {
+			scanlinePatternIsA: true, lastMarqueeContent: '', lastWeatherContent: '',
+			calendarDate: new Date(), weeklyCalendarDate: new Date(), yearlyCalendarDate: new Date(),
+			shichenDetailDate: new Date(), moonCalendarDate: new Date(),
+			yearlyDataCache: { year: -1, holidays: [], jieqi: [] }, weatherDataCache: null,
+			isDragging: false, dragTarget: null, dragType: null, startX: 0, startY: 0,
+			initialX: 0, initialY: 0, initialScale: 1, initialDist: 0, initialWidth: 0,
+			movementEnabledBeforeEdit: true,
 		};
-
 		const taiwanLocations = { "台灣": { "english": "taiwan", "districts": { "台灣": "taiwan" } }, "基隆市": { "english": "keelung", "districts": { "基隆市": "keelung", "仁愛區": "renai", "信義區": "xinyi", "中正區": "zhongzheng", "中山區": "zhongshan", "安樂區": "anle", "暖暖區": "nuannuan", "七堵區": "qidu" } }, "臺北市": { "english": "taipei", "districts": { "臺北市": "taipei", "中正區": "zhongzheng", "大同區": "datong", "中山區": "zhongshan", "松山區": "songshan", "大安區": "da'an", "萬華區": "wanhua", "信義區": "xinyi", "士林區": "shilin", "北投區": "beitou", "內湖區": "neihu", "南港區": "nangang", "文山區": "wenshan" } }, "新北市": { "english": "new taipei", "districts": { "新北市": "new taipei", "板橋區": "banqiao", "三重區": "sanchong", "中和區": "zhonghe", "永和區": "yonghe", "新莊區": "xinzhuang", "新店區": "xindian", "土城區": "tucheng", "蘆洲區": "luzhou", "樹林區": "shulin", "汐止區": "xizhi", "鶯歌區": "yingge", "三峽區": "sanxia", "淡水區": "danshui", "瑞芳區": "ruifang", "五股區": "wugu", "泰山區": "taishan", "林口區": "linkou", "深坑區": "shengkeng", "石碇區": "shiding", "坪林區": "pinglin", "三芝區": "sanzhi", "石門區": "shimen", "八里區": "bali", "平溪區": "pingxi", "雙溪區": "shuangxi", "貢寮區": "gongliao", "金山區": "jinshan", "萬里區": "wanli", "烏來區": "wulai" } }, "桃園市": { "english": "taoyuan", "districts": { "桃園市": "taoyuan", "桃園區": "taoyuan", "中壢區": "zhongli", "平鎮區": "pingzhen", "八德區": "bade", "楊梅區": "yangmei", "蘆竹區": "luzhu", "大溪區": "daxi", "龍潭區": "longtan", "龜山區": "guishan", "大園區": "dayuan", "觀音區": "guanyin", "新屋區": "xinwu", "復興區": "fuxing" } }, "臺中市": { "english": "taichung", "districts": { "臺中市": "taichung", "中區": "central", "東區": "east", "南區": "south", "西區": "west", "北區": "north", "北屯區": "beitun", "西屯區": "xitun", "南屯區": "nantun", "太平區": "taiping", "大里區": "dali", "霧峰區": "wufeng", "烏日區": "wuri", "豐原區": "fengyuan", "后里區": "houli", "石岡區": "shigang", "東勢區": "dongshi", "和平區": "heping", "新社區": "xinshe", "潭子區": "tanzi", "大雅區": "daya", "神岡區": "shengang", "大肚區": "dadu", "沙鹿區": "shalu", "龍井區": "longjing", "梧棲區": "wuqi", "清水區": "qingshui", "大甲區": "dajia", "外埔區": "waipu", "大安區": "daan" } }, "臺南市": { "english": "tainan", "districts": { "臺南市": "tainan", "中西區": "west central", "東區": "east", "南區": "south", "北區": "north", "安平區": "anping", "安南區": "annan", "永康區": "yongkang", "歸仁區": "guiren", "新化區": "xinhua", "左鎮區": "zuozhen", "玉井區": "yujing", "楠西區": "nanxi", "南化區": "nanhua", "仁德區": "rende", "關廟區": "guanmiao", "龍崎區": "longqi", "官田區": "guantian", "麻豆區": "madou", "佳里區": "jiali", "西港區": "xigang", "七股區": "qigu", "將軍區": "jiangjun", "學甲區": "xuejia", "北門區": "beimen", "新營區": "xinying", "後壁區": "houbi", "白河區": "baihe", "東山區": "dongshan", "六甲區": "liujia", "下營區": "xiaying", "柳營區": "liuying", "鹽水區": "yanshui", "善化區": "shanhua", "大內區": "danei", "山上區": "shanshang", "新市區": "xingshi", "安定區": "anding" } }, "高雄市": { "english": "kaohsiung", "districts": { "高雄市": "kaohsiung", "楠梓區": "nanzi", "左營區": "zuoying", "鼓山區": "gushan", "三民區": "sanmin", "鹽埕區": "yancheng", "前金區": "qianjin", "新興區": "xinxing", "苓雅區": "lingya", "前鎮區": "qianzhen", "旗津區": "qijin", "小港區": "xiaogang", "鳳山區": "fengshan", "林園區": "linyuan", "大寮區": "daliao", "大樹區": "dashu", "大社區": "dashe", "仁武區": "renwu", "鳥松區": "niaosong", "岡山區": "gangshan", "橋頭區": "qiaotou", "燕巢區": "yanchao", "田寮區": "tianliao", "阿蓮區": "alian", "路竹區": "luzhu", "湖內區": "hunei", "茄萣區": "qieding", "永安區": "yong'an", "彌陀區": "mizuo", "梓官區": "ziguan", "旗山區": "qishan", "美濃區": "meinong", "六龜區": "liugui", "甲仙區": "jiaxian", "杉林區": "shanlin", "內門區": "neimen", "茂林區": "maolin", "桃源區": "taoyuan", "那瑪夏區": "namasia" } }, "新竹縣": { "english": "hsinchu county", "districts": { "新竹縣": "hsinchu county", "竹北市": "zhubei", "竹東鎮": "zhudong", "新埔鎮": "xinpu", "關西鎮": "guanxi", "湖口鄉": "hukou", "新豐鄉": "xinfeng", "芎林鄉": "qionglin", "橫山鄉": "hengshan", "北埔鄉": "beipu", "寶山鄉": "baoshan", "峨眉鄉": "emei", "尖石鄉": "jianshi", "五峰鄉": "wufeng" } }, "苗栗縣": { "english": "miaoli", "districts": { "苗栗縣": "miaoli", "苗栗市": "miaoli city", "頭份市": "toufen", "苑裡鎮": "yuanli", "通霄鎮": "tongxiao", "竹南鎮": "zhunan", "後龍鎮": "houlong", "卓蘭鎮": "zhuolan", "大湖鄉": "dahu", "公館鄉": "gongguan", "銅鑼鄉": "tongluo", "南庄鄉": "nanzhuang", "頭屋鄉": "touwu", "三灣鄉": "sanwan", "三義鄉": "sanyi", "西湖鄉": "xihu", "造橋鄉": "zaoqiao", "獅潭鄉": "shitan", "泰安鄉": "taian" } }, "彰化縣": { "english": "changhua", "districts": { "彰化縣": "changhua", "彰化市": "changhua city", "員林市": "yuanlin", "和美鎮": "hemei", "鹿港鎮": "lukang", "溪湖鎮": "xihu", "田中鎮": "tianzhong", "北斗鎮": "beidou", "二林鎮": "erlin", "線西鄉": "xianxi", "伸港鄉": "shengang", "福興鄉": "fuxing", "秀水鄉": "xiushui", "花壇鄉": "huatan", "芬園鄉": "fenyuan", "大村鄉": "dacun", "埔鹽鄉": "puyan", "埔心鄉": "puxin", "永靖鄉": "yongjing", "社頭鄉": "shetou", "二水鄉": "ershui", "田尾鄉": "tianwei", "埤頭鄉": "pitou", "芳苑鄉": "fangyuan", "大城鄉": "dacheng", "竹塘鄉": "zhutang", "溪州鄉": "xizhou" } }, "南投縣": { "english": "nantou", "districts": { "南投縣": "nantou", "南投市": "nantou city", "埔里鎮": "puli", "草屯鎮": "caotun", "竹山鎮": "zhushan", "集集鎮": "jiji", "名間鄉": "mingjian", "鹿谷鄉": "lugu", "中寮鄉": "zhongliao", "魚池鄉": "yuchi", "國姓鄉": "guoxing", "水里鄉": "shuili", "信義鄉": "xinyi", "仁愛鄉": "ren'ai" } }, "雲林縣": { "english": "yunlin", "districts": { "雲林縣": "yunlin", "斗六市": "douliu", "斗南鎮": "dounan", "虎尾鎮": "huwei", "西螺鎮": "xiluo", "土庫鎮": "tuku", "北港鎮": "beigang", "古坑鄉": "gukeng", "大埤鄉": "dapi", "莿桐鄉": "citong", "林內鄉": "linnei", "二崙鄉": "erlun", "崙背鄉": "lunbei", "麥寮鄉": "mailiao", "東勢鄉": "dongshi", "褒忠鄉": "baozhong", "臺西鄉": "taixi", "元長鄉": "yuanchang", "四湖鄉": "sihu", "口湖鄉": "kouhu", "水林鄉": "shuilin" } }, "嘉義縣": { "english": "chiayi county", "districts": { "嘉義縣": "chiayi county", "太保市": "taibao", "朴子市": "puzi", "布袋鎮": "budai", "大林鎮": "dalin", "民雄鄉": "minxiong", "溪口鄉": "xikou", "新港鄉": "xingang", "六腳鄉": "liujiao", "東石鄉": "dongshi", "義竹鄉": "yizu", "鹿草鄉": "lucao", "水上鄉": "shuishang", "中埔鄉": "zhongpu", "竹崎鄉": "zhuqi", "梅山鄉": "meishan", "番路鄉": "fanlu", "大埔鄉": "dapu", "阿里山鄉": "alishan" } }, "屏東縣": { "english": "pingtung", "districts": { "屏東縣": "pingtung", "屏東市": "pingtung city", "潮州鎮": "chaozhou", "東港鎮": "donggang", "恆春鎮": "hengchun", "萬丹鄉": "wandan", "長治鄉": "changzhi", "麟洛鄉": "linluo", "九如鄉": "jiuru", "里港鄉": "ligang", "鹽埔鄉": "yanpu", "高樹鄉": "gaoshu", "萬巒鄉": "wanluan", "內埔鄉": "neipu", "竹田鄉": "zhutian", "新埤鄉": "xinpi", "枋寮鄉": "fangliao", "新園鄉": "xinyuan", "崁頂鄉": "kanding", "林邊鄉": "linbian", "南州鄉": "nanzhou", "佳冬鄉": "jiadong", "琉球鄉": "liuqiu", "車城鄉": "checheng", "滿州鄉": "manzhou", "枋山鄉": "fangshan", "三地門鄉": "sandimen", "霧臺鄉": "wutai", "瑪家鄉": "majia", "泰武鄉": "taiwu", "來義鄉": "laiyi", "春日鄉": "chunri", "獅子鄉": "shizi", "牡丹鄉": "mudan" } }, "宜蘭縣": { "english": "yilan", "districts": { "宜蘭縣": "yilan", "宜蘭市": "yilan city", "羅東鎮": "luodong", "蘇澳鎮": "su'ao", "頭城鎮": "toucheng", "礁溪鄉": "jiaoxi", "壯圍鄉": "zhuangwei", "員山鄉": "yuanshan", "冬山鄉": "dongshan", "五結鄉": "wujie", "三星鄉": "sanxing", "大同鄉": "datong", "南澳鄉": "nan'ao" } }, "花蓮縣": { "english": "hualien", "districts": { "花蓮縣": "hualien", "花蓮市": "hualien city", "鳳林鎮": "fenglin", "玉里鎮": "yuli", "新城鄉": "xincheng", "吉安鄉": "ji'an", "壽豐鄉": "shoufeng", "光復鄉": "guangfu", "豐濱鄉": "fengbin", "瑞穗鄉": "ruisui", "富里鄉": "fuli", "秀林鄉": "xiulin", "萬榮鄉": "wanrong", "卓溪鄉": "zhuoxi" } }, "臺東縣": { "english": "taitung", "districts": { "臺東縣": "taitung", "臺東市": "taitung city", "成功鎮": "chenggong", "關山鎮": "guanshan", "卑南鄉": "beinan", "鹿野鄉": "luye", "池上鄉": "chishang", "東河鄉": "donghe", "長濱鄉": "changbin", "太麻里鄉": "taimali", "大武鄉": "dawu", "達仁鄉": "daren", "金峰鄉": "jinfeng", "海端鄉": "haiduan", "延平鄉": "yanping", "綠島鄉": "ludao", "蘭嶼鄉": "lanyu" } }, "澎湖縣": { "english": "penghu", "districts": { "澎湖縣": "penghu", "馬公市": "magong", "湖西鄉": "huxi", "白沙鄉": "baisha", "西嶼鄉": "xiyu", "望安鄉": "wang'an", "七美鄉": "qimei" } }, "金門縣": { "english": "kinmen", "districts": { "金門縣": "kinmen", "金城鎮": "jincheng", "金湖鎮": "jinhu", "金沙鎮": "jinsha", "金寧鄉": "jinning", "烈嶼鄉": "lieyu", "烏坵鄉": "wuqiu" } }, "連江縣": { "english": "lienchiang", "districts": { "連江縣": "lienchiang", "南竿鄉": "nangan", "北竿鄉": "beigan", "莒光鄉": "juguang", "東引鄉": "dongyin" } }, "新竹市": { "english": "hsinchu", "districts": { "新竹市": "hsinchu", "東區": "east", "北區": "north", "香山區": "xiangshan" } }, "嘉義市": { "english": "chiayi", "districts": { "嘉義市": "chiayi", "東區": "east", "西區": "west" } } };
-		const defaultSettings = { backgroundColor: '#000000', editMode: false, enableMovement: true, movementIntervalMinutes: 0, movementIntervalSeconds: 10, showWeather: true, weatherLocation: 'taiwan', weatherColor: '#87CEFA', showWeatherLocation: true, weatherLocationColor: '#00FFFF', showDigitalTime: true, showGregorianDate: true, showLunarDate: true, showAmPm: true, showGregorianYear: true, showGregorianMonth: true, showGregorianDay: true, showGregorianWeekday: true, showMinguoYear: true, showLunarMonth: true, showLunarDay: true, showLunarShiChen: true, showJieqi: true, showHolidays: true, textColor: '#00FF00', gregorianYearColor: '#00FF00', gregorianMonthColor: '#00FF00', gregorianDayColor: '#00FF00', gregorianWeekdayColor: '#00FF00', minguoYearColor: '#00FF00', lunarMonthColor: '#00FF00', lunarDayColor: '#00FF00', lunarShiChenColor: '#00FF00', jieqiColor: '#00FF00', holidayColor: '#00FFFF', enableTextScanline: false, enableBackgroundScanline: false, scanlineIntervalMinutes: 0, scanlineIntervalSeconds: 10, showAnalogClock: false, showAnalogCalendar: false, hourHandColor: '#ffffff', minuteHandColor: '#ffffff', secondHandColor: '#ff5b3f', tickColor: '#ffffff', calendarHeaderColor: '#ff5b3f', calendarWeekdayColor: '#00ffff', calendarDayColor: '#ffffff', calendarLunarColor: '#aaaaaa', }; // 預設顯示設定
-		const defaultTransformState = { 
-			'master': { x: 0, y: 0, scale: 1 },
-			'digital': { x: 0, y: -120, scale: 1 }, 
-			'gregorian-date': { x: 0, y: 80, scale: 1, width: 92 }, 
-			'lunar-date': { x: 0, y: 150, scale: 1, width: 92 }, 
-			'analog-clock': { x: 0, y: -150, scale: 0.8 }, 
-			'analog-calendar': { x: 0, y: 150, scale: 0.8 } 
-		}; // 預設位置與縮放
-
-		const qs = (selector) => document.querySelector(selector); // querySelector 簡寫
-		const qsa = (selector) => document.querySelectorAll(selector); // querySelectorAll 簡寫
-		const setStyle = (element, styles) => Object.assign(element.style, styles); // 批量設定樣式
-
-		function saveState() { try { localStorage.setItem('mergedClockSettings_v3', JSON.stringify(settings)); localStorage.setItem('mergedClockTransforms_v3', JSON.stringify(transformState)); } catch (e) { console.error("儲存狀態失敗:", e); } } // 儲存設定到 localStorage
-		function loadState() { try { const storedSettings = localStorage.getItem('mergedClockSettings_v3'); settings = storedSettings ? { ...defaultSettings, ...JSON.parse(storedSettings) } : { ...defaultSettings }; const storedTransforms = localStorage.getItem('mergedClockTransforms_v3'); transformState = storedTransforms ? { ...defaultTransformState, ...JSON.parse(storedTransforms) } : { ...defaultTransformState }; } catch (e) { console.error("解析狀態失敗:", e); settings = { ...defaultSettings }; transformState = { ...defaultTransformState }; } } // 從 localStorage 載入設定
-		function updateSettingsModalUI() { for (const key in settings) { const el = document.getElementById(key); if (el) { if (el.type === 'checkbox') el.checked = settings[key]; else if (el.tagName !== 'SELECT' || !['countySelect', 'districtSelect'].includes(key)) el.value = settings[key]; } } setLocationSelectorsFromEnglish(settings.weatherLocation); toggleEditModeUI(); } // 更新設定彈窗的 UI
-		function restoreDefaults() { settings = { ...defaultSettings }; transformState = { ...defaultTransformState }; saveState(); updateSettingsModalUI(); applyAllSettings(); applyTransforms(); updateWidgetVisibility(); applyScanlineEffect(); applyMovement(); state.lastMarqueeContent = ''; state.lastWeatherContent = ''; updateWeather(); } // 恢復預設設定
-		function setRandomColors() { for (const key in settings) { if (key.toLowerCase().includes('color')) settings[key] = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0'); } saveState(); updateSettingsModalUI(); applyAllSettings(); } // 設定隨機顏色
-
-		function initializeTimers() {
-			Object.values(timers).forEach(clearInterval);
-			timers.main = setInterval(updateDigitalClock, 1000);
-			timers.analog = setInterval(updateAnalogClock, 50);
-			applyMovement();
-			applyScanlineEffect();
-		}
-		
-		// 獲取所有可見元件的整體邊界框
+		const defaultSettings = {
+			backgroundColor: '#000000', enableMovement: true, movementIntervalMinutes: 0, movementIntervalSeconds: 10, showWeather: true,
+			weatherLocation: 'taiwan', weatherColor: '#87CEFA', showWeatherLocation: true, weatherLocationColor: '#00FFFF', showDigitalTime: true,
+			showGregorianDate: true, showLunarDate: true, showAmPm: true, showGregorianYear: true, showGregorianMonth: true, showGregorianDay: true,
+			showGregorianWeekday: true, showMinguoYear: true, showLunarMonth: true, showLunarDay: true, showLunarShiChen: true, showJieqi: true,
+			showHolidays: true, hourColor: '#00FF00', minuteColor: '#00FF00', colonColor: '#00FF00', secondColor: '#00FF00', amPmColor: '#00FF00',
+			gregorianYearColor: '#00FF00', gregorianMonthColor: '#00FF00', gregorianDayColor: '#00FF00', gregorianWeekdayColor: '#00FF00',
+			minguoYearColor: '#00FF00', lunarMonthColor: '#00FF00', lunarDayColor: '#00FF00', lunarShiChenColor: '#00FF00', jieqiColor: '#00FF00',
+			holidayColor: '#00FFFF', enableTextScanline: false, enableBackgroundScanline: false, scanlineIntervalMinutes: 0, scanlineIntervalSeconds: 10,
+			showAnalogClock: false, showAnalogCalendar: false, hourHandColor: '#ffffff', minuteHandColor: '#ffffff', secondHandColor: '#ff5b3f',
+			tickColor: '#ffffff', numberColor: '#ffffff', calendarHeaderColor: '#ff5b3f', calendarWeekdayColor: '#00ffff', calendarDayColor: '#ffffff',
+			calendarLunarColor: '#aaaaaa',
+		};
+		const defaultTransformState = {
+			'master': { x: 0, y: 0, scale: 1 }, 'digital': { x: 0, y: -120, scale: 1 }, 'gregorian-date': { x: 0, y: 80, scale: 1, width: 92 },
+			'lunar-date': { x: 0, y: 150, scale: 1, width: 92 }, 'analog-clock': { x: 0, y: -150, scale: 0.8 }, 'analog-calendar': { x: 0, y: 150, scale: 0.8 }
+		};
+		const qs = (selector) => document.querySelector(selector);
+		const qsa = (selector) => document.querySelectorAll(selector);
+		const setStyle = (element, styles) => Object.assign(element.style, styles);
+		function saveState() { try { localStorage.setItem('mergedClockSettings_v4', JSON.stringify(settings)); localStorage.setItem('mergedClockTransforms_v4', JSON.stringify(transformState)); } catch (e) { console.error("儲存狀態失敗:", e); } }
+		function loadState() { try { const storedSettings = localStorage.getItem('mergedClockSettings_v4'); settings = storedSettings ? { ...defaultSettings, ...JSON.parse(storedSettings) } : { ...defaultSettings }; const storedTransforms = localStorage.getItem('mergedClockTransforms_v4'); transformState = storedTransforms ? { ...defaultTransformState, ...JSON.parse(storedTransforms) } : { ...defaultTransformState }; } catch (e) { console.error("解析狀態失敗:", e); settings = { ...defaultSettings }; transformState = { ...defaultTransformState }; } settings.editMode = false; }
+		function updateSettingsModalUI() { for (const key in settings) { const el = document.getElementById(key); if (el) { if (el.type === 'checkbox') el.checked = settings[key]; else if (el.tagName !== 'SELECT' || !['countySelect', 'districtSelect'].includes(key)) el.value = settings[key]; } } setLocationSelectorsFromEnglish(settings.weatherLocation); }
+		function restoreDefaults() { settings = { ...defaultSettings }; transformState = { ...defaultTransformState }; saveState(); updateSettingsModalUI(); applyAllSettings(); applyTransforms(); updateWidgetVisibility(); applyScanlineEffect(); applyMovement(); updateSettingDependencies(); state.lastMarqueeContent = ''; state.lastWeatherContent = ''; updateWeather(); }
+		function setRandomColors() { for (const key in settings) { if (key.toLowerCase().includes('color')) settings[key] = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0'); } saveState(); updateSettingsModalUI(); applyAllSettings(); }
+		function initializeTimers() { Object.values(timers).forEach(clearInterval); timers.main = setInterval(updateDigitalClock, 1000); timers.analog = setInterval(updateAnalogClock, 50); applyMovement(); applyScanlineEffect(); }
 		function getEncompassingBoundingBox(elements) {
-			let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-			let hasVisibleElements = false;
-			elements.forEach(el => {
-				if (window.getComputedStyle(el).display !== 'none') {
-					hasVisibleElements = true;
-					const rect = el.getBoundingClientRect();
-					minX = Math.min(minX, rect.left);
-					minY = Math.min(minY, rect.top);
-					maxX = Math.max(maxX, rect.right);
-					maxY = Math.max(maxY, rect.bottom);
-				}
-			});
+			let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity, hasVisibleElements = false;
+			elements.forEach(el => { if (window.getComputedStyle(el).display !== 'none') { hasVisibleElements = true; const rect = el.getBoundingClientRect(); minX = Math.min(minX, rect.left); minY = Math.min(minY, rect.top); maxX = Math.max(maxX, rect.right); maxY = Math.max(maxY, rect.bottom); } });
 			if (!hasVisibleElements) return null;
 			return { left: minX, top: minY, right: maxX, bottom: maxY, width: maxX - minX, height: maxY - minY };
 		}
-
-		function applyMovement() { 
-			clearInterval(timers.movement); 
-			if (settings.editMode) return; 
-			if (settings.enableMovement) { 
-				const intervalMs = (parseInt(settings.movementIntervalMinutes) * 60 + parseInt(settings.movementIntervalSeconds)) * 1000; 
-				if (intervalMs > 0) {
-					moveRandomly(qs('#master-layout'));
-					timers.movement = setInterval(() => moveRandomly(qs('#master-layout')), intervalMs); 
-				} 
-			} else { 
-				applyTransforms(); 
-			} 
+		function applyMovement() {
+			clearInterval(timers.movement);
+			if (settings.editMode) return;
+			if (settings.enableMovement) {
+				const intervalMs = (parseInt(settings.movementIntervalMinutes) * 60 + parseInt(settings.movementIntervalSeconds)) * 1000;
+				if (intervalMs > 0) { moveRandomly(qs('#master-layout')); timers.movement = setInterval(() => moveRandomly(qs('#master-layout')), intervalMs); }
+			} else { applyTransforms(); }
 		}
-		function applyScanlineEffect() { 
-			clearInterval(timers.scanline); 
-			const bg = qs('#background-scanline-overlay'), txt = qs('#text-scanline-overlay'); 
-			bg.classList.toggle('active', settings.enableBackgroundScanline); 
-			txt.classList.toggle('active', settings.enableTextScanline); 
-			if (settings.enableBackgroundScanline || settings.enableTextScanline) { 
-				const intervalMs = (parseInt(settings.scanlineIntervalMinutes) * 60 + parseInt(settings.scanlineIntervalSeconds)) * 1000; 
-				if (intervalMs > 0) {
-					timers.scanline = setInterval(() => { 
-						state.scanlinePatternIsA = !state.scanlinePatternIsA; 
-						updateDigitalClock(); 
-					}, intervalMs); 
-				}
-			} 
+		function applyScanlineEffect() {
+			clearInterval(timers.scanline);
+			const bg = qs('#background-scanline-overlay'), txt = qs('#text-scanline-overlay');
+			bg.classList.toggle('active', settings.enableBackgroundScanline);
+			txt.classList.toggle('active', settings.enableTextScanline);
+			if (settings.enableBackgroundScanline || settings.enableTextScanline) {
+				const intervalMs = (parseInt(settings.scanlineIntervalMinutes) * 60 + parseInt(settings.scanlineIntervalSeconds)) * 1000;
+				if (intervalMs > 0) { timers.scanline = setInterval(() => { state.scanlinePatternIsA = !state.scanlinePatternIsA; updateDigitalClock(); }, intervalMs); }
+			}
 		}
-		function applyAllSettings() { 
-			document.documentElement.style.setProperty('--page-background-color', settings.backgroundColor); 
-			['hourHandColor', 'minuteHandColor', 'secondHandColor', 'tickColor', 'calendarHeaderColor', 'calendarWeekdayColor', 'calendarDayColor', 'calendarLunarColor'].forEach(key => document.documentElement.style.setProperty('--' + key.replace(/([A-Z])/g, '-$1').toLowerCase(), settings[key])); 
-			updateWeatherDisplay(); 
-			updateDigitalClock();
-			updateAnalogClock();
+		function hexToRgba(hex, alpha = 1) { if (!hex || !hex.startsWith('#')) return `rgba(255, 255, 255, ${alpha})`; const bigint = parseInt(hex.slice(1), 16); const r = (bigint >> 16) & 255, g = (bigint >> 8) & 255, b = bigint & 255; return `rgba(${r}, ${g}, ${b}, ${alpha})`; }
+		function applyAllSettings() {
+			document.documentElement.style.setProperty('--page-background-color', settings.backgroundColor);
+			['hourHandColor', 'minuteHandColor', 'secondHandColor', 'tickColor', 'numberColor', 'calendarHeaderColor', 'calendarWeekdayColor', 'calendarDayColor', 'calendarLunarColor'].forEach(key => { if (settings[key]) document.documentElement.style.setProperty('--' + key.replace(/([A-Z])/g, '-$1').toLowerCase(), settings[key]); });
+			const bgMonthColor = hexToRgba(settings.calendarHeaderColor, 0.12);
+			qsa('.calendar-bg-month, .analog-calendar-bg-month').forEach(el => el.style.color = bgMonthColor);
+			updateWeatherDisplay(); updateDigitalClock(); updateAnalogClock();
 		}
-		
-		function moveRandomly(element) { 
+		function moveRandomly(element) {
 			if (!element || settings.editMode) return;
 			const id = 'master';
 			if (!transformState[id]) transformState[id] = { x: 0, y: 0, scale: 1};
-
-			const T = transformState[id];
-			
-			// 使用新的邊界計算方式
-			const allWidgets = qsa('.widget-wrapper');
-			const bbox = getEncompassingBoundingBox(allWidgets);
-			if (!bbox) return; // No visible elements to move
-
-			const scaledWidth = bbox.width / T.scale;
-			const scaledHeight = bbox.height / T.scale;
-
-			// 計算中心點可移動的最大範圍，確保邊界不會超出畫面
-			const maxX = (window.innerWidth - scaledWidth) / 2;
-			const maxY = (window.innerHeight - scaledHeight) / 2;
-			
-			if (maxX > 0 && maxY > 0) {
-				const x = Math.random() * (maxX * 2) - maxX;
-				const y = Math.random() * (maxY * 2) - maxY;
-				T.x = x;
-				T.y = y;
-			} else {
-				// 如果元件太大，就將其置中
-				T.x = 0;
-				T.y = 0;
-			}
-			
+			const T = transformState[id], allWidgets = qsa('.widget-wrapper'), bbox = getEncompassingBoundingBox(allWidgets);
+			if (!bbox) return;
+			const scaledWidth = bbox.width / T.scale, scaledHeight = bbox.height / T.scale;
+			const maxX = (window.innerWidth - scaledWidth) / 2, maxY = (window.innerHeight - scaledHeight) / 2;
+			if (maxX > 0 && maxY > 0) { T.x = Math.random() * (maxX * 2) - maxX; T.y = Math.random() * (maxY * 2) - maxY; } else { T.x = 0; T.y = 0; }
 			setStyle(element, { transform: `translate(calc(-50% + ${T.x}px), calc(-50% + ${T.y}px)) scale(${T.scale})` });
 		}
-
 		function applyTransforms() {
-			// Apply master layout transform first
-			const masterEl = qs('#master-layout');
-			const T_master = transformState['master'] || defaultTransformState['master'];
-			if(masterEl) {
-				masterEl.style.transition = state.isDragging ? 'none' : 'transform 1s ease-in-out';
-				masterEl.style.transform = `translate(calc(-50% + ${T_master.x}px), calc(-50% + ${T_master.y}px)) scale(${T_master.scale})`;
-			}
-
-			// Apply individual widget transforms
+			const masterEl = qs('#master-layout'), T_master = transformState['master'] || defaultTransformState['master'];
+			if(masterEl) { masterEl.style.transition = state.isDragging ? 'none' : 'transform 1s ease-in-out'; masterEl.style.transform = `translate(calc(-50% + ${T_master.x}px), calc(-50% + ${T_master.y}px)) scale(${T_master.scale})`; }
 			for (const id in transformState) {
-				if (id === 'master') continue; // Skip master
+				if (id === 'master') continue;
 				const el = qs(`#${id}-widget`);
 				if (el) {
 					const T = transformState[id];
 					el.style.transition = state.isDragging ? 'none' : 'transform 1s ease-in-out';
 					el.style.transform = `translate(calc(-50% + ${T.x}px), calc(-50% + ${T.y}px)) scale(${T.scale})`;
-
 					const invScale = 1 / T.scale;
 					const handle = el.querySelector('.move-handle');
 					if (handle) handle.style.transform = `translate(-50%, -50%) scale(${invScale})`;
-					
 					const resizeHandleX = el.querySelector('.resize-handle-x');
 					if (resizeHandleX) resizeHandleX.style.transform = `translateY(-50%) scale(${invScale})`;
-
-					// Apply width if it exists
-					if (T.width) {
-						const contentEl = qs(`#${id}-widget > div:first-child`);
-						if(contentEl) contentEl.style.width = `${T.width}vw`;
-					}
+					if (T.width) { const contentEl = qs(`#${id}-widget > div:first-child`); if(contentEl) contentEl.style.width = `${T.width}vw`; }
 				}
 			}
 		}
-
-		function toggleEditModeUI() {
+		function toggleEditModeState() {
 			document.body.classList.toggle('edit-mode', settings.editMode);
-			const movementSwitch = qs('#enableMovement');
-			const movementContainer = movementSwitch.closest('.setting-item');
-			if (settings.editMode) {
-				if (movementSwitch.checked) {
-					movementSwitch.checked = false;
-					settings.enableMovement = false;
-					applyMovement();
-				}
-				movementContainer.style.opacity = '0.5';
-				movementContainer.style.pointerEvents = 'none';
-			} else {
-				movementContainer.style.opacity = '1';
-				movementContainer.style.pointerEvents = 'auto';
-			}
+			const wrenchIcon = qs('#edit-mode-icon .wrench-icon'), closeIcon = qs('#edit-mode-icon .close-icon-svg');
+			if (wrenchIcon && closeIcon) { wrenchIcon.style.display = settings.editMode ? 'none' : 'block'; closeIcon.style.display = settings.editMode ? 'block' : 'none'; }
+			qs('#edit-mode-icon').title = settings.editMode ? '結束編輯' : '編輯模式';
+			if (settings.editMode) { state.movementEnabledBeforeEdit = settings.enableMovement; if (settings.enableMovement) { settings.enableMovement = false; qs('#enableMovement').checked = false; } }
+			else { settings.enableMovement = state.movementEnabledBeforeEdit; qs('#enableMovement').checked = state.movementEnabledBeforeEdit; }
+			applyMovement(); updateSettingDependencies();
 		}
-
+		function updateSettingDependencies() {
+			const toggleSettingGroup = (parentSelector, childSelectors, isParentEnabled) => {
+				const parentSwitch = qs(parentSelector); if (!parentSwitch) return;
+				const isEnabled = isParentEnabled && parentSwitch.checked;
+				childSelectors.forEach(selector => { const element = qs(selector); if (!element) return; const item = element.closest('.setting-item'); if (item) { item.classList.toggle('disabled', !isEnabled); item.querySelectorAll('input, select, button').forEach(ctrl => ctrl.disabled = !isEnabled); } });
+			};
+			const isGregorianOn = qs('#showGregorianDate').checked, isWeatherOn = qs('#showWeather').checked, isWeatherLocationOn = qs('#showWeatherLocation').checked;
+			toggleSettingGroup('#showDigitalTime', ['#hourColor', '#colonColor', '#minuteColor', '#secondColor', '#showAmPm', '#amPmColor'], true);
+			toggleSettingGroup('#showLunarDate', ['#showMinguoYear', '#minguoYearColor', '#showLunarMonth', '#lunarMonthColor', '#showLunarDay', '#lunarDayColor', '#showLunarShiChen', '#lunarShiChenColor', '#showJieqi', '#jieqiColor', '#showHolidays', '#holidayColor'], true);
+			toggleSettingGroup('#showAnalogClock', ['#hourHandColor', '#minuteHandColor', '#secondHandColor', '#tickColor', '#numberColor'], true);
+			toggleSettingGroup('#showAnalogCalendar', ['#calendarHeaderColor', '#calendarWeekdayColor', '#calendarDayColor', '#calendarLunarColor'], true);
+			toggleSettingGroup('#showGregorianDate', ['#showGregorianYear', '#gregorianYearColor', '#showGregorianMonth', '#gregorianMonthColor', '#showGregorianDay', '#gregorianDayColor', '#showGregorianWeekday', '#gregorianWeekdayColor'], true);
+			toggleSettingGroup('#showGregorianDate', ['#showWeather'], true);
+			const areWeatherChildrenEnabled = isGregorianOn && isWeatherOn;
+			const locationItem = qs('#showWeatherLocation').closest('.setting-item');
+			if (locationItem) { locationItem.classList.toggle('disabled', !areWeatherChildrenEnabled); locationItem.querySelectorAll('input, select, button').forEach(ctrl => ctrl.disabled = !areWeatherChildrenEnabled); }
+			const areLocationChildrenEnabled = isGregorianOn && isWeatherOn && isWeatherLocationOn;
+			const selectorsItem = qs('#countySelect').closest('.setting-item');
+			if (selectorsItem) { selectorsItem.classList.toggle('disabled', !areLocationChildrenEnabled); selectorsItem.querySelectorAll('input, select, button').forEach(ctrl => ctrl.disabled = !areLocationChildrenEnabled); }
+			const weatherColorPicker = qs('#weatherColor');
+			if (weatherColorPicker) { weatherColorPicker.disabled = !areWeatherChildrenEnabled; const randomBtn = weatherColorPicker.nextElementSibling; if(randomBtn) randomBtn.disabled = weatherColorPicker.disabled; }
+			const locationColorPicker = qs('#weatherLocationColor');
+			if (locationColorPicker) { locationColorPicker.disabled = !areLocationChildrenEnabled || !isWeatherLocationOn; const randomBtn = locationColorPicker.nextElementSibling; if(randomBtn) randomBtn.disabled = locationColorPicker.disabled; }
+			const movementItem = qs('#enableMovement').closest('.setting-item');
+			if (movementItem) { const isDisabled = settings.editMode; movementItem.classList.toggle('disabled', isDisabled); movementItem.querySelectorAll('input, select, button').forEach(ctrl => ctrl.disabled = isDisabled); }
+		}
 		function updateWidgetVisibility() {
 			setStyle(qs('#digital-widget'), { display: settings.showDigitalTime ? 'inline-flex' : 'none' });
 			setStyle(qs('#gregorian-date-widget'), { display: settings.showGregorianDate ? 'inline-flex' : 'none' });
@@ -785,48 +501,33 @@
 			setStyle(qs('#analog-clock-widget'), { display: settings.showAnalogClock ? 'inline-flex' : 'none' });
 			setStyle(qs('#analog-calendar-widget'), { display: settings.showAnalogCalendar ? 'inline-flex' : 'none' });
 		}
-
-		function s2t(input) { if (typeof input !== 'string' && !Array.isArray(input)) return input; const map = {'见':'見','贵':'貴','无':'無','开':'開','纳':'納','财':'財','挂':'掛','梁':'樑','动':'動','种':'種','启':'啟','钻':'鑽','订':'訂','竖':'豎','门':'門','词':'詞','讼':'訟','发':'髮','养':'養','马':'馬','经':'經','络':'絡','盖':'蓋','会':'會','学':'學','艺':'藝','医':'醫','装':'裝','结':'結','网':'網','渔':'漁','猎':'獵','亲':'親','进':'進','扫':'掃','绘':'繪','齐':'齊','斋':'齋','庙':'廟','灶':'竈','谢':'謝','问':'問','婿':'壻','归':'歸','宁':'寧','坟':'墳','寿':'壽','坏':'壞','补':'補','厕':'廁','仓':'倉','涂':'塗','桥':'橋','筑':'築','饰':'飾','墙':'牆','买':'買','车':'車','产':'產','雇':'僱','佣':'傭','货':'貨','机':'機','械':'械','酝':'醞','酿':'釀','铸':'鑄','针':'針','库':'庫','疗':'療','诸':'諸','馀':'餘','丧':'喪','断':'斷','蚁':'蟻','户':'戶','炉':'爐','栖':'棲','厨':'廚','胜':'勝','负':'負','灭':'滅','龙':'龍','鸡':'雞','猪':'豬','乌':'烏','双':'雙','宫':'宮','惊':'驚','蛰':'蟄','满':'滿','处':'處','时':'時','气':'氣','后':'後','灾':'災','复':'復','虚':'虛','贼':'賊','败':'敗','仪':'儀','祸':'禍','临':'臨','阴':'陰','阳':'陽','圣':'聖','冲':'沖','绝':'絕','岁':'歲','伤':'傷','杀':'殺','黄':'黃','节':'節','树':'樹','国':'國','万':'萬','长':'長','华':'華','为':'為','电':'電','声':'聲','冻':'凍','虫':'蟲','鱼':'魚','鹰':'鷹','来':'來','润':'潤','凉':'涼','麦':'麥','温':'溫','收':'收','闭':'閉','闰':'閏','谷':'穀','殓':'殮'}; const convert = (str) => str.split('').map(char => map[char] || char).join(''); return Array.isArray(input) ? input.map(convert) : convert(input); } // 簡轉繁
-		
-		const moonPhaseData = { 1: { name: '朔月', aka: '新月', desc: '月球位於太陽和地球之間，月球的黑暗面朝向地球，因此我們看不見月亮。這是農曆月的開始。' }, 2: { name: '既朔月', desc: '新月之後，月球被太陽照亮的一小部分開始可見，呈現極細的彎月。' }, 3: { name: '蛾眉新月', desc: '月牙兒逐漸變寬，形如美女的秀眉。' }, 4: { name: '蛾眉月', desc: '月相持續變寬，更易於觀察。' }, 5: { name: '蛾眉月', desc: '月相持續變寬，更易於觀察。' }, 6: { name: '夕月', desc: '日落後不久即可在西方天空看到，故名夕月。' }, 7: { name: '上弦月', desc: '月球運行到其軌道的四分之一處，我們能看到月球被太陽照亮的一半，看起來像一個字母 "D"。' }, 8: { name: '上弦月', desc: '月球運行到其軌道的四分之一處，我們能看到月球被太陽照亮的一半，看起來像一個字母 "D"。' }, 9: { name: '九夜月', desc: '上弦月之後，可見的被照亮部分繼續增加。' }, 10: { name: '宵月', desc: '夜晚大部分時間都能看到月亮。' }, 11: { name: '漸盈凸月', desc: '月相接近圓滿，但尚未完全變圓。' }, 12: { name: '漸盈凸月', desc: '月相接近圓滿，但尚未完全變圓。' }, 13: { name: '漸盈凸月', desc: '月相接近圓滿，但尚未完全變圓。' }, 14: { name: '小望月', desc: '距離滿月僅一步之遙，非常明亮。' }, 15: { name: '望月', aka: '滿月', desc: '地球位於太陽和月球之間，月球被太陽照亮的整個半球都朝向地球，看起來是一個完整的圓盤。' }, 16: { name: '既望月', desc: '滿月之後，月亮開始由盈轉虧。' }, 17: { name: '立待月', desc: '月出時間稍晚，需要站著等待一會兒。' }, 18: { name: '居待月', desc: '月出更晚，可以在家中坐著等待。' }, 19: { name: '寢待月', desc: '月亮升起時已近睡覺時間。' }, 20: { name: '更待月', desc: '月亮在深夜一更之後才升起。' }, 21: { name: '漸虧凸月', desc: '可見的被照亮部分開始減少，但仍然大於一半。' }, 22: { name: '下弦月', desc: '我們再次看到月球被照亮的一半，但這次看起來像一個反向的 "D"。' }, 23: { name: '下弦月', desc: '我們再次看到月球被照亮的一半，但這次看起來像一個反向的 "D"。' }, 24: { name: '有明月', desc: '天將亮時，仍可在天空中看見月亮。' }, 25: { name: '蛾眉殘月', desc: '月相變回彎曲的鐮刀形狀。' }, 26: { name: '蛾眉殘月', desc: '月相變回彎曲的鐮刀形狀。' }, 27: { name: '殘月', desc: '月牙兒變得更細。' }, 28: { name: '殘月', desc: '月牙兒變得更細。' }, 29: { name: '曉月', desc: '僅在黎明前的東方天空短暫可見。' }, 30: { name: '晦月', desc: '月亮完全消失在太陽的光芒中，為一個農曆月的結束。' } }; // 詳細月相資料
-		function getMoonPhaseDetails(lunarDay) { return moonPhaseData[lunarDay] || { name: '未知月相', desc: '無此月相的詳細資訊。' }; } // 根據農曆日期獲取詳細月相資訊
-		function getMoonPhaseSVG(lunarDay, size = '1em') { const phase = (lunarDay - 1) / 29.0, r = 50, cx = 50, cy = 50, light = '#f0e68c', dark = '#222'; const cos_angle = Math.cos(phase * 2 * Math.PI + Math.PI); const base = phase > 0.5 ? `<rect x="0" y="0" width="${cx}" height="${r*2}" fill="${light}" /><rect x="${cx}" y="0" width="${cx}" height="${r*2}" fill="${dark}" />` : `<rect x="0" y="0" width="${cx}" height="${r*2}" fill="${dark}" /><rect x="${cx}" y="0" width="${cx}" height="${r*2}" fill="${light}" />`; const terminator = `<ellipse cx="${cx}" cy="${cy}" rx="${r * Math.abs(cos_angle)}" ry="${r}" fill="${cos_angle > 0 ? light : dark}" />`; const id = 'moon-clip-' + Math.random().toString(36).substr(2, 9); return `<svg width="${size}" height="${size}" viewBox="0 0 100 100" style="display: inline-block; vertical-align: middle; border-radius: 50%; box-shadow: 0 0 2px rgba(240, 230, 140, 0.5);"><defs><clipPath id="${id}"><circle cx="${cx}" cy="${cy}" r="${r}" /></clipPath></defs><g clip-path="url(#${id})">${base}${terminator}</g></svg>`; } // 根據農曆日期繪製符合天文觀測的SVG月相圖示
-
-		function getJieqiDescription(name) { const d = { '立春': '春季開始，萬物復甦。', '雨水': '降雨增多，春耕開始。', '驚蟄': '春雷響動，驚醒冬眠動物。', '春分': '晝夜等長，春意盎然。', '清明': '氣候清爽明朗，掃墓祭祖。', '穀雨': '雨水滋潤，穀物生長。', '立夏': '夏季開始，萬物繁茂。', '小滿': '夏熟作物籽粒開始飽滿。', '芒種': '收穫與播種的時節。', '夏至': '北半球白晝最長，盛夏開始。', '小暑': '天氣開始炎熱。', '大暑': '一年中最炎熱的時期。', '立秋': '秋季開始，氣溫漸降。', '處暑': '暑氣漸退，天氣轉涼。', '白露': '水氣凝結成露，天氣漸寒。', '秋分': '晝夜等長，秋高氣爽。', '寒露': '氣溫更低，天氣轉冷。', '霜降': '天氣漸冷，露水凝結成霜。', '立冬': '冬季開始，萬物收藏。', '小雪': '開始降雪，但雪量不大。', '大雪': '降雪量增多，天氣更冷。', '冬至': '北半球白晝最短，數九寒天開始。', '小寒': '天氣寒冷，尚未達到最冷。', '大寒': '一年中最寒冷的時期。' }; return d[name] || '此節氣無詳細說明。'; } // 取得節氣說明
-		function checkYearlyCache(year) { if (state.yearlyDataCache.year !== year) state.yearlyDataCache = { year: year, holidays: [], jieqi: [] }; } // 檢查並在需要時重設年度資料快取
-		function getHolidaysForYear(year) { checkYearlyCache(year); if (state.yearlyDataCache.holidays.length > 0) return state.yearlyDataCache.holidays; const holidays = []; [{ n: '元旦', m: 0, d: 1 }, { n: '和平紀念日', m: 1, d: 28 }, { n: '兒童節', m: 3, d: 4 }, { n: '勞動節', m: 4, d: 1 }, { n: '國慶日', m: 9, d: 10 }, { n: '聖誕節', m: 11, d: 25 }].forEach(h => holidays.push({ name: h.n, date: new Date(year, h.m, h.d) })); [{m:1,d:1,n:'農曆新年'}, {m:1,d:15,n:'元宵節'}, {m:5,d:5,n:'端午節'}, {m:7,d:7,n:'七夕'}, {m:7,d:15,n:'中元節'}, {m:8,d:15,n:'中秋節'}, {m:9,d:9,n:'重陽節'}, {m:12,d:8,n:'臘八節'}].forEach(lh => { const sd = Lunar.fromYmd(year, lh.m, lh.d).getSolar(); holidays.push({ name: lh.n, date: new Date(sd.getYear(), sd.getMonth() - 1, sd.getDay()) }); }); const nySolar = Lunar.fromYmd(year, 1, 1).getSolar(); holidays.push({ name: '除夕', date: new Date(nySolar.getYear(), nySolar.getMonth() - 1, nySolar.getDay() - 1) }); const qmJieqi = getJieqiForYear(year).find(jq => jq.name === '清明'); if(qmJieqi) holidays.push({ name: '清明節', date: qmJieqi.date }); const may1 = new Date(year, 4, 1); holidays.push({ name: '母親節', date: new Date(year, 4, 1 + (7 - may1.getDay() + 7) % 7 + 7) }); return state.yearlyDataCache.holidays = holidays.sort((a, b) => a.date - b.date); } // 獲取指定年份的節日列表
-		function getJieqiForYear(year) { checkYearlyCache(year); if (state.yearlyDataCache.jieqi.length > 0) return state.yearlyDataCache.jieqi; const pinyinMap = { 'LI_CHUN': '立春', 'YU_SHUI': '雨水', 'JING_ZHE': '驚蟄', 'CHUN_FEN': '春分', 'QING_MING': '清明', 'GU_YU': '穀雨', 'LI_XIA': '立夏', 'XIAO_MAN': '小滿', 'MANG_ZHONG': '芒種', 'XIA_ZHHI': '夏至', 'XIAO_SHU': '小暑', 'DA_SHU': '大暑', 'LI_QIU': '立秋', 'CHU_SHU': '處暑', 'BAI_LU': '白露', 'QIU_FEN': '秋分', 'HAN_LU': '寒露', 'SHUANG_JIANG': '霜降', 'LI_DONG': '立冬', 'XIAO_XUE': '小雪', 'DA_XUE': '大雪', 'DONG_ZHI': '冬至', 'XIAO_HAN': '小寒', 'DA_HAN': '大寒' }; const sMap = { '惊蛰': '驚蟄', '小满': '小滿', '芒种': '芒種', '处暑': '處暑', '谷雨': '穀雨' }; const table = Lunar.fromYmd(year, 1, 1).getJieQiTable(); return state.yearlyDataCache.jieqi = Object.entries(table).map(([name, dateStr]) => ({ name: pinyinMap[name] || sMap[name] || name, date: new Date(dateStr) })).sort((a, b) => a.date - b.date); } // 獲取指定年份的節氣列表
-		
-		const timeInfoByHour = { 0: { shichen: '子', period: '凌晨' }, 1: { shichen: '丑', period: '凌晨' }, 2: { shichen: '丑', period: '凌晨' }, 3: { shichen: '寅', period: '凌晨' }, 4: { shichen: '寅', period: '凌晨' }, 5: { shichen: '卯', period: '清晨' }, 6: { shichen: '卯', period: '清晨' }, 7: { shichen: '辰', period: '清晨' }, 8: { shichen: '辰', period: '清晨' }, 9: { shichen: '巳', period: '上午' }, 10: { shichen: '巳', period: '上午' }, 11: { shichen: '午', period: '上午' }, 12: { shichen: '午', period: '中午' }, 13: { shichen: '未', period: '下午' }, 14: { shichen: '未', period: '下午' }, 15: { shichen: '申', period: '下午' }, 16: { shichen: '申', period: '下午' }, 17: { shichen: '酉', period: '傍晚' }, 18: { shichen: '酉', period: '傍晚' }, 19: { shichen: '戌', period: '夜晚' }, 20: { shichen: '戌', period: '夜晚' }, 21: { shichen: '亥', period: '夜晚' }, 22: { shichen: '亥', period: '夜晚' }, 23: { shichen: '子', period: '深夜' } }; // 時辰與時段資訊
-		const shichenTimeRanges = { '子': '23:00 - 00:59', '丑': '01:00 - 02:59', '寅': '03:00 - 04:59', '卯': '05:00 - 06:59', '辰': '07:00 - 08:59', '巳': '09:00 - 10:59', '午': '11:00 - 12:59', '未': '13:00 - 14:59', '申': '15:00 - 16:59', '酉': '17:00 - 18:59', '戌': '19:00 - 20:59', '亥': '21:00 - 22:59' }; // 時辰對應時間範圍
-		const getShiChen = (h) => timeInfoByHour[h]?.shichen || ''; // 根據小時取得時辰
-		const getShiChenTimeRange = (name) => shichenTimeRanges[name] || ''; // 取得時辰時間範圍
-		const getDetailedTimePeriod = (h) => timeInfoByHour[h]?.period || ''; // 取得詳細時段名稱
-
-		function getWeatherDescriptionAndEmoji(code) { const map = { 0: { desc: '晴' }, 1: { desc: '多雲時晴' }, 2: { desc: '局部多雲' }, 3: { desc: '陰' }, 45: { desc: '霧' }, 48: { desc: '凍霧' }, 51: { desc: '毛毛雨' }, 53: { desc: '毛毛雨' }, 55: { desc: '毛毛雨' }, 56: { desc: '凍毛毛雨' }, 57: { desc: '凍毛毛雨' }, 61: { desc: '雨' }, 63: { desc: '雨' }, 65: { desc: '大雨' }, 66: { desc: '凍雨' }, 67: { desc: '凍雨' }, 71: { desc: '雪' }, 73: { desc: '雪' }, 75: { desc: '大雪' }, 77: { desc: '冰雹' }, 80: { desc: '陣雨' }, 81: { desc: '陣雨' }, 82: { desc: '大陣雨' }, 85: { desc: '陣雪' }, 86: { desc: '大陣雪' }, 95: { desc: '雷陣雨' }, 96: { desc: '雷陣雨伴冰雹' }, 99: { desc: '雷陣雨伴冰雹' } }; return map[code] || { desc: '未知' }; } // 根據天氣代碼取得天氣描述
-		function getWeatherSVGIcon(code, size = '1em') { const createSvg = (viewBox = "0 0 64 64") => `<svg width="${size}" height="${size}" viewBox="${viewBox}" class="weather-svg-icon">`; const sun = () => `${createSvg()}<g><circle cx="32" cy="32" r="14" fill="#FDB813" stroke="#FDB813" stroke-width="2"/><g stroke="#FDB813" stroke-width="3" stroke-linecap="round">${[0, 45, 90, 135, 180, 225, 270, 315].map(a => `<line x1="32" y1="15" x2="32" y2="5" transform="rotate(${a} 32 32)"/>`).join('')}</g></g></svg>`; const cloud = () => `${createSvg()}<g><path d="M 15,42 A 10,10 0 0 1 25,32 A 18,18 0 0 1 52,35 A 12,12 0 0 1 58,48 L 20,48 A 10,10 0 0 1 15,42 Z" fill="#B0C4DE" stroke="#90a4be" stroke-width="1.5"/></g></svg>`; const partlyCloudy = () => `${createSvg()}<g><circle cx="24" cy="24" r="12" fill="#FDB813"/><path d="M 15,42 A 10,10 0 0 1 25,32 A 18,18 0 0 1 52,35 A 12,12 0 0 1 58,48 L 20,48 A 10,10 0 0 1 15,42 Z" fill="#B0C4DE" stroke="#90a4be" stroke-width="1.5"/></g></svg>`; const rain = () => `${createSvg()}<g><path d="M 15,38 A 10,10 0 0 1 25,28 A 18,18 0 0 1 52,31 A 12,12 0 0 1 58,44 L 20,44 A 10,10 0 0 1 15,38 Z" fill="#90a4be" stroke="#70849e" stroke-width="1.5"/><g stroke="#4682B4" stroke-width="3" stroke-linecap="round">${[[25,48,25,58],[37,50,37,60],[49,48,49,58]].map(c => `<line x1="${c[0]}" y1="${c[1]}" x2="${c[2]}" y2="${c[3]}"/>`).join('')}</g></g></svg>`; const snow = () => `${createSvg()}<g><path d="M 15,38 A 10,10 0 0 1 25,28 A 18,18 0 0 1 52,31 A 12,12 0 0 1 58,44 L 20,44 A 10,10 0 0 1 15,38 Z" fill="#B0C4DE" stroke="#90a4be" stroke-width="1.5"/><g stroke="#FFFFFF" stroke-width="2" stroke-linecap="round">${[[25,55],[37,58],[49,55]].map(c => `<path d="M${c[0]-4},${c[1]} l8,0 M${c[0]},${c[1]-4} l0,8 M${c[0]-3},${c[1]-3} l6,6 M${c[0]-3},${c[1]+3} l6,-6"/>`).join('')}</g></g></svg>`; const storm = () => `${createSvg()}<g><path d="M 15,38 A 10,10 0 0 1 25,28 A 18,18 0 0 1 52,31 A 12,12 0 0 1 58,44 L 20,44 A 10,10 0 0 1 15,38 Z" fill="#6c757d" stroke="#5c656d" stroke-width="1.5"/><path d="M 38,45 L 32,55 L 42,55 L 36,65" fill="none" stroke="#FFC107" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></g></svg>`; const fog = () => `${createSvg()}<g><path d="M 15,42 A 10,10 0 0 1 25,32 A 18,18 0 0 1 52,35 A 12,12 0 0 1 58,48 L 20,48 A 10,10 0 0 1 15,42 Z" fill="#E0E0E0" stroke="#C0C0C0" stroke-width="1.5"/><g stroke="#B0B0B0" stroke-width="3" stroke-linecap="round">${[[18,38,56,38],[22,44,52,44],[20,50,54,50]].map(c => `<line x1="${c[0]}" y1="${c[1]}" x2="${c[2]}" y2="${c[3]}"/>`).join('')}</g></g></svg>`; switch (code) { case 0: return sun(); case 1: return partlyCloudy(); case 2: case 3: return cloud(); case 45: case 48: return fog(); case 51: case 53: case 55: case 61: case 63: case 80: case 81: return rain(); case 65: case 82: return rain(); case 95: case 96: case 99: return storm(); case 56: case 57: case 66: case 67: case 71: case 73: case 75: case 77: case 85: case 86: return snow(); default: return `<span style="font-size:${size}; vertical-align: middle;">❓</span>`; } } // 根據天氣代碼獲取對應的SVG圖示字串
-
-		const zodiacSVGFunctions = { "鼠": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><path d="M 50 90 C 20 90, 20 40, 50 30 C 80 40, 80 90, 50 90 Z" fill="#9E9E9E" stroke="#616161" stroke-width="2"></path><path d="M 25 45 A 15 15 0 1 1 35 30" fill="#757575" stroke="#616161" stroke-width="2"></path><path d="M 75 45 A 15 15 0 1 0 65 30" fill="#757575" stroke="#616161" stroke-width="2"></path><path d="M 40 60 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 60 60 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 50 75 a 4 4 0 1 1 0.1 0" fill="black"></path></svg>`, "牛": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><path d="M 30 30 Q 10 10 20 40" fill="#795548" stroke="#4E342E" stroke-width="2"></path><path d="M 70 30 Q 90 10 80 40" fill="#795548" stroke="#4E342E" stroke-width="2"></path><path d="M 50 95 C 20 95, 25 30, 50 25 C 75 30, 80 95, 50 95 Z" fill="#795548" stroke="#4E342E" stroke-width="2"></path><path d="M 25 50 L 15 60 L 30 60 Z" fill="#A1887F" stroke="#4E342E" stroke-width="2"></path><path d="M 75 50 L 85 60 L 70 60 Z" fill="#A1887F" stroke="#4E342E" stroke-width="2"></path><path d="M 40 60 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 60 60 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 40 80 A 10 8 0 1 1 60 80" fill="#A1887F" stroke="#4E342E" stroke-width="2"></path></svg>`, "虎": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><path d="M 50 90 A 40 40 0 1 1 50.1 90 Z" fill="#FF9800" stroke="#E65100" stroke-width="2"></path><path d="M 25 30 A 10 10 0 1 1 35 20" fill="#F57C00" stroke="#E65100" stroke-width="2"></path><path d="M 75 30 A 10 10 0 1 0 65 20" fill="#F57C00" stroke="#E65100" stroke-width="2"></path><path d="M 20 50 L 30 55" stroke="black" stroke-width="3" fill="none"></path><path d="M 22 65 L 32 68" stroke="black" stroke-width="3" fill="none"></path><path d="M 80 50 L 70 55" stroke="black" stroke-width="3" fill="none"></path><path d="M 78 65 L 68 68" stroke="black" stroke-width="3" fill="none"></path><path d="M 50 30 L 50 40" stroke="black" stroke-width="3" fill="none"></path><path d="M 40 55 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 60 55 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 50 70 L 45 80 L 55 80 Z" fill="black"></path></svg>`, "兔": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><path d="M 35 40 C 30 10, 40 10, 40 40 Z" fill="#FAFAFA" stroke="#BDBDBD" stroke-width="2"></path><path d="M 65 40 C 70 10, 60 10, 60 40 Z" fill="#FAFAFA" stroke="#BDBDBD" stroke-width="2"></path><path d="M 50 90 A 25 30 0 1 1 50.1 90 Z" fill="#FAFAFA" stroke="#BDBDBD" stroke-width="2"></path><path d="M 42 65 a 3 3 0 1 1 0.1 0" fill="#F44336"></path><path d="M 58 65 a 3 3 0 1 1 0.1 0" fill="#F44336"></path><path d="M 50 75 L 50 80 M 45 80 Q 50 85 55 80" fill="none" stroke="#BDBDBD" stroke-width="2"></path></svg>`, "龍": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><path d="M 50 95 C 20 95, 15 40, 50 20 C 85 40, 80 95, 50 95 Z" fill="#00695C" stroke="#004D40" stroke-width="2"></path><path d="M 35 30 C 20 10, 40 15, 40 35" fill="#FFC107" stroke="#FF8F00" stroke-width="1"></path><path d="M 65 30 C 80 10, 60 15, 60 35" fill="#FFC107" stroke="#FF8F00" stroke-width="1"></path><path d="M 40 80 C 35 70, 65 70, 60 80 Q 50 90 40 80 Z" fill="#00695C" stroke="#004D40" stroke-width="2"></path><circle cx="40" cy="55" r="4" fill="#F44336"></circle><circle cx="60" cy="55" r="4" fill="#F44336"></circle><path d="M 35 80 Q 15 75 30 65" fill="none" stroke="#FF8F00" stroke-width="1"></path><path d="M 65 80 Q 85 75 70 65" fill="none" stroke="#FF8F00" stroke-width="1"></path></svg>`, "蛇": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><path d="M 50 20 C 80 20, 80 70, 50 90 C 20 70, 20 20, 50 20 Z" fill="#8BC34A" stroke="#558B2F" stroke-width="2"></path><path d="M 40 50 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 60 50 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 50 90 L 50 98 L 47 95 M 50 98 L 53 95" stroke="#F44336" stroke-width="2" fill="none"></path></svg>`, "馬": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><path d="M 60 10 L 55 40 L 65 40 L 60 60" fill="#6D4C41" stroke="#5D4037" stroke-width="2"></path><path d="M 50 95 C 25 95, 30 20, 50 20 C 70 20, 75 95, 50 95 Z" fill="#A1887F" stroke="#5D4037" stroke-width="2"></path><path d="M 35 30 L 30 15 L 45 30 Z" fill="#A1887F" stroke="#5D4037" stroke-width="2"></path><path d="M 65 30 L 70 15 L 55 30 Z" fill="#A1887F" stroke="#5D4037" stroke-width="2"></path><path d="M 40 55 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 60 55 a 3 3 0 1 1 0.1 0" fill="black"></path></svg>`, "羊": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><circle cx="50" cy="40" r="20" fill="#ECEFF1" stroke="#B0BEC5" stroke-width="1"></circle><circle cx="35" cy="55" r="18" fill="#ECEFF1" stroke="#B0BEC5" stroke-width="1"></circle><circle cx="65" cy="55" r="18" fill="#ECEFF1" stroke="#B0BEC5" stroke-width="1"></circle><circle cx="50" cy="65" r="20" fill="#ECEFF1" stroke="#B0BEC5" stroke-width="1"></circle><circle cx="50" cy="65" r="15" fill="#CFD8DC" stroke="#78909C" stroke-width="2"></circle><circle cx="44" cy="62" r="2.5" fill="black"></circle><circle cx="56" cy="62" r="2.5" fill="black"></circle><path d="M 30 50 C 15 45, 15 65, 30 65" fill="none" stroke="#78909C" stroke-width="2"></path><path d="M 70 50 C 85 45, 85 65, 70 65" fill="none" stroke="#78909C" stroke-width="2"></path></svg>`, "猴": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><path d="M 20 60 A 15 15 0 1 1 20.1 60 Z" fill="#BCAAA4" stroke="#795548" stroke-width="2"></path><path d="M 80 60 A 15 15 0 1 1 80.1 60 Z" fill="#BCAAA4" stroke="#795548" stroke-width="2"></path><path d="M 50 90 A 35 35 0 1 1 50.1 90 Z" fill="#BCAAA4" stroke="#795548" stroke-width="2"></path><path d="M 50 80 A 25 25 0 1 1 50.1 80 Z" fill="#D7CCC8" stroke="#795548" stroke-width="2"></path><path d="M 40 60 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 60 60 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 40 75 Q 50 85 60 75" fill="none" stroke="#795548" stroke-width="2"></path></svg>`, "雞": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><circle cx="50" cy="60" r="25" fill="#FFFFFF" stroke="#9E9E9E" stroke-width="2"></circle><path d="M 40 35 Q 45 25, 50 35 T 60 35" fill="#F44336" stroke="#D32F2F" stroke-width="1"></path><path d="M 75 60 L 85 65 L 75 70 Z" fill="#FFC107" stroke="#FFA000"></path><path d="M 70 75 A 5 8 0 1 1 70.1 75 Z" fill="#F44336" stroke="#D32F2F" stroke-width="1"></path><circle cx="60" cy="55" r="3" fill="black"></circle></svg>`, "狗": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><path d="M 25 40 L 15 70 L 35 50 Z" fill="#FFE0B2" stroke="#FB8C00" stroke-width="2"></path><path d="M 75 40 L 85 70 L 65 50 Z" fill="#FFE0B2" stroke="#FB8C00" stroke-width="2"></path><path d="M 50 90 C 20 90, 20 40, 50 35 C 80 40, 80 90, 50 90 Z" fill="#FFE0B2" stroke="#FB8C00" stroke-width="2"></path><path d="M 40 60 a 4 4 0 1 1 0.1 0" fill="black"></path><path d="M 60 60 a 4 4 0 1 1 0.1 0" fill="black"></path><path d="M 50 75 L 45 85 L 55 85 Z" fill="black"></path></svg>`, "豬": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><path d="M 25 40 L 20 20 L 40 40 Z" fill="#F8BBD0" stroke="#EC407A" stroke-width="2"></path><path d="M 75 40 L 80 20 L 60 40 Z" fill="#F8BBD0" stroke="#EC407A" stroke-width="2"></path><path d="M 50 90 A 35 35 0 1 1 50.1 90 Z" fill="#F8BBD0" stroke="#EC407A" stroke-width="2"></path><path d="M 50 75 A 15 10 0 1 1 50.1 75 Z" fill="#F48FB1" stroke="#EC407A" stroke-width="2"></path><path d="M 45 75 a 2 2 0 1 1 0.1 0" fill="#EC407A"></path><path d="M 55 75 a 2 2 0 1 1 0.1 0" fill="#EC407A"></path><path d="M 40 60 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 60 60 a 3 3 0 1 1 0.1 0" fill="black"></path></svg>` }; // 十二生肖SVG繪製函數
-		const getShengXiaoSVG = (name, size = '1.2em') => zodiacSVGFunctions[name] ? zodiacSVGFunctions[name](size) : ''; // 根據生肖名稱取得SVG圖示
-
-		function addCalendarBgMonth(container, month) { // 新增輔助函數來添加背景月份數字
+		function s2t(input) { if (typeof input !== 'string' && !Array.isArray(input)) return input; const map = {'见':'見','贵':'貴','无':'無','开':'開','纳':'納','财':'財','挂':'掛','梁':'樑','动':'動','种':'種','启':'啟','钻':'鑽','订':'訂','竖':'豎','门':'門','词':'詞','讼':'訟','发':'髮','养':'養','马':'馬','经':'經','络':'絡','盖':'蓋','会':'會','学':'學','艺':'藝','医':'醫','装':'裝','结':'結','网':'網','渔':'漁','猎':'獵','亲':'親','进':'進','扫':'掃','绘':'繪','齐':'齊','斋':'齋','庙':'廟','灶':'竈','谢':'謝','问':'問','婿':'壻','归':'歸','宁':'寧','坟':'墳','寿':'壽','坏':'壞','补':'補','厕':'廁','仓':'倉','涂':'塗','桥':'橋','筑':'築','饰':'飾','墙':'牆','买':'買','车':'車','产':'產','雇':'僱','佣':'傭','货':'貨','机':'機','械':'械','酝':'醞','酿':'釀','铸':'鑄','针':'針','库':'庫','疗':'療','诸':'諸','馀':'餘','丧':'喪','断':'斷','蚁':'蟻','户':'戶','炉':'爐','栖':'棲','厨':'廚','胜':'勝','负':'負','灭':'滅','龙':'龍','鸡':'雞','猪':'豬','乌':'烏','双':'雙','宫':'宮','惊':'驚','蛰':'蟄','满':'滿','处':'處','时':'時','气':'氣','后':'後','灾':'災','复':'復','虚':'虛','贼':'賊','败':'敗','仪':'儀','祸':'禍','临':'臨','阴':'陰','阳':'陽','圣':'聖','冲':'沖','绝':'絕','岁':'歲','伤':'傷','杀':'殺','黄':'黃','节':'節','树':'樹','国':'國','万':'萬','长':'長','华':'華','为':'為','电':'電','声':'聲','冻':'凍','虫':'蟲','鱼':'魚','鹰':'鷹','来':'來','润':'潤','凉':'涼','麦':'麥','温':'溫','收':'收','闭':'閉','闰':'閏','谷':'穀','殓':'殮'}; const convert = (str) => str.split('').map(char => map[char] || char).join(''); return Array.isArray(input) ? input.map(convert) : convert(input); }
+		const moonPhaseData = { 1: { name: '朔月', aka: '新月', desc: '月球位於太陽和地球之間，月球的黑暗面朝向地球，因此我們看不見月亮。這是農曆月的開始。' }, 2: { name: '既朔月', desc: '新月之後，月球被太陽照亮的一小部分開始可見，呈現極細的彎月。' }, 3: { name: '蛾眉新月', desc: '月牙兒逐漸變寬，形如美女的秀眉。' }, 4: { name: '蛾眉月', desc: '月相持續變寬，更易於觀察。' }, 5: { name: '蛾眉月', desc: '月相持續變寬，更易於觀察。' }, 6: { name: '夕月', desc: '日落後不久即可在西方天空看到，故名夕月。' }, 7: { name: '上弦月', desc: '月球運行到其軌道的四分之一處，我們能看到月球被太陽照亮的一半，看起來像一個字母 "D"。' }, 8: { name: '上弦月', desc: '月球運行到其軌道的四分之一處，我們能看到月球被太陽照亮的一半，看起來像一個字母 "D"。' }, 9: { name: '九夜月', desc: '上弦月之後，可見的被照亮部分繼續增加。' }, 10: { name: '宵月', desc: '夜晚大部分時間都能看到月亮。' }, 11: { name: '漸盈凸月', desc: '月相接近圓滿，但尚未完全變圓。' }, 12: { name: '漸盈凸月', desc: '月相接近圓滿，但尚未完全變圓。' }, 13: { name: '漸盈凸月', desc: '月相接近圓滿，但尚未完全變圓。' }, 14: { name: '小望月', desc: '距離滿月僅一步之遙，非常明亮。' }, 15: { name: '望月', aka: '滿月', desc: '地球位於太陽和月球之間，月球被太陽照亮的整個半球都朝向地球，看起來是一個完整的圓盤。' }, 16: { name: '既望月', desc: '滿月之後，月亮開始由盈轉虧。' }, 17: { name: '立待月', desc: '月出時間稍晚，需要站著等待一會兒。' }, 18: { name: '居待月', desc: '月出更晚，可以在家中坐著等待。' }, 19: { name: '寢待月', desc: '月亮升起時已近睡覺時間。' }, 20: { name: '更待月', desc: '月亮在深夜一更之後才升起。' }, 21: { name: '漸虧凸月', desc: '可見的被照亮部分開始減少，但仍然大於一半。' }, 22: { name: '下弦月', desc: '我們再次看到月球被照亮的一半，但這次看起來像一個反向的 "D"。' }, 23: { name: '下弦月', desc: '我們再次看到月球被照亮的一半，但這次看起來像一個反向的 "D"。' }, 24: { name: '有明月', desc: '天將亮時，仍可在天空中看見月亮。' }, 25: { name: '蛾眉殘月', desc: '月相變回彎曲的鐮刀形狀。' }, 26: { name: '蛾眉殘月', desc: '月相變回彎曲的鐮刀形狀。' }, 27: { name: '殘月', desc: '月牙兒變得更細。' }, 28: { name: '殘月', desc: '月牙兒變得更細。' }, 29: { name: '曉月', desc: '僅在黎明前的東方天空短暫可見。' }, 30: { name: '晦月', desc: '月亮完全消失在太陽的光芒中，為一個農曆月的結束。' } };
+		function getMoonPhaseDetails(lunarDay) { return moonPhaseData[lunarDay] || { name: '未知月相', desc: '無此月相的詳細資訊。' }; }
+		function getMoonPhaseSVG(lunarDay, size = '1em') { const phase = (lunarDay - 1) / 29.0, r = 50, cx = 50, cy = 50, light = '#f0e68c', dark = '#222'; const cos_angle = Math.cos(phase * 2 * Math.PI + Math.PI); const base = phase > 0.5 ? `<rect x="0" y="0" width="${cx}" height="${r*2}" fill="${light}" /><rect x="${cx}" y="0" width="${cx}" height="${r*2}" fill="${dark}" />` : `<rect x="0" y="0" width="${cx}" height="${r*2}" fill="${dark}" /><rect x="${cx}" y="0" width="${cx}" height="${r*2}" fill="${light}" />`; const terminator = `<ellipse cx="${cx}" cy="${cy}" rx="${r * Math.abs(cos_angle)}" ry="${r}" fill="${cos_angle > 0 ? light : dark}" />`; const id = 'moon-clip-' + Math.random().toString(36).substr(2, 9); return `<svg width="${size}" height="${size}" viewBox="0 0 100 100" style="display: inline-block; vertical-align: middle; border-radius: 50%; box-shadow: 0 0 2px rgba(240, 230, 140, 0.5);"><defs><clipPath id="${id}"><circle cx="${cx}" cy="${cy}" r="${r}" /></clipPath></defs><g clip-path="url(#${id})">${base}${terminator}</g></svg>`; }
+		function getJieqiDescription(name) { const d = { '立春': '春季開始，萬物復甦。', '雨水': '降雨增多，春耕開始。', '驚蟄': '春雷響動，驚醒冬眠動物。', '春分': '晝夜等長，春意盎然。', '清明': '氣候清爽明朗，掃墓祭祖。', '穀雨': '雨水滋潤，穀物生長。', '立夏': '夏季開始，萬物繁茂。', '小滿': '夏熟作物籽粒開始飽滿。', '芒種': '收穫與播種的時節。', '夏至': '北半球白晝最長，盛夏開始。', '小暑': '天氣開始炎熱。', '大暑': '一年中最炎熱的時期。', '立秋': '秋季開始，氣溫漸降。', '處暑': '暑氣漸退，天氣轉涼。', '白露': '水氣凝結成露，天氣漸寒。', '秋分': '晝夜等長，秋高氣爽。', '寒露': '氣溫更低，天氣轉冷。', '霜降': '天氣漸冷，露水凝結成霜。', '立冬': '冬季開始，萬物收藏。', '小雪': '開始降雪，但雪量不大。', '大雪': '降雪量增多，天氣更冷。', '冬至': '北半球白晝最短，數九寒天開始。', '小寒': '天氣寒冷，尚未達到最冷。', '大寒': '一年中最寒冷的時期。' }; return d[name] || '此節氣無詳細說明。'; }
+		function checkYearlyCache(year) { if (state.yearlyDataCache.year !== year) state.yearlyDataCache = { year: year, holidays: [], jieqi: [] }; }
+		function getHolidaysForYear(year) { checkYearlyCache(year); if (state.yearlyDataCache.holidays.length > 0) return state.yearlyDataCache.holidays; const holidays = []; [{ n: '元旦', m: 0, d: 1 }, { n: '和平紀念日', m: 1, d: 28 }, { n: '兒童節', m: 3, d: 4 }, { n: '勞動節', m: 4, d: 1 }, { n: '國慶日', m: 9, d: 10 }, { n: '聖誕節', m: 11, d: 25 }].forEach(h => holidays.push({ name: h.n, date: new Date(year, h.m, h.d) })); [{m:1,d:1,n:'農曆新年'}, {m:1,d:15,n:'元宵節'}, {m:5,d:5,n:'端午節'}, {m:7,d:7,n:'七夕'}, {m:7,d:15,n:'中元節'}, {m:8,d:15,n:'中秋節'}, {m:9,d:9,n:'重陽節'}, {m:12,d:8,n:'臘八節'}].forEach(lh => { const sd = Lunar.fromYmd(year, lh.m, lh.d).getSolar(); holidays.push({ name: lh.n, date: new Date(sd.getYear(), sd.getMonth() - 1, sd.getDay()) }); }); const nySolar = Lunar.fromYmd(year, 1, 1).getSolar(); holidays.push({ name: '除夕', date: new Date(nySolar.getYear(), nySolar.getMonth() - 1, nySolar.getDay() - 1) }); const qmJieqi = getJieqiForYear(year).find(jq => jq.name === '清明'); if(qmJieqi) holidays.push({ name: '清明節', date: qmJieqi.date }); const may1 = new Date(year, 4, 1); holidays.push({ name: '母親節', date: new Date(year, 4, 1 + (7 - may1.getDay() + 7) % 7 + 7) }); return state.yearlyDataCache.holidays = holidays.sort((a, b) => a.date - b.date); }
+		function getJieqiForYear(year) { checkYearlyCache(year); if (state.yearlyDataCache.jieqi.length > 0) return state.yearlyDataCache.jieqi; const pinyinMap = { 'LI_CHUN': '立春', 'YU_SHUI': '雨水', 'JING_ZHE': '驚蟄', 'CHUN_FEN': '春分', 'QING_MING': '清明', 'GU_YU': '穀雨', 'LI_XIA': '立夏', 'XIAO_MAN': '小滿', 'MANG_ZHONG': '芒種', 'XIA_ZHHI': '夏至', 'XIAO_SHU': '小暑', 'DA_SHU': '大暑', 'LI_QIU': '立秋', 'CHU_SHU': '處暑', 'BAI_LU': '白露', 'QIU_FEN': '秋分', 'HAN_LU': '寒露', 'SHUANG_JIANG': '霜降', 'LI_DONG': '立冬', 'XIAO_XUE': '小雪', 'DA_XUE': '大雪', 'DONG_ZHI': '冬至', 'XIAO_HAN': '小寒', 'DA_HAN': '大寒' }; const sMap = { '惊蛰': '驚蟄', '小满': '小滿', '芒种': '芒種', '处暑': '處暑', '谷雨': '穀雨' }; const table = Lunar.fromYmd(year, 1, 1).getJieQiTable(); return state.yearlyDataCache.jieqi = Object.entries(table).map(([name, dateStr]) => ({ name: pinyinMap[name] || sMap[name] || name, date: new Date(dateStr) })).sort((a, b) => a.date - b.date); }
+		const timeInfoByHour = { 0: { shichen: '子', period: '凌晨' }, 1: { shichen: '丑', period: '凌晨' }, 2: { shichen: '丑', period: '凌晨' }, 3: { shichen: '寅', period: '凌晨' }, 4: { shichen: '寅', period: '凌晨' }, 5: { shichen: '卯', period: '清晨' }, 6: { shichen: '卯', period: '清晨' }, 7: { shichen: '辰', period: '清晨' }, 8: { shichen: '辰', period: '清晨' }, 9: { shichen: '巳', period: '上午' }, 10: { shichen: '巳', period: '上午' }, 11: { shichen: '午', period: '上午' }, 12: { shichen: '午', period: '中午' }, 13: { shichen: '未', period: '下午' }, 14: { shichen: '未', period: '下午' }, 15: { shichen: '申', period: '下午' }, 16: { shichen: '申', period: '下午' }, 17: { shichen: '酉', period: '傍晚' }, 18: { shichen: '酉', period: '傍晚' }, 19: { shichen: '戌', period: '夜晚' }, 20: { shichen: '戌', period: '夜晚' }, 21: { shichen: '亥', period: '夜晚' }, 22: { shichen: '亥', period: '夜晚' }, 23: { shichen: '子', period: '深夜' } };
+		const shichenTimeRanges = { '子': '23:00 - 00:59', '丑': '01:00 - 02:59', '寅': '03:00 - 04:59', '卯': '05:00 - 06:59', '辰': '07:00 - 08:59', '巳': '09:00 - 10:59', '午': '11:00 - 12:59', '未': '13:00 - 14:59', '申': '15:00 - 16:59', '酉': '17:00 - 18:59', '戌': '19:00 - 20:59', '亥': '21:00 - 22:59' };
+		const getShiChen = (h) => timeInfoByHour[h]?.shichen || '';
+		const getShiChenTimeRange = (name) => shichenTimeRanges[name] || '';
+		const getDetailedTimePeriod = (h) => timeInfoByHour[h]?.period || '';
+		function getWeatherDescriptionAndEmoji(code) { const map = { 0: { desc: '晴' }, 1: { desc: '多雲時晴' }, 2: { desc: '局部多雲' }, 3: { desc: '陰' }, 45: { desc: '霧' }, 48: { desc: '凍霧' }, 51: { desc: '毛毛雨' }, 53: { desc: '毛毛雨' }, 55: { desc: '毛毛雨' }, 56: { desc: '凍毛毛雨' }, 57: { desc: '凍毛毛雨' }, 61: { desc: '雨' }, 63: { desc: '雨' }, 65: { desc: '大雨' }, 66: { desc: '凍雨' }, 67: { desc: '凍雨' }, 71: { desc: '雪' }, 73: { desc: '雪' }, 75: { desc: '大雪' }, 77: { desc: '冰雹' }, 80: { desc: '陣雨' }, 81: { desc: '陣雨' }, 82: { desc: '大陣雨' }, 85: { desc: '陣雪' }, 86: { desc: '大陣雪' }, 95: { desc: '雷陣雨' }, 96: { desc: '雷陣雨伴冰雹' }, 99: { desc: '雷陣雨伴冰雹' } }; return map[code] || { desc: '未知' }; }
+		function getWeatherSVGIcon(code, size = '1em') { const createSvg = (viewBox = "0 0 64 64") => `<svg width="${size}" height="${size}" viewBox="${viewBox}" class="weather-svg-icon">`; const sun = () => `${createSvg()}<g><circle cx="32" cy="32" r="14" fill="#FDB813" stroke="#FDB813" stroke-width="2"/><g stroke="#FDB813" stroke-width="3" stroke-linecap="round">${[0, 45, 90, 135, 180, 225, 270, 315].map(a => `<line x1="32" y1="15" x2="32" y2="5" transform="rotate(${a} 32 32)"/>`).join('')}</g></g></svg>`; const cloud = () => `${createSvg()}<g><path d="M 15,42 A 10,10 0 0 1 25,32 A 18,18 0 0 1 52,35 A 12,12 0 0 1 58,48 L 20,48 A 10,10 0 0 1 15,42 Z" fill="#B0C4DE" stroke="#90a4be" stroke-width="1.5"/></g></svg>`; const partlyCloudy = () => `${createSvg()}<g><circle cx="24" cy="24" r="12" fill="#FDB813"/><path d="M 15,42 A 10,10 0 0 1 25,32 A 18,18 0 0 1 52,35 A 12,12 0 0 1 58,48 L 20,48 A 10,10 0 0 1 15,42 Z" fill="#B0C4DE" stroke="#90a4be" stroke-width="1.5"/></g></svg>`; const rain = () => `${createSvg()}<g><path d="M 15,38 A 10,10 0 0 1 25,28 A 18,18 0 0 1 52,31 A 12,12 0 0 1 58,44 L 20,44 A 10,10 0 0 1 15,38 Z" fill="#90a4be" stroke="#70849e" stroke-width="1.5"/><g stroke="#4682B4" stroke-width="3" stroke-linecap="round">${[[25,48,25,58],[37,50,37,60],[49,48,49,58]].map(c => `<line x1="${c[0]}" y1="${c[1]}" x2="${c[2]}" y2="${c[3]}"/>`).join('')}</g></g></svg>`; const snow = () => `${createSvg()}<g><path d="M 15,38 A 10,10 0 0 1 25,28 A 18,18 0 0 1 52,31 A 12,12 0 0 1 58,44 L 20,44 A 10,10 0 0 1 15,38 Z" fill="#B0C4DE" stroke="#90a4be" stroke-width="1.5"/><g stroke="#FFFFFF" stroke-width="2" stroke-linecap="round">${[[25,55],[37,58],[49,55]].map(c => `<path d="M${c[0]-4},${c[1]} l8,0 M${c[0]},${c[1]-4} l0,8 M${c[0]-3},${c[1]-3} l6,6 M${c[0]-3},${c[1]+3} l6,-6"/>`).join('')}</g></g></svg>`; const storm = () => `${createSvg()}<g><path d="M 15,38 A 10,10 0 0 1 25,28 A 18,18 0 0 1 52,31 A 12,12 0 0 1 58,44 L 20,44 A 10,10 0 0 1 15,38 Z" fill="#6c757d" stroke="#5c656d" stroke-width="1.5"/><path d="M 38,45 L 32,55 L 42,55 L 36,65" fill="none" stroke="#FFC107" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></g></svg>`; const fog = () => `${createSvg()}<g><path d="M 15,42 A 10,10 0 0 1 25,32 A 18,18 0 0 1 52,35 A 12,12 0 0 1 58,48 L 20,48 A 10,10 0 0 1 15,42 Z" fill="#E0E0E0" stroke="#C0C0C0" stroke-width="1.5"/><g stroke="#B0B0B0" stroke-width="3" stroke-linecap="round">${[[18,38,56,38],[22,44,52,44],[20,50,54,50]].map(c => `<line x1="${c[0]}" y1="${c[1]}" x2="${c[2]}" y2="${c[3]}"/>`).join('')}</g></g></svg>`; switch (code) { case 0: return sun(); case 1: return partlyCloudy(); case 2: case 3: return cloud(); case 45: case 48: return fog(); case 51: case 53: case 55: case 61: case 63: case 80: case 81: return rain(); case 65: case 82: return rain(); case 95: case 96: case 99: return storm(); case 56: case 57: case 66: case 67: case 71: case 73: case 75: case 77: case 85: case 86: return snow(); default: return `<span style="font-size:${size}; vertical-align: middle;">❓</span>`; } }
+		const zodiacSVGFunctions = { "鼠": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><path d="M 50 90 C 20 90, 20 40, 50 30 C 80 40, 80 90, 50 90 Z" fill="#9E9E9E" stroke="#616161" stroke-width="2"></path><path d="M 25 45 A 15 15 0 1 1 35 30" fill="#757575" stroke="#616161" stroke-width="2"></path><path d="M 75 45 A 15 15 0 1 0 65 30" fill="#757575" stroke="#616161" stroke-width="2"></path><path d="M 40 60 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 60 60 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 50 75 a 4 4 0 1 1 0.1 0" fill="black"></path></svg>`, "牛": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><path d="M 30 30 Q 10 10 20 40" fill="#795548" stroke="#4E342E" stroke-width="2"></path><path d="M 70 30 Q 90 10 80 40" fill="#795548" stroke="#4E342E" stroke-width="2"></path><path d="M 50 95 C 20 95, 25 30, 50 25 C 75 30, 80 95, 50 95 Z" fill="#795548" stroke="#4E342E" stroke-width="2"></path><path d="M 25 50 L 15 60 L 30 60 Z" fill="#A1887F" stroke="#4E342E" stroke-width="2"></path><path d="M 75 50 L 85 60 L 70 60 Z" fill="#A1887F" stroke="#4E342E" stroke-width="2"></path><path d="M 40 60 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 60 60 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 40 80 A 10 8 0 1 1 60 80" fill="#A1887F" stroke="#4E342E" stroke-width="2"></path></svg>`, "虎": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><path d="M 50 90 A 40 40 0 1 1 50.1 90 Z" fill="#FF9800" stroke="#E65100" stroke-width="2"></path><path d="M 25 30 A 10 10 0 1 1 35 20" fill="#F57C00" stroke="#E65100" stroke-width="2"></path><path d="M 75 30 A 10 10 0 1 0 65 20" fill="#F57C00" stroke="#E65100" stroke-width="2"></path><path d="M 20 50 L 30 55" stroke="black" stroke-width="3" fill="none"></path><path d="M 22 65 L 32 68" stroke="black" stroke-width="3" fill="none"></path><path d="M 80 50 L 70 55" stroke="black" stroke-width="3" fill="none"></path><path d="M 78 65 L 68 68" stroke="black" stroke-width="3" fill="none"></path><path d="M 50 30 L 50 40" stroke="black" stroke-width="3" fill="none"></path><path d="M 40 55 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 60 55 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 50 70 L 45 80 L 55 80 Z" fill="black"></path></svg>`, "兔": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><path d="M 35 40 C 30 10, 40 10, 40 40 Z" fill="#FAFAFA" stroke="#BDBDBD" stroke-width="2"></path><path d="M 65 40 C 70 10, 60 10, 60 40 Z" fill="#FAFAFA" stroke="#BDBDBD" stroke-width="2"></path><path d="M 50 90 A 25 30 0 1 1 50.1 90 Z" fill="#FAFAFA" stroke="#BDBDBD" stroke-width="2"></path><path d="M 42 65 a 3 3 0 1 1 0.1 0" fill="#F44336"></path><path d="M 58 65 a 3 3 0 1 1 0.1 0" fill="#F44336"></path><path d="M 50 75 L 50 80 M 45 80 Q 50 85 55 80" fill="none" stroke="#BDBDBD" stroke-width="2"></path></svg>`, "龍": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><path d="M 50 95 C 20 95, 15 40, 50 20 C 85 40, 80 95, 50 95 Z" fill="#00695C" stroke="#004D40" stroke-width="2"></path><path d="M 35 30 C 20 10, 40 15, 40 35" fill="#FFC107" stroke="#FF8F00" stroke-width="1"></path><path d="M 65 30 C 80 10, 60 15, 60 35" fill="#FFC107" stroke="#FF8F00" stroke-width="1"></path><path d="M 40 80 C 35 70, 65 70, 60 80 Q 50 90 40 80 Z" fill="#00695C" stroke="#004D40" stroke-width="2"></path><circle cx="40" cy="55" r="4" fill="#F44336"></circle><circle cx="60" cy="55" r="4" fill="#F44336"></circle><path d="M 35 80 Q 15 75 30 65" fill="none" stroke="#FF8F00" stroke-width="1"></path><path d="M 65 80 Q 85 75 70 65" fill="none" stroke="#FF8F00" stroke-width="1"></path></svg>`, "蛇": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><path d="M 50 20 C 80 20, 80 70, 50 90 C 20 70, 20 20, 50 20 Z" fill="#8BC34A" stroke="#558B2F" stroke-width="2"></path><path d="M 40 50 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 60 50 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 50 90 L 50 98 L 47 95 M 50 98 L 53 95" stroke="#F44336" stroke-width="2" fill="none"></path></svg>`, "馬": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><path d="M 60 10 L 55 40 L 65 40 L 60 60" fill="#6D4C41" stroke="#5D4037" stroke-width="2"></path><path d="M 50 95 C 25 95, 30 20, 50 20 C 70 20, 75 95, 50 95 Z" fill="#A1887F" stroke="#5D4037" stroke-width="2"></path><path d="M 35 30 L 30 15 L 45 30 Z" fill="#A1887F" stroke="#5D4037" stroke-width="2"></path><path d="M 65 30 L 70 15 L 55 30 Z" fill="#A1887F" stroke="#5D4037" stroke-width="2"></path><path d="M 40 55 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 60 55 a 3 3 0 1 1 0.1 0" fill="black"></path></svg>`, "羊": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><circle cx="50" cy="40" r="20" fill="#ECEFF1" stroke="#B0BEC5" stroke-width="1"></circle><circle cx="35" cy="55" r="18" fill="#ECEFF1" stroke="#B0BEC5" stroke-width="1"></circle><circle cx="65" cy="55" r="18" fill="#ECEFF1" stroke="#B0BEC5" stroke-width="1"></circle><circle cx="50" cy="65" r="20" fill="#ECEFF1" stroke="#B0BEC5" stroke-width="1"></circle><circle cx="50" cy="65" r="15" fill="#CFD8DC" stroke="#78909C" stroke-width="2"></circle><circle cx="44" cy="62" r="2.5" fill="black"></circle><circle cx="56" cy="62" r="2.5" fill="black"></circle><path d="M 30 50 C 15 45, 15 65, 30 65" fill="none" stroke="#78909C" stroke-width="2"></path><path d="M 70 50 C 85 45, 85 65, 70 65" fill="none" stroke="#78909C" stroke-width="2"></path></svg>`, "猴": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><path d="M 20 60 A 15 15 0 1 1 20.1 60 Z" fill="#BCAAA4" stroke="#795548" stroke-width="2"></path><path d="M 80 60 A 15 15 0 1 1 80.1 60 Z" fill="#BCAAA4" stroke="#795548" stroke-width="2"></path><path d="M 50 90 A 35 35 0 1 1 50.1 90 Z" fill="#BCAAA4" stroke="#795548" stroke-width="2"></path><path d="M 50 80 A 25 25 0 1 1 50.1 80 Z" fill="#D7CCC8" stroke="#795548" stroke-width="2"></path><path d="M 40 60 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 60 60 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 40 75 Q 50 85 60 75" fill="none" stroke="#795548" stroke-width="2"></path></svg>`, "雞": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><circle cx="50" cy="60" r="25" fill="#FFFFFF" stroke="#9E9E9E" stroke-width="2"></circle><path d="M 40 35 Q 45 25, 50 35 T 60 35" fill="#F44336" stroke="#D32F2F" stroke-width="1"></path><path d="M 75 60 L 85 65 L 75 70 Z" fill="#FFC107" stroke="#FFA000"></path><path d="M 70 75 A 5 8 0 1 1 70.1 75 Z" fill="#F44336" stroke="#D32F2F" stroke-width="1"></path><circle cx="60" cy="55" r="3" fill="black"></circle></svg>`, "狗": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><path d="M 25 40 L 15 70 L 35 50 Z" fill="#FFE0B2" stroke="#FB8C00" stroke-width="2"></path><path d="M 75 40 L 85 70 L 65 50 Z" fill="#FFE0B2" stroke="#FB8C00" stroke-width="2"></path><path d="M 50 90 C 20 90, 20 40, 50 35 C 80 40, 80 90, 50 90 Z" fill="#FFE0B2" stroke="#FB8C00" stroke-width="2"></path><path d="M 40 60 a 4 4 0 1 1 0.1 0" fill="black"></path><path d="M 60 60 a 4 4 0 1 1 0.1 0" fill="black"></path><path d="M 50 75 L 45 85 L 55 85 Z" fill="black"></path></svg>`, "豬": (s) => `<svg class="zodiac-svg-icon" width="${s}" height="${s}" viewBox="0 0 100 100"><path d="M 25 40 L 20 20 L 40 40 Z" fill="#F8BBD0" stroke="#EC407A" stroke-width="2"></path><path d="M 75 40 L 80 20 L 60 40 Z" fill="#F8BBD0" stroke="#EC407A" stroke-width="2"></path><path d="M 50 90 A 35 35 0 1 1 50.1 90 Z" fill="#F8BBD0" stroke="#EC407A" stroke-width="2"></path><path d="M 50 75 A 15 10 0 1 1 50.1 75 Z" fill="#F48FB1" stroke="#EC407A" stroke-width="2"></path><path d="M 45 75 a 2 2 0 1 1 0.1 0" fill="#EC407A"></path><path d="M 55 75 a 2 2 0 1 1 0.1 0" fill="#EC407A"></path><path d="M 40 60 a 3 3 0 1 1 0.1 0" fill="black"></path><path d="M 60 60 a 3 3 0 1 1 0.1 0" fill="black"></path></svg>` };
+		const getShengXiaoSVG = (name, size = '1.2em') => zodiacSVGFunctions[name] ? zodiacSVGFunctions[name](size) : '';
+		function addCalendarBgMonth(container, month) {
 			let bgMonthEl = container.querySelector('.calendar-bg-month');
-			if (!bgMonthEl) {
-				bgMonthEl = document.createElement('div');
-				bgMonthEl.className = 'calendar-bg-month';
-				container.insertBefore(bgMonthEl, container.firstChild);
-			}
+			if (!bgMonthEl) { bgMonthEl = document.createElement('div'); bgMonthEl.className = 'calendar-bg-month'; container.insertBefore(bgMonthEl, container.firstChild); }
 			bgMonthEl.textContent = month;
 		}
-
-		function updateDigitalClock() { // 更新數位時鐘顯示
+		function updateDigitalClock() {
 			const now = new Date();
 			const bg = qs('#background-scanline-overlay'), txt = qs('#text-scanline-overlay');
 			if (settings.enableBackgroundScanline) { bg.classList.toggle('pattern-a', state.scanlinePatternIsA); bg.classList.toggle('pattern-b', !state.scanlinePatternIsA); }
 			if (settings.enableTextScanline) { txt.classList.toggle('pattern-a', !state.scanlinePatternIsA); txt.classList.toggle('pattern-b', state.scanlinePatternIsA); }
-			
-			// 數位時間顯示
-			const timeContainer = qs('#timeTextContainer');
 			if (settings.showDigitalTime) {
 				const parts = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: false }).formatToParts(now);
 				const h = parts.find(p => p.type === 'hour')?.value.padStart(2, '0') || '00';
@@ -834,14 +535,9 @@
 				const s = parts.find(p => p.type === 'second')?.value || '00';
 				let displayHour = h, amPmText = '';
 				if (settings.showAmPm) { const h12 = parseInt(h, 10); amPmText = getDetailedTimePeriod(h12); let dH12 = h12 % 12; if (dH12 === 0) dH12 = 12; displayHour = dH12.toString().padStart(2, '0'); }
-				qs('#hoursMinutesDisplay').textContent = `${displayHour}:${m}`;
-				qs('#secondsDisplay').textContent = s;
-				qs('#amPmDisplay').textContent = amPmText;
-				setStyle(qs('#amPmDisplay'), { display: amPmText ? 'block' : 'none' });
-				setStyle(timeContainer, { color: settings.textColor });
+				qs('#hoursDisplay').textContent = displayHour; qs('#minutesDisplay').textContent = m; qs('#secondsDisplay').textContent = s; qs('#amPmDisplay').textContent = amPmText;
+				setStyle(qs('#hoursDisplay'), { color: settings.hourColor }); setStyle(qs('#minutesDisplay'), { color: settings.minuteColor }); setStyle(qs('#colonDisplay'), { color: settings.colonColor }); setStyle(qs('#secondsDisplay'), { color: settings.secondColor }); setStyle(qs('#amPmDisplay'), { color: settings.amPmColor, display: amPmText ? 'block' : 'none' });
 			}
-
-			// 公曆日期顯示
 			if (settings.showGregorianDate) {
 				let gregorianParts = [];
 				if (settings.showGregorianYear) gregorianParts.push(`<span class="gregorian-year-target" style="color: ${settings.gregorianYearColor};">${now.getFullYear()}年</span>`);
@@ -850,8 +546,6 @@
 				if (settings.showGregorianWeekday) gregorianParts.push(`<span class="weekday-target" style="color: ${settings.gregorianWeekdayColor};">周${['日', '一', '二', '三', '四', '五', '六'][now.getDay()]}</span>`);
 				qs('#gregorianDateParts').innerHTML = gregorianParts.join('');
 			}
-			
-			// 農曆資訊顯示
 			if (settings.showLunarDate) {
 				let lunarParts = [], combinedJieqiHolidayText = '';
 				const currentYear = now.getFullYear();
@@ -874,13 +568,11 @@
 				setStyle(qs('#jieqiHolidayMarqueeContainer'), { display: jieqiMarqueeVisible ? 'block' : 'none' });
 				if (jieqiMarqueeVisible && state.lastMarqueeContent !== combinedJieqiHolidayText) { updateMarquee(combinedJieqiHolidayText, 'jieqi'); state.lastMarqueeContent = combinedJieqiHolidayText; }
 			}
-			
-			// 統一處理天氣跑馬燈的顯示邏輯
-			const weatherMarqueeVisible = settings.showWeather && settings.showGregorianDate; // 只有公曆顯示時才顯示天氣
+			const weatherMarqueeVisible = settings.showWeather && settings.showGregorianDate;
 			setStyle(qs('#weatherMarqueeContainer'), { display: weatherMarqueeVisible ? 'block' : 'none' });
 			if (weatherMarqueeVisible && state.lastWeatherContent && qs('#weatherMarqueeInner .weather-marquee-content').innerHTML !== state.lastWeatherContent) { updateMarquee(state.lastWeatherContent, 'weather'); }
 		}
-		function updateMarquee(text, type) { // 更新跑馬燈內容與動畫
+		function updateMarquee(text, type) {
 			const isWeather = type === 'weather';
 			const ids = { container: isWeather ? 'weatherMarqueeContainer' : 'jieqiHolidayMarqueeContainer', inner: isWeather ? 'weatherMarqueeInner' : 'jieqiHolidayMarqueeInner' };
 			const classes = { content: isWeather ? 'weather-marquee-content' : 'jieqi-holiday-marquee-content', duplicate: isWeather ? 'weather-marquee-content-duplicate' : 'jieqi-holiday-marquee-content-duplicate' };
@@ -891,8 +583,7 @@
 			contentSpan.innerHTML = text;
 			requestAnimationFrame(() => { const contentW = contentSpan.scrollWidth, containerW = container.offsetWidth; if (contentW > containerW) { duplicateSpan.innerHTML = text; container.classList.add('scrolling'); setStyle(inner, { animationDuration: `${contentW / 40}s` }); } else { duplicateSpan.innerHTML = ''; container.classList.remove('scrolling'); } });
 		}
-
-		function initializeAnalogClock() { // 初始化類比時鐘
+		function initializeAnalogClock() {
 			const container = qs('#ticks-container'); container.innerHTML = '';
 			for (let i = 1; i <= 60; i++) {
 				const isHour = i % 5 === 0, rotation = i * 6;
@@ -902,22 +593,13 @@
 				container.appendChild(wrapper);
 			}
 		}
-		function updateAnalogClock() { // 更新類比時鐘
+		function updateAnalogClock() {
 			if (!settings.showAnalogClock && !settings.showAnalogCalendar) return;
 			const now = new Date(), s = now.getSeconds() + now.getMilliseconds() / 1000, m = now.getMinutes() + s / 60, h = now.getHours() % 12 + m / 60;
-			if (settings.showAnalogClock) {
-				setStyle(qs('.hour-hand'), { transform: `rotate(${(h / 12) * 360}deg)` });
-				setStyle(qs('.minute-hand'), { transform: `rotate(${(m / 60) * 360}deg)` });
-				setStyle(qs('.second-hand'), { transform: `rotate(${(s / 60) * 360}deg)` });
-			}
-			if (settings.showAnalogCalendar) {
-				const todayCell = qs('#analog-calendar-grid .is-today .gregorian-day');
-				if (!todayCell || new Date().getDate() !== parseInt(todayCell.textContent)) {
-					createAnalogCalendar();
-				}
-			}
+			if (settings.showAnalogClock) { setStyle(qs('.hour-hand'), { transform: `rotate(${(h / 12) * 360}deg)` }); setStyle(qs('.minute-hand'), { transform: `rotate(${(m / 60) * 360}deg)` }); setStyle(qs('.second-hand'), { transform: `rotate(${(s / 60) * 360}deg)` }); }
+			if (settings.showAnalogCalendar) { const todayCell = qs('#analog-calendar-grid .is-today .gregorian-day'); if (!todayCell || new Date().getDate() !== parseInt(todayCell.textContent)) createAnalogCalendar(); }
 		}
-		function createAnalogCalendar() { // 建立類比版面主日曆
+		function createAnalogCalendar() {
 			const now = new Date(), year = now.getFullYear(), month = now.getMonth();
 			qs('#analog-calendar-widget .analog-calendar-bg-month').textContent = month + 1;
 			const grid = qs('#analog-calendar-grid'); grid.innerHTML = '';
@@ -944,8 +626,7 @@
 				grid.appendChild(cell);
 			}
 		}
-
-		function updateWeatherDisplay() { // 更新天氣顯示 (主要用於數位版)
+		function updateWeatherDisplay() {
 			if (!settings.showWeather) { state.lastWeatherContent = ''; updateDigitalClock(); return; }
 			let weatherText = `<span style="color: ${settings.weatherColor};">無法取得天氣資訊</span>`;
 			if (state.weatherDataCache) {
@@ -955,22 +636,20 @@
 				const location = settings.showWeatherLocation ? `<span style="color: ${settings.weatherLocationColor};">${getChineseLocationName(settings.weatherLocation)}</span> ` : '';
 				weatherText = `${location}<span style="color: ${settings.weatherColor};">${desc}${icon}${temp}°C</span>`;
 			}
-			state.lastWeatherContent = weatherText;
-			updateMarquee(weatherText, 'weather');
+			state.lastWeatherContent = weatherText; updateMarquee(weatherText, 'weather');
 		}
-		async function updateWeather() { // 更新天氣資料
+		async function updateWeather() {
 			const locationName = settings.weatherLocation.trim();
 			if (!locationName) { state.weatherDataCache = null; updateWeatherDisplay(); return; }
 			const coords = await fetchCoordinates(locationName);
 			state.weatherDataCache = coords ? await fetchWeather(coords.latitude, coords.longitude) : null;
 			updateWeatherDisplay();
 		}
-		async function fetchAPI(url) { try { const response = await fetch(url); if (!response.ok) throw new Error('API請求失敗'); return await response.json(); } catch (error) { console.error(`獲取資料失敗: ${url}`, error); return null; } } // 通用 API 請求函數
-		async function fetchCoordinates(name) { const data = await fetchAPI(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=en&format=json`); return data?.results?.[0] || null; } // 從 API 獲取座標
-		async function fetchWeather(lat, lon) { return await fetchAPI(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=8`); } // 從 API 獲取天氣
-		function getChineseLocationName(englishName) { for (const county in taiwanLocations) { for (const district in taiwanLocations[county].districts) { if (taiwanLocations[county].districts[district].toLowerCase() === englishName.toLowerCase()) return county === district ? county : district; } } return englishName; } // 將英文地名轉為中文
-		
-		function updateMainMoonPhaseDisplay(date) { // 更新月相彈窗的主顯示區域
+		async function fetchAPI(url) { try { const response = await fetch(url); if (!response.ok) throw new Error('API請求失敗'); return await response.json(); } catch (error) { console.error(`獲取資料失敗: ${url}`, error); return null; } }
+		async function fetchCoordinates(name) { const data = await fetchAPI(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=en&format=json`); return data?.results?.[0] || null; }
+		async function fetchWeather(lat, lon) { return await fetchAPI(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=8`); }
+		function getChineseLocationName(englishName) { for (const county in taiwanLocations) { for (const district in taiwanLocations[county].districts) { if (taiwanLocations[county].districts[district].toLowerCase() === englishName.toLowerCase()) return county === district ? county : district; } } return englishName; }
+		function updateMainMoonPhaseDisplay(date) {
 			const lunar = Solar.fromDate(date).getLunar(), day = lunar.getDay(), details = getMoonPhaseDetails(day);
 			const title = details.aka ? `${details.name} (${details.aka})` : details.name;
 			qs('#moonPhaseModalTitle').textContent = `月相詳情：${title}`;
@@ -980,7 +659,7 @@
 			const selectedDayEl = qs(`#moonCalendarGrid .calendar-day[data-date-string='${date.toDateString()}']`);
 			if (selectedDayEl) selectedDayEl.classList.add('is-selected');
 		}
-		function generateMoonPhaseCalendar(year, month, selectedDate) { // 產生月相彈窗中的月曆
+		function generateMoonPhaseCalendar(year, month, selectedDate) {
 			const grid = qs('#moonCalendarGrid'), monthYear = qs('#moonCalendarMonthYear'), weekdaysEl = qs('#moonCalendarWeekdays');
 			grid.innerHTML = ''; weekdaysEl.innerHTML = '';
 			['日', '一', '二', '三', '四', '五', '六'].forEach(day => { const el = document.createElement('div'); el.textContent = day; weekdaysEl.appendChild(el); });
@@ -1000,16 +679,12 @@
 				grid.appendChild(cell);
 			}
 		}
-		function showMoonPhaseDetails(date) { // 顯示月相彈窗
+		function showMoonPhaseDetails(date) {
 			if (settings.editMode) return;
 			const d = new Date(date); d.setHours(12, 0, 0, 0);
-			state.moonCalendarDate = d;
-			updateMainMoonPhaseDisplay(d);
-			generateMoonPhaseCalendar(d.getFullYear(), d.getMonth(), d);
-			qs('#moonPhaseModal').classList.add('is-active');
+			state.moonCalendarDate = d; updateMainMoonPhaseDisplay(d); generateMoonPhaseCalendar(d.getFullYear(), d.getMonth(), d); qs('#moonPhaseModal').classList.add('is-active');
 		}
-		
-		function showDateDetails(date) { // 顯示指定日期的詳細資訊彈窗
+		function showDateDetails(date) {
 			if (settings.editMode) return;
 			date.setHours(12, 0, 0, 0); const year = date.getFullYear();
 			const holidays = getHolidaysForYear(year), jieqi = getJieqiForYear(year);
@@ -1030,13 +705,13 @@
 			if (countdownHtml) eventHtml += `<div class="countdown-section">${countdownHtml}</div>`;
 			const detailsHtml = `<p><strong>公曆：</strong>${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日</p><p><strong>農曆：</strong>${lunarYearText} ${lunarDateText} ${getMoonPhaseSVG(lunar.getDay(), '1.2em')}</p><div class="yi-ji-grid"><strong>宜：</strong><span>${s2t(lunar.getDayYi()).join('、') || '無'}</span><strong>忌：</strong><span>${s2t(lunar.getDayJi()).join('、') || '無'}</span></div>${eventHtml}<p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">宜忌僅供參考，請順心而為。</p>`;
 			qs('#dateDetailsModalTitle').textContent = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
-			qs('#dateDetailsModalContent').innerHTML = detailsHtml;
-			qs('#dateDetailsModal').classList.add('is-active');
+			qs('#dateDetailsModalContent').innerHTML = detailsHtml; qs('#dateDetailsModal').classList.add('is-active');
 		}
-		function updateShiChenDetailsView(date) { 
+		function updateShiChenDetailsView(date) {
 			if (settings.editMode) return;
-			state.shichenDetailDate = new Date(date); const lunar = Solar.fromDate(state.shichenDetailDate).getLunar(); const hour = state.shichenDetailDate.getHours(); const name = getShiChen(hour); qs('#shichenDetailsModalTitle').textContent = `${state.shichenDetailDate.getMonth() + 1}月${state.shichenDetailDate.getDate()}日 ${name}時`; const lunarTime = lunar.getTimes().find(lt => lt.getZhi() === name); if (lunarTime) { qs('#shichenDetailsModalContent').innerHTML = `<p><strong>時辰：</strong>${name}時 (${s2t(lunarTime.getGan() + lunarTime.getZhi())}) <span style="font-size: 0.9em; color: #ccc;">${getShiChenTimeRange(name)}</span></p><div class="yi-ji-grid"><strong>宜：</strong><span>${s2t(lunarTime.getYi()).join('、') || '無'}</span><strong>忌：</strong><span>${s2t(lunarTime.getJi()).join('、') || '無'}</span></div><p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">時辰宜忌僅供參考。</p>`; } else { qs('#shichenDetailsModalContent').innerHTML = `<p>找不到 ${name}時 的詳細資訊。</p>`; } qs('#shichenDetailsModal').classList.add('is-active'); } // 更新並顯示時辰詳情彈窗
-		function generateCalendarPopup(year, month) { // 產生月曆彈窗
+			state.shichenDetailDate = new Date(date); const lunar = Solar.fromDate(state.shichenDetailDate).getLunar(); const hour = state.shichenDetailDate.getHours(); const name = getShiChen(hour); qs('#shichenDetailsModalTitle').textContent = `${state.shichenDetailDate.getMonth() + 1}月${state.shichenDetailDate.getDate()}日 ${name}時`; const lunarTime = lunar.getTimes().find(lt => lt.getZhi() === name); if (lunarTime) { qs('#shichenDetailsModalContent').innerHTML = `<p><strong>時辰：</strong>${name}時 (${s2t(lunarTime.getGan() + lunarTime.getZhi())}) <span style="font-size: 0.9em; color: #ccc;">${getShiChenTimeRange(name)}</span></p><div class="yi-ji-grid"><strong>宜：</strong><span>${s2t(lunarTime.getYi()).join('、') || '無'}</span><strong>忌：</strong><span>${s2t(lunarTime.getJi()).join('、') || '無'}</span></div><p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">時辰宜忌僅供參考。</p>`; } else { qs('#shichenDetailsModalContent').innerHTML = `<p>找不到 ${name}時 的詳細資訊。</p>`; } qs('#shichenDetailsModal').classList.add('is-active');
+		}
+		function generateCalendarPopup(year, month) {
 			const grid = qs('#calendarGrid'), monthYear = qs('#calendarMonthYear'), weekdaysEl = qs('#calendarWeekdays');
 			grid.innerHTML = ''; weekdaysEl.innerHTML = '';
 			addCalendarBgMonth(qs('#calendarModal .modal-content'), month + 1);
@@ -1062,63 +737,48 @@
 				grid.appendChild(cell);
 			}
 		}
-		function generateWeekCalendar(baseDate) { const grid = qs('#weeklyCalendarGrid'), title = qs('#weeklyCalendarTitle'); grid.innerHTML = ''; const today = new Date(), start = new Date(baseDate); start.setDate(baseDate.getDate() - baseDate.getDay()); const end = new Date(start); end.setDate(start.getDate() + 6); title.textContent = `${start.getFullYear()}年${start.getMonth() + 1}月${start.getDate()}日 - ${end.getFullYear()}年${end.getMonth() + 1}月${end.getDate()}日`; const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']; const holidays = getHolidaysForYear(baseDate.getFullYear()), jieqi = getJieqiForYear(baseDate.getFullYear()); for (let i = 0; i < 7; i++) { const day = new Date(start); day.setDate(start.getDate() + i); const cell = document.createElement('div'); cell.className = 'weekly-calendar-day'; cell.dataset.date = day.toISOString(); cell.onclick = () => showDateDetails(new Date(cell.dataset.date)); if (day.toDateString() === today.toDateString()) cell.classList.add('is-today'); const lunar = Solar.fromDate(day).getLunar(); cell.innerHTML = `<div class="weekly-day-header">${weekdays[i]}</div><div class="weekly-gregorian-day">${day.getDate()}</div><div class="weekly-lunar-day">${lunar.getDay() === 1 ? s2t(lunar.getMonthInChinese()) + '月' : s2t(lunar.getDayInChinese())}</div>`; const holiday = holidays.find(h => h.date.toDateString() === day.toDateString()); if (holiday) cell.innerHTML += `<span class="event-indicator holiday">${holiday.name}</span>`; const jq = jieqi.find(j => j.date.toDateString() === day.toDateString()); if (jq) cell.innerHTML += `<span class="event-indicator jieqi">${jq.name}</span>`; grid.appendChild(cell); } } // 產生週曆彈窗
-		function generateYearCalendar(year) { const grid = qs('#yearlyCalendarGrid'), title = qs('#yearlyCalendarTitle'); grid.innerHTML = ''; title.textContent = `${year}年`; const today = new Date(), weekdays = ['日', '一', '二', '三', '四', '五', '六']; const holidays = getHolidaysForYear(year), jieqi = getJieqiForYear(year); for (let month = 0; month < 12; month++) { const monthContainer = document.createElement('div'); monthContainer.className = 'yearly-month-container'; monthContainer.style.cursor = 'pointer'; monthContainer.title = `查看 ${month + 1}月 月曆`; monthContainer.onclick = () => { if (settings.editMode) return; qs('#yearlyCalendarModal').classList.remove('is-active'); state.calendarDate.setFullYear(year, month, 1); generateCalendarPopup(year, month); qs('#calendarModal').classList.add('is-active'); }; addCalendarBgMonth(monthContainer, month + 1); const weekdaysDiv = document.createElement('div'); weekdaysDiv.className = 'yearly-weekdays'; weekdays.forEach(day => { const el = document.createElement('div'); el.textContent = day; weekdaysDiv.appendChild(el); }); monthContainer.appendChild(weekdaysDiv); const dayGrid = document.createElement('div'); dayGrid.className = 'yearly-day-grid'; const firstDay = new Date(year, month, 1).getDay(), daysInMonth = new Date(year, month + 1, 0).getDate(); for (let i = 0; i < firstDay; i++) dayGrid.appendChild(document.createElement('div')); for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) { const cell = document.createElement('div'); cell.className = 'yearly-day'; const date = new Date(year, month, dayNum); cell.dataset.date = date.toISOString(); cell.onclick = (e) => { e.stopPropagation(); showDateDetails(new Date(cell.dataset.date)); }; cell.textContent = dayNum; if (today.getFullYear() === year && today.getMonth() === month && dayNum === today.getDate()) cell.classList.add('is-today'); const holiday = holidays.find(h => h.date.toDateString() === date.toDateString()); const jq = jieqi.find(j => j.date.toDateString() === date.toDateString()); if(holiday || jq) { const indicators = document.createElement('div'); indicators.className = 'yearly-indicators'; if(holiday) indicators.innerHTML += '<span class="dot holiday"></span>'; if(jq) indicators.innerHTML += '<span class="dot jieqi"></span>'; cell.appendChild(indicators); } dayGrid.appendChild(cell); } monthContainer.appendChild(dayGrid); grid.appendChild(monthContainer); } } // 產生年曆彈窗
-		function showWeatherForecast() { if (settings.editMode) return; if (!state.weatherDataCache) { const el = qs('#weatherMarqueeContainer'); if(el) { setStyle(el, { backgroundColor: '#552222' }); setTimeout(() => setStyle(el, { backgroundColor: '' }), 500); } return; } const grid = qs('#weatherForecastGrid'), title = qs('#weatherForecastModalTitle'); grid.innerHTML = ''; title.textContent = `${getChineseLocationName(settings.weatherLocation)} 一週預報`; for (let i = 0; i < 7; i++) { const date = new Date(state.weatherDataCache.daily.time[i]); const dayName = i === 0 ? '今天' : `周${['日', '一', '二', '三', '四', '五', '六'][date.getDay()]}`; const { desc } = getWeatherDescriptionAndEmoji(state.weatherDataCache.daily.weather_code[i]); const dayCell = document.createElement('div'); dayCell.className = 'forecast-day'; dayCell.innerHTML = `<p class="day-name">${dayName}</p><p>${date.getMonth() + 1}/${date.getDate()}</p><div class="weather-icon">${getWeatherSVGIcon(state.weatherDataCache.daily.weather_code[i], '2.5em')}</div><p>${desc}</p><p><span class="temp-high">${Math.round(state.weatherDataCache.daily.temperature_2m_max[i])}°</span> / <span class="temp-low">${Math.round(state.weatherDataCache.daily.temperature_2m_min[i])}°</span></p>`; dayCell.onclick = () => showHourlyWeather(i); grid.appendChild(dayCell); } qs('#weatherForecastModal').classList.add('is-active'); } // 顯示天氣預報彈窗
-		function showHourlyWeather(dayIndex) { if (!state.weatherDataCache?.hourly) return; const grid = qs('#hourlyWeatherGrid'), title = qs('#hourlyWeatherModalTitle'); grid.innerHTML = ''; const date = new Date(state.weatherDataCache.daily.time[dayIndex]); const max = Math.round(state.weatherDataCache.daily.temperature_2m_max[dayIndex]), min = Math.round(state.weatherDataCache.daily.temperature_2m_min[dayIndex]); title.innerHTML = `${date.getMonth() + 1}月${date.getDate()}日 預報 <span style="font-size: 0.7em; color: #ccc;">(高 <span class="temp-high">${max}°</span> / 低 <span class="temp-low">${min}°</span>)</span>`; const now = new Date(); const start = dayIndex * 24, end = start + 24; for (let i = start; i < end; i += 3) { const hourDate = new Date(state.weatherDataCache.hourly.time[i]); const { desc } = getWeatherDescriptionAndEmoji(state.weatherDataCache.hourly.weather_code[i]); const hourCell = document.createElement('div'); hourCell.className = 'hourly-item'; if (dayIndex === 0) { const currentHour = now.getHours(), blockStartHour = hourDate.getHours(); if (currentHour >= blockStartHour && currentHour < blockStartHour + 3) hourCell.classList.add('is-now'); } hourCell.innerHTML = `<p class="hour-time">${hourDate.getHours().toString().padStart(2, '0')}:00</p><div class="weather-icon">${getWeatherSVGIcon(state.weatherDataCache.hourly.weather_code[i], '2em')}</div><p>${desc}</p><p>${Math.round(state.weatherDataCache.hourly.temperature_2m[i])}°C</p>`; grid.appendChild(hourCell); } qs('#weatherForecastModal').classList.remove('is-active'); qs('#hourlyWeatherModal').classList.add('is-active'); } // 顯示每小時天氣彈窗
-		function showZodiacDetails() { if (settings.editMode) return; const grid = qs('#zodiacGrid'); grid.innerHTML = ''; ['鼠', '牛', '虎', '兔', '龍', '蛇', '馬', '羊', '猴', '雞', '狗', '豬'].forEach(name => { const item = document.createElement('div'); item.className = 'zodiac-item'; item.innerHTML = `<div class="zodiac-icon">${getShengXiaoSVG(name, '100%')}</div><p>${name}</p>`; grid.appendChild(item); }); qs('#zodiacModal').classList.add('is-active'); } // 顯示十二生肖彈窗
-		function updateDistrictSelector(county) { const sel = qs('#districtSelect'); sel.innerHTML = ''; const districts = taiwanLocations[county]?.districts || {}; for (const name in districts) { const opt = document.createElement('option'); opt.value = name; opt.textContent = name; sel.appendChild(opt); } } // 更新鄉鎮市區下拉選單
-		function syncLocationControls() { const county = qs('#countySelect').value, district = qs('#districtSelect').value; const english = taiwanLocations[county]?.districts[district] || 'taiwan'; qs('#weatherLocation').value = english; settings.weatherLocation = english; saveState(); updateWeather(); } // 同步地區選擇器與設定
-		function setLocationSelectorsFromEnglish(english) { const countySel = qs('#countySelect'), districtSel = qs('#districtSelect'); qs('#weatherLocation').value = english; let found = false; for (const county in taiwanLocations) { for (const district in taiwanLocations[county].districts) { if (taiwanLocations[county].districts[district].toLowerCase() === english.toLowerCase()) { countySel.value = county; updateDistrictSelector(county); districtSel.value = district; found = true; break; } } if (found) break; } if (!found) { countySel.value = '台灣'; updateDistrictSelector('台灣'); districtSel.value = '台灣'; } } // 根據英文地名設定下拉選單
-
-		function initializeEventListeners() { // 初始化所有事件監聽器
+		function generateWeekCalendar(baseDate) { const grid = qs('#weeklyCalendarGrid'), title = qs('#weeklyCalendarTitle'); grid.innerHTML = ''; const today = new Date(), start = new Date(baseDate); start.setDate(baseDate.getDate() - baseDate.getDay()); const end = new Date(start); end.setDate(start.getDate() + 6); title.textContent = `${start.getFullYear()}年${start.getMonth() + 1}月${start.getDate()}日 - ${end.getFullYear()}年${end.getMonth() + 1}月${end.getDate()}日`; const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']; const holidays = getHolidaysForYear(baseDate.getFullYear()), jieqi = getJieqiForYear(baseDate.getFullYear()); for (let i = 0; i < 7; i++) { const day = new Date(start); day.setDate(start.getDate() + i); const cell = document.createElement('div'); cell.className = 'weekly-calendar-day'; cell.dataset.date = day.toISOString(); cell.onclick = () => showDateDetails(new Date(cell.dataset.date)); if (day.toDateString() === today.toDateString()) cell.classList.add('is-today'); const lunar = Solar.fromDate(day).getLunar(); cell.innerHTML = `<div class="weekly-day-header">${weekdays[i]}</div><div class="weekly-gregorian-day">${day.getDate()}</div><div class="weekly-lunar-day">${lunar.getDay() === 1 ? s2t(lunar.getMonthInChinese()) + '月' : s2t(lunar.getDayInChinese())}</div>`; const holiday = holidays.find(h => h.date.toDateString() === day.toDateString()); if (holiday) cell.innerHTML += `<span class="event-indicator holiday">${holiday.name}</span>`; const jq = jieqi.find(j => j.date.toDateString() === day.toDateString()); if (jq) cell.innerHTML += `<span class="event-indicator jieqi">${jq.name}</span>`; grid.appendChild(cell); } }
+		function generateYearCalendar(year) { const grid = qs('#yearlyCalendarGrid'), title = qs('#yearlyCalendarTitle'); grid.innerHTML = ''; title.textContent = `${year}年`; const today = new Date(), weekdays = ['日', '一', '二', '三', '四', '五', '六']; const holidays = getHolidaysForYear(year), jieqi = getJieqiForYear(year); for (let month = 0; month < 12; month++) { const monthContainer = document.createElement('div'); monthContainer.className = 'yearly-month-container'; monthContainer.style.cursor = 'pointer'; monthContainer.title = `查看 ${month + 1}月 月曆`; monthContainer.onclick = () => { if (settings.editMode) return; qs('#yearlyCalendarModal').classList.remove('is-active'); state.calendarDate.setFullYear(year, month, 1); generateCalendarPopup(year, month); qs('#calendarModal').classList.add('is-active'); }; addCalendarBgMonth(monthContainer, month + 1); const weekdaysDiv = document.createElement('div'); weekdaysDiv.className = 'yearly-weekdays'; weekdays.forEach(day => { const el = document.createElement('div'); el.textContent = day; weekdaysDiv.appendChild(el); }); monthContainer.appendChild(weekdaysDiv); const dayGrid = document.createElement('div'); dayGrid.className = 'yearly-day-grid'; const firstDay = new Date(year, month, 1).getDay(), daysInMonth = new Date(year, month + 1, 0).getDate(); for (let i = 0; i < firstDay; i++) dayGrid.appendChild(document.createElement('div')); for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) { const cell = document.createElement('div'); cell.className = 'yearly-day'; const date = new Date(year, month, dayNum); cell.dataset.date = date.toISOString(); cell.onclick = (e) => { e.stopPropagation(); showDateDetails(new Date(cell.dataset.date)); }; cell.textContent = dayNum; if (today.getFullYear() === year && today.getMonth() === month && dayNum === today.getDate()) cell.classList.add('is-today'); const holiday = holidays.find(h => h.date.toDateString() === date.toDateString()); const jq = jieqi.find(j => j.date.toDateString() === date.toDateString()); if(holiday || jq) { const indicators = document.createElement('div'); indicators.className = 'yearly-indicators'; if(holiday) indicators.innerHTML += '<span class="dot holiday"></span>'; if(jq) indicators.innerHTML += '<span class="dot jieqi"></span>'; cell.appendChild(indicators); } dayGrid.appendChild(cell); } monthContainer.appendChild(dayGrid); grid.appendChild(monthContainer); } }
+		function showWeatherForecast() { if (settings.editMode) return; if (!state.weatherDataCache) { const el = qs('#weatherMarqueeContainer'); if(el) { setStyle(el, { backgroundColor: '#552222' }); setTimeout(() => setStyle(el, { backgroundColor: '' }), 500); } return; } const grid = qs('#weatherForecastGrid'), title = qs('#weatherForecastModalTitle'); grid.innerHTML = ''; title.textContent = `${getChineseLocationName(settings.weatherLocation)} 一週預報`; for (let i = 0; i < 7; i++) { const date = new Date(state.weatherDataCache.daily.time[i]); const dayName = i === 0 ? '今天' : `周${['日', '一', '二', '三', '四', '五', '六'][date.getDay()]}`; const { desc } = getWeatherDescriptionAndEmoji(state.weatherDataCache.daily.weather_code[i]); const dayCell = document.createElement('div'); dayCell.className = 'forecast-day'; dayCell.innerHTML = `<p class="day-name">${dayName}</p><p>${date.getMonth() + 1}/${date.getDate()}</p><div class="weather-icon">${getWeatherSVGIcon(state.weatherDataCache.daily.weather_code[i], '2.5em')}</div><p>${desc}</p><p><span class="temp-high">${Math.round(state.weatherDataCache.daily.temperature_2m_max[i])}°</span> / <span class="temp-low">${Math.round(state.weatherDataCache.daily.temperature_2m_min[i])}°</span></p>`; dayCell.onclick = () => showHourlyWeather(i); grid.appendChild(dayCell); } qs('#weatherForecastModal').classList.add('is-active'); }
+		function showHourlyWeather(dayIndex) { if (!state.weatherDataCache?.hourly) return; const grid = qs('#hourlyWeatherGrid'), title = qs('#hourlyWeatherModalTitle'); grid.innerHTML = ''; const date = new Date(state.weatherDataCache.daily.time[dayIndex]); const max = Math.round(state.weatherDataCache.daily.temperature_2m_max[dayIndex]), min = Math.round(state.weatherDataCache.daily.temperature_2m_min[dayIndex]); title.innerHTML = `${date.getMonth() + 1}月${date.getDate()}日 預報 <span style="font-size: 0.7em; color: #ccc;">(高 <span class="temp-high">${max}°</span> / 低 <span class="temp-low">${min}°</span>)</span>`; const now = new Date(); const start = dayIndex * 24, end = start + 24; for (let i = start; i < end; i += 3) { const hourDate = new Date(state.weatherDataCache.hourly.time[i]); const { desc } = getWeatherDescriptionAndEmoji(state.weatherDataCache.hourly.weather_code[i]); const hourCell = document.createElement('div'); hourCell.className = 'hourly-item'; if (dayIndex === 0) { const currentHour = now.getHours(), blockStartHour = hourDate.getHours(); if (currentHour >= blockStartHour && currentHour < blockStartHour + 3) hourCell.classList.add('is-now'); } hourCell.innerHTML = `<p class="hour-time">${hourDate.getHours().toString().padStart(2, '0')}:00</p><div class="weather-icon">${getWeatherSVGIcon(state.weatherDataCache.hourly.weather_code[i], '2em')}</div><p>${desc}</p><p>${Math.round(state.weatherDataCache.hourly.temperature_2m[i])}°C</p>`; grid.appendChild(hourCell); } qs('#weatherForecastModal').classList.remove('is-active'); qs('#hourlyWeatherModal').classList.add('is-active'); }
+		function showZodiacDetails() { if (settings.editMode) return; const grid = qs('#zodiacGrid'); grid.innerHTML = ''; ['鼠', '牛', '虎', '兔', '龍', '蛇', '馬', '羊', '猴', '雞', '狗', '豬'].forEach(name => { const item = document.createElement('div'); item.className = 'zodiac-item'; item.innerHTML = `<div class="zodiac-icon">${getShengXiaoSVG(name, '100%')}</div><p>${name}</p>`; grid.appendChild(item); }); qs('#zodiacModal').classList.add('is-active'); }
+		function updateDistrictSelector(county) { const sel = qs('#districtSelect'); sel.innerHTML = ''; const districts = taiwanLocations[county]?.districts || {}; for (const name in districts) { const opt = document.createElement('option'); opt.value = name; opt.textContent = name; sel.appendChild(opt); } }
+		function syncLocationControls() { const county = qs('#countySelect').value, district = qs('#districtSelect').value; const english = taiwanLocations[county]?.districts[district] || 'taiwan'; qs('#weatherLocation').value = english; settings.weatherLocation = english; saveState(); updateWeather(); }
+		function setLocationSelectorsFromEnglish(english) { const countySel = qs('#countySelect'), districtSel = qs('#districtSelect'); qs('#weatherLocation').value = english; let found = false; for (const county in taiwanLocations) { for (const district in taiwanLocations[county].districts) { if (taiwanLocations[county].districts[district].toLowerCase() === english.toLowerCase()) { countySel.value = county; updateDistrictSelector(county); districtSel.value = district; found = true; break; } } if (found) break; } if (!found) { countySel.value = '台灣'; updateDistrictSelector('台灣'); districtSel.value = '台灣'; } }
+		function initializeEventListeners() {
 			qs('#settingsModal').addEventListener('change', e => {
 				const { id, type, checked, value } = e.target;
 				if (['countySelect', 'districtSelect', 'weatherLocation'].includes(id)) return;
 				settings[id] = type === 'checkbox' ? checked : value;
-				
-				if (id === 'editMode') { 
-					toggleEditModeUI(); 
-					applyMovement(); 
-				} else if (id.startsWith('enableMovement') || id.includes('movementInterval')) {
-					applyMovement();
-				} else if (id.startsWith('enableBackgroundScanline') || id.startsWith('enableTextScanline') || id.includes('scanlineInterval')) { 
-					applyScanlineEffect(); 
-					updateDigitalClock(); 
-				} else if (id.startsWith('show')) { 
-					updateWidgetVisibility();
-					updateDigitalClock(); // Also update digital clock to handle dependencies
-				} else {
-					applyAllSettings();
-				}
-				
-				saveState();
+				if (id.startsWith('enableMovement') || id.includes('movementInterval')) applyMovement();
+				else if (id.startsWith('enableBackgroundScanline') || id.startsWith('enableTextScanline') || id.includes('scanlineInterval')) { applyScanlineEffect(); updateDigitalClock(); }
+				else if (id.startsWith('show')) { updateWidgetVisibility(); updateDigitalClock(); }
+				else applyAllSettings();
+				updateSettingDependencies(); saveState();
 			});
 			qsa('#settingsModal input[type="color"]').forEach(el => el.addEventListener('input', e => { settings[e.target.id] = e.target.value; applyAllSettings(); saveState(); }));
+			qsa('.random-color-btn').forEach(btn => { btn.addEventListener('click', () => { const targetId = btn.dataset.target; if (targetId && settings.hasOwnProperty(targetId)) { const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0'); settings[targetId] = randomColor; document.getElementById(targetId).value = randomColor; saveState(); applyAllSettings(); } }); });
 			qs('#countySelect').addEventListener('change', () => { updateDistrictSelector(qs('#countySelect').value); syncLocationControls(); });
 			qs('#districtSelect').addEventListener('change', syncLocationControls);
 			qs('#weatherLocation').addEventListener('change', e => { const loc = e.target.value.trim(); if(loc) { settings.weatherLocation = loc; setLocationSelectorsFromEnglish(loc); saveState(); updateWeather(); } });
 			qs('#useCurrentLocationBtn').addEventListener('click', () => { if (navigator.geolocation) { updateMarquee('正在定位...', 'weather'); navigator.geolocation.getCurrentPosition( pos => { fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&localityLanguage=en`).then(r => r.json()).then(geo => { const city = geo.locality || geo.city; if (city) { settings.weatherLocation = city; setLocationSelectorsFromEnglish(city); saveState(); updateWeather(); } else updateMarquee(`<span style="color: ${settings.weatherColor};">定位失敗</span>`, 'weather'); }).catch(() => updateMarquee(`<span style="color: ${settings.weatherColor};">定位失敗</span>`, 'weather')); }, () => updateMarquee(`<span style="color: ${settings.weatherColor};">定位失敗，請檢查權限</span>`, 'weather'), { timeout: 10000 } ); } });
-			qs('#restoreDefaultsBtn').onclick = restoreDefaults;
-			qs('#randomColorsBtn').onclick = setRandomColors;
-			
-			document.body.addEventListener('click', e => { 
+			qs('#restoreDefaultsBtn').onclick = restoreDefaults; qs('#randomColorsBtn').onclick = setRandomColors;
+			document.body.addEventListener('click', e => {
 				if (settings.editMode || state.isDragging) return;
-				const target = e.target; 
-				if (target.closest('#weatherMarqueeContainer')) showWeatherForecast(); 
-				else if (target.closest('.jieqi-holiday-marquee-container')) showDateDetails(new Date()); 
-				else if (target.closest('.lunar-shichen-target')) updateShiChenDetailsView(new Date()); 
-				else if (target.closest('.lunar-day-target')) showDateDetails(new Date()); 
-				else if (target.closest('.lunar-month-text-target') || target.closest('.gregorian-month-target')) { state.calendarDate = new Date(); generateCalendarPopup(state.calendarDate.getFullYear(), state.calendarDate.getMonth()); qs('#calendarModal').classList.add('is-active'); } 
-				else if (target.closest('.moon-phase-icon-target')) showMoonPhaseDetails(new Date()); 
-				else if (target.closest('.lunar-year-target')) showZodiacDetails(); 
-				else if (target.closest('.gregorian-year-target')) { state.yearlyCalendarDate = new Date(); generateYearCalendar(state.yearlyCalendarDate.getFullYear()); qs('#yearlyCalendarModal').classList.add('is-active'); } 
-				else if (target.closest('.weekday-target')) { state.weeklyCalendarDate = new Date(); generateWeekCalendar(state.weeklyCalendarDate); qs('#weeklyCalendarModal').classList.add('is-active'); } 
-				else if (target.closest('.gregorian-day-target')) showDateDetails(new Date()); 
+				const target = e.target;
+				if (target.closest('#weatherMarqueeContainer')) showWeatherForecast();
+				else if (target.closest('.jieqi-holiday-marquee-container')) showDateDetails(new Date());
+				else if (target.closest('.lunar-shichen-target')) updateShiChenDetailsView(new Date());
+				else if (target.closest('.lunar-day-target')) showDateDetails(new Date());
+				else if (target.closest('.lunar-month-text-target') || target.closest('.gregorian-month-target')) { state.calendarDate = new Date(); generateCalendarPopup(state.calendarDate.getFullYear(), state.calendarDate.getMonth()); qs('#calendarModal').classList.add('is-active'); }
+				else if (target.closest('.moon-phase-icon-target')) showMoonPhaseDetails(new Date());
+				else if (target.closest('.lunar-year-target')) showZodiacDetails();
+				else if (target.closest('.gregorian-year-target')) { state.yearlyCalendarDate = new Date(); generateYearCalendar(state.yearlyCalendarDate.getFullYear()); qs('#yearlyCalendarModal').classList.add('is-active'); }
+				else if (target.closest('.weekday-target')) { state.weeklyCalendarDate = new Date(); generateWeekCalendar(state.weeklyCalendarDate); qs('#weeklyCalendarModal').classList.add('is-active'); }
+				else if (target.closest('.gregorian-day-target')) showDateDetails(new Date());
 				else if (target.closest('#analog-calendar-widget .calendar-container')) { state.calendarDate = new Date(); generateCalendarPopup(state.calendarDate.getFullYear(), state.calendarDate.getMonth()); qs('#calendarModal').classList.add('is-active'); }
 				else if (target.closest('#clockCenterDot')) updateShiChenDetailsView(new Date());
 			});
-
 			qsa('.close-icon').forEach(btn => btn.onclick = () => btn.closest('.modal').classList.remove('is-active'));
 			qsa('.modal').forEach(modal => modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('is-active'); }));
 			qs('#backToWeeklyForecastBtn').onclick = () => { qs('#hourlyWeatherModal').classList.remove('is-active'); qs('#weatherForecastModal').classList.add('is-active'); };
@@ -1138,7 +798,8 @@
 			qs('#prevMoonMonthBtn').onclick = () => { state.moonCalendarDate.setMonth(state.moonCalendarDate.getMonth() - 1); generateMoonPhaseCalendar(state.moonCalendarDate.getFullYear(), state.moonCalendarDate.getMonth(), state.moonCalendarDate); };
 			qs('#nextMoonMonthBtn').onclick = () => { state.moonCalendarDate.setMonth(state.moonCalendarDate.getMonth() + 1); generateMoonPhaseCalendar(state.moonCalendarDate.getFullYear(), state.moonCalendarDate.getMonth(), state.moonCalendarDate); };
 			qs('#todayMoonCalendarBtn').onclick = () => { const today = new Date(); today.setHours(12,0,0,0); state.moonCalendarDate = today; updateMainMoonPhaseDisplay(today); generateMoonPhaseCalendar(today.getFullYear(), today.getMonth(), today); };
-			qs('#settings-icon').addEventListener('click', () => { qs('#settingsModal').classList.add('is-active'); updateSettingsModalUI(); });
+			qs('#settings-icon').addEventListener('click', () => { qs('#settingsModal').classList.add('is-active'); updateSettingsModalUI(); updateSettingDependencies(); });
+			qs('#edit-mode-icon').addEventListener('click', () => { settings.editMode = !settings.editMode; toggleEditModeState(); saveState(); });
 			qs('#fullscreen-icon').addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(err => console.warn(`無法進入全螢幕模式: ${err.message}`)); else if (document.exitFullscreen) document.exitFullscreen(); });
 			const handleFullscreen = () => { setStyle(qs('#fullscreen-icon'), { display: document.fullscreenElement ? 'none' : 'block' }); window.dispatchEvent(new Event('resize')); };
 			document.addEventListener('fullscreenchange', handleFullscreen); document.addEventListener('webkitfullscreenchange', handleFullscreen);
@@ -1146,119 +807,53 @@
 			const resetIdle = () => { icons.forEach(icon => { if (window.getComputedStyle(icon).display !== 'none') setStyle(icon, { opacity: '0.5' }); }); clearTimeout(inactivityTimer); inactivityTimer = setTimeout(() => icons.forEach(icon => setStyle(icon, { opacity: '0' })), 5000); };
 			['mousemove', 'keydown', 'touchstart'].forEach(evt => document.addEventListener(evt, resetIdle));
 			resetIdle();
-
 			const dragStart = (e) => {
 				if (!settings.editMode) return;
-				
 				const wrapper = e.target.closest('.widget-wrapper');
 				if (!wrapper) return;
-
 				e.preventDefault();
-				state.isDragging = true;
-				state.dragTarget = wrapper.id.replace('-widget', '');
-				
-				const T = transformState[state.dragTarget];
-				if (!T) return;
-
+				state.isDragging = true; state.dragTarget = wrapper.id.replace('-widget', '');
+				const T = transformState[state.dragTarget]; if (!T) return;
 				const event = e.touches ? e.touches[0] : e;
-				state.startX = event.clientX;
-				state.startY = event.clientY;
-				
-				if (e.target.classList.contains('resize-handle-x')) {
-					state.dragType = 'resize-x';
-					document.body.style.cursor = 'ew-resize';
-					state.initialWidth = T.width || 92;
-				} else if (e.target.classList.contains('move-handle')) {
-					state.dragType = 'move';
-					document.body.style.cursor = 'move';
-					state.initialX = T.x;
-					state.initialY = T.y;
-				} else {
-					state.dragType = 'scale';
-					document.body.style.cursor = 'nwse-resize';
-					const rect = wrapper.getBoundingClientRect();
-					const centerX = rect.left + rect.width / 2;
-					const centerY = rect.top + rect.height / 2;
-					state.initialDist = Math.hypot(state.startX - centerX, state.startY - centerY);
-					state.initialScale = T.scale;
-				}
-
-				window.addEventListener('mousemove', dragMove);
-				window.addEventListener('touchmove', dragMove, { passive: false });
-				window.addEventListener('mouseup', dragEnd);
-				window.addEventListener('touchend', dragEnd);
+				state.startX = event.clientX; state.startY = event.clientY;
+				if (e.target.classList.contains('resize-handle-x')) { state.dragType = 'resize-x'; document.body.style.cursor = 'ew-resize'; state.initialWidth = T.width || 92; }
+				else if (e.target.classList.contains('move-handle')) { state.dragType = 'move'; document.body.style.cursor = 'move'; state.initialX = T.x; state.initialY = T.y; }
+				else { state.dragType = 'scale'; document.body.style.cursor = 'nwse-resize'; const rect = wrapper.getBoundingClientRect(); const centerX = rect.left + rect.width / 2; const centerY = rect.top + rect.height / 2; state.initialDist = Math.hypot(state.startX - centerX, state.startY - centerY); state.initialScale = T.scale; }
+				window.addEventListener('mousemove', dragMove); window.addEventListener('touchmove', dragMove, { passive: false }); window.addEventListener('mouseup', dragEnd); window.addEventListener('touchend', dragEnd);
 			};
-
 			const dragMove = (e) => {
 				if (!state.isDragging || !state.dragTarget) return;
 				e.preventDefault();
-				
-				const T = transformState[state.dragTarget];
-				const el = qs(`#${state.dragTarget}-widget`);
+				const T = transformState[state.dragTarget]; const el = qs(`#${state.dragTarget}-widget`);
 				if (!el || !T) return;
-				
 				const event = e.touches ? e.touches[0] : e;
-				const dx = event.clientX - state.startX;
-				const dy = event.clientY - state.startY;
-
+				const dx = event.clientX - state.startX; const dy = event.clientY - state.startY;
 				requestAnimationFrame(() => {
-					if (!state.isDragging) return; // Check again inside rAF
-					if (state.dragType === 'move') {
-						T.x = state.initialX + dx;
-						T.y = state.initialY + dy;
-					} else if (state.dragType === 'scale') {
-						const rect = el.getBoundingClientRect();
-						const centerX = rect.left + rect.width / 2;
-						const centerY = rect.top + rect.height / 2;
-						const currentDist = Math.hypot(event.clientX - centerX, event.clientY - centerY);
-						if (state.initialDist > 0) {
-							const scaleFactor = currentDist / state.initialDist;
-							T.scale = Math.max(0.2, state.initialScale * scaleFactor);
-						}
-					} else if (state.dragType === 'resize-x') {
-						const widthInVw = (dx / window.innerWidth) * 100;
-						T.width = Math.max(20, state.initialWidth + widthInVw); // Minimum width of 20vw
-					}
+					if (!state.isDragging) return;
+					if (state.dragType === 'move') { T.x = state.initialX + dx; T.y = state.initialY + dy; }
+					else if (state.dragType === 'scale') { const rect = el.getBoundingClientRect(); const centerX = rect.left + rect.width / 2; const centerY = rect.top + rect.height / 2; const currentDist = Math.hypot(event.clientX - centerX, event.clientY - centerY); if (state.initialDist > 0) { const scaleFactor = currentDist / state.initialDist; T.scale = Math.max(0.2, state.initialScale * scaleFactor); } }
+					else if (state.dragType === 'resize-x') { const widthInVw = (dx / window.innerWidth) * 100; T.width = Math.max(20, state.initialWidth + widthInVw); }
 					applyTransforms();
 				});
 			};
-
 			const dragEnd = () => {
 				if (!state.isDragging) return;
-				state.isDragging = false;
-				state.dragTarget = null;
-				state.dragType = null;
-				document.body.style.cursor = 'default';
-				saveState();
-				applyTransforms();
-				window.removeEventListener('mousemove', dragMove);
-				window.removeEventListener('touchmove', dragMove);
-				window.removeEventListener('mouseup', dragEnd);
-				window.removeEventListener('touchend', dragEnd);
+				state.isDragging = false; state.dragTarget = null; state.dragType = null;
+				document.body.style.cursor = 'default'; saveState(); applyTransforms();
+				window.removeEventListener('mousemove', dragMove); window.removeEventListener('touchmove', dragMove); window.removeEventListener('mouseup', dragEnd); window.removeEventListener('touchend', dragEnd);
 			};
-			
-			document.addEventListener('mousedown', dragStart);
-			document.addEventListener('touchstart', dragStart, { passive: false });
+			document.addEventListener('mousedown', dragStart); document.addEventListener('touchstart', dragStart, { passive: false });
 		}
-		function initializeApp() { // 初始化應用程式
+		function initializeApp() {
 			['movementIntervalMinutes', 'movementIntervalSeconds', 'scanlineIntervalMinutes', 'scanlineIntervalSeconds'].forEach(id => { const sel = document.getElementById(id); if (sel) for (let i = 0; i <= 59; i++) { const opt = document.createElement('option'); opt.value = i; opt.textContent = i; sel.appendChild(opt); } });
 			const countySelect = qs('#countySelect');
 			for (const county in taiwanLocations) { const opt = document.createElement('option'); opt.value = county; opt.textContent = county; countySelect.appendChild(opt); }
-			loadState();
-			updateSettingsModalUI();
-			initializeTimers();
-			initializeAnalogClock();
-			createAnalogCalendar();
-			applyAllSettings();
-			applyTransforms();
-			updateWidgetVisibility();
-			clearInterval(timers.weather);
-			updateWeather();
+			loadState(); updateSettingsModalUI(); updateSettingDependencies(); initializeTimers(); initializeAnalogClock(); createAnalogCalendar();
+			applyAllSettings(); applyTransforms(); updateWidgetVisibility(); clearInterval(timers.weather); updateWeather();
 			timers.weather = setInterval(updateWeather, 10 * 60 * 1000);
 			initializeEventListeners();
 		}
-
-		window.onload = initializeApp; // 頁面載入完成後初始化
+		window.onload = initializeApp;
 	</script>
 </body>
 </html>
