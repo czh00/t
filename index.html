@@ -135,12 +135,12 @@
 		.widget-wrapper { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); transition: transform 1s ease-in-out; will-change: transform; z-index: 10; display: inline-flex; justify-content: center; align-items: center; }
 		body.edit-mode .widget-wrapper { cursor: grab; }
 		#dateTimeDisplay { font-family: 'Digital Dismay', 'Noto Sans TC', sans-serif; font-weight: bold; text-align: center; padding: 10px; text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); cursor: default; z-index: 10; }
-		.time-text { font-size: 36vw; font-weight: normal; margin-bottom: -10vw; position: relative; display: inline-flex; align-items: baseline; gap: 0; white-space: nowrap; padding-right: 8vw; }
+		.time-text { font-size: 36vw; font-weight: normal; margin-bottom: -8vw; position: relative; display: inline-flex; align-items: baseline; gap: 0; white-space: nowrap; padding-right: 8vw; line-height: 0.7; }
 		.time-colon { line-height: 1; display: inline-flex; align-items: center; justify-content: center; }
 		.time-colon svg { fill: currentColor; position: relative; top: 0.05em; height: 0.6em; }
-		.time-seconds { font-size: 8vw; font-weight: normal; position: absolute; right: 0; bottom: 8vw; text-align: right; width: 6vw; }
-		.time-ampm { font-size: 5vw; font-weight: bold; position: absolute; top: 8vw; right: 0; text-align: right; width: 8vw; }
-		.gregorian-date-text, .lunar-and-jieqi-line { font-family: 'Noto Sans TC', 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; white-space: nowrap; cursor: default; position: relative; z-index: 1; width: 92vw; font-weight: 1000; }
+		.time-seconds { font-size: 8vw; font-weight: normal; position: absolute; right: 30px; bottom: 0vw; text-align: right; width: 6vw; }
+		.time-ampm { font-size: 5vw; font-weight: bold; position: absolute; top: 0vw; right: 20px; text-align: right; width: 8vw; }
+		.gregorian-date-text, .lunar-and-jieqi-line { font-family: 'Noto Sans TC', 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; white-space: nowrap; cursor: default; position: relative; z-index: 1; width: 92vw; font-weight: 1000; padding: 1vw 0; }
 		.gregorian-date-text { font-size: 6.5vw; }
 		.lunar-and-jieqi-line { font-size: 6.25vw; }
 		.gregorian-date-parts, .lunar-date-static-text { flex-shrink: 0; }
@@ -356,7 +356,7 @@
 			<g class="close-icon-svg" style="display: none;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></g>
 		</svg>
 	</div>
-	<div id="settings-icon" class="control-icon" title="設定"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61-.25-1.17-.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg></div>
+	<div id="settings-icon" class="control-icon" title="設定"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61-.25-1.17-.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12-.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg></div>
 	<div id="fullscreen-icon" class="control-icon" title="全螢幕/退出全螢幕"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"></path></svg></div>
 	<script>
 		let settings = {}, transformState = {};
@@ -611,7 +611,11 @@
 				const date = new Date(startDate); date.setDate(startDate.getDate() + i);
 				const cell = document.createElement('div'); cell.className = 'calendar-day';
 				if (date.getMonth() !== month) cell.classList.add('other-month');
-				cell.dataset.date = date.toISOString(); cell.onclick = () => showDateDetails(new Date(cell.dataset.date));
+				cell.dataset.date = date.toISOString();
+				cell.onclick = (e) => {
+					e.stopPropagation();
+					showDateDetails(new Date(cell.dataset.date));
+				};
 				const lunar = Solar.fromDate(date).getLunar();
 				const lunarText = lunar.getDay() === 1 ? s2t(lunar.getMonthInChinese()) + '月' : s2t(lunar.getDayInChinese());
 				let eventHtml = '';
@@ -745,6 +749,32 @@
 		function updateDistrictSelector(county) { const sel = qs('#districtSelect'); sel.innerHTML = ''; const districts = taiwanLocations[county]?.districts || {}; for (const name in districts) { const opt = document.createElement('option'); opt.value = name; opt.textContent = name; sel.appendChild(opt); } }
 		function syncLocationControls() { const county = qs('#countySelect').value, district = qs('#districtSelect').value; const english = taiwanLocations[county]?.districts[district] || 'taiwan'; qs('#weatherLocation').value = english; settings.weatherLocation = english; saveState(); updateWeather(); }
 		function setLocationSelectorsFromEnglish(english) { const countySel = qs('#countySelect'), districtSel = qs('#districtSelect'); qs('#weatherLocation').value = english; let found = false; for (const county in taiwanLocations) { for (const district in taiwanLocations[county].districts) { if (taiwanLocations[county].districts[district].toLowerCase() === english.toLowerCase()) { countySel.value = county; updateDistrictSelector(county); districtSel.value = district; found = true; break; } } if (found) break; } if (!found) { countySel.value = '台灣'; updateDistrictSelector('台灣'); districtSel.value = '台灣'; } }
+		
+		function constrainPositions() {
+			const handleSize = 40; // As defined in CSS for .move-handle
+			const margin = 10; // Extra margin from the edge
+			const minX = -window.innerWidth / 2 + handleSize / 2 + margin;
+			const maxX = window.innerWidth / 2 - handleSize / 2 - margin;
+			const minY = -window.innerHeight / 2 + handleSize / 2 + margin;
+			const maxY = window.innerHeight / 2 - handleSize / 2 - margin;
+
+			let needsUpdate = false;
+			for (const id in transformState) {
+				if (id === 'master') continue;
+				const T = transformState[id];
+				if (T && typeof T.x === 'number' && typeof T.y === 'number') {
+					const originalX = T.x;
+					const originalY = T.y;
+					T.x = Math.max(minX, Math.min(maxX, T.x));
+					T.y = Math.max(minY, Math.min(maxY, T.y));
+					if (T.x !== originalX || T.y !== originalY) {
+						needsUpdate = true;
+					}
+				}
+			}
+			return needsUpdate;
+		}
+
 		function initializeEventListeners() {
 			qs('#settingsModal').addEventListener('change', e => {
 				const { id, type, checked, value } = e.target;
@@ -802,7 +832,9 @@
 			qs('#edit-mode-icon').addEventListener('click', () => { settings.editMode = !settings.editMode; toggleEditModeState(); saveState(); });
 			qs('#fullscreen-icon').addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(err => console.warn(`無法進入全螢幕模式: ${err.message}`)); else if (document.exitFullscreen) document.exitFullscreen(); });
 			const handleFullscreen = () => { setStyle(qs('#fullscreen-icon'), { display: document.fullscreenElement ? 'none' : 'block' }); window.dispatchEvent(new Event('resize')); };
+			const handleResize = () => { if (constrainPositions()) { applyTransforms(); } };
 			document.addEventListener('fullscreenchange', handleFullscreen); document.addEventListener('webkitfullscreenchange', handleFullscreen);
+			window.addEventListener('resize', handleResize);
 			let inactivityTimer; const icons = qsa('.control-icon');
 			const resetIdle = () => { icons.forEach(icon => { if (window.getComputedStyle(icon).display !== 'none') setStyle(icon, { opacity: '0.5' }); }); clearTimeout(inactivityTimer); inactivityTimer = setTimeout(() => icons.forEach(icon => setStyle(icon, { opacity: '0' })), 5000); };
 			['mousemove', 'keydown', 'touchstart'].forEach(evt => document.addEventListener(evt, resetIdle));
@@ -830,7 +862,16 @@
 				const dx = event.clientX - state.startX; const dy = event.clientY - state.startY;
 				requestAnimationFrame(() => {
 					if (!state.isDragging) return;
-					if (state.dragType === 'move') { T.x = state.initialX + dx; T.y = state.initialY + dy; }
+					if (state.dragType === 'move') {
+						const handleSize = 40;
+						const margin = 10;
+						const minX = -window.innerWidth / 2 + handleSize / 2 + margin;
+						const maxX = window.innerWidth / 2 - handleSize / 2 - margin;
+						const minY = -window.innerHeight / 2 + handleSize / 2 + margin;
+						const maxY = window.innerHeight / 2 - handleSize / 2 - margin;
+						T.x = Math.max(minX, Math.min(maxX, state.initialX + dx));
+						T.y = Math.max(minY, Math.min(maxY, state.initialY + dy));
+					}
 					else if (state.dragType === 'scale') { const rect = el.getBoundingClientRect(); const centerX = rect.left + rect.width / 2; const centerY = rect.top + rect.height / 2; const currentDist = Math.hypot(event.clientX - centerX, event.clientY - centerY); if (state.initialDist > 0) { const scaleFactor = currentDist / state.initialDist; T.scale = Math.max(0.2, state.initialScale * scaleFactor); } }
 					else if (state.dragType === 'resize-x') { const widthInVw = (dx / window.innerWidth) * 100; T.width = Math.max(20, state.initialWidth + widthInVw); }
 					applyTransforms();
@@ -839,7 +880,11 @@
 			const dragEnd = () => {
 				if (!state.isDragging) return;
 				state.isDragging = false; state.dragTarget = null; state.dragType = null;
-				document.body.style.cursor = 'default'; saveState(); applyTransforms();
+				document.body.style.cursor = 'default';
+				if (constrainPositions()) {
+					applyTransforms();
+				}
+				saveState();
 				window.removeEventListener('mousemove', dragMove); window.removeEventListener('touchmove', dragMove); window.removeEventListener('mouseup', dragEnd); window.removeEventListener('touchend', dragEnd);
 			};
 			document.addEventListener('mousedown', dragStart); document.addEventListener('touchstart', dragStart, { passive: false });
@@ -848,7 +893,9 @@
 			['movementIntervalMinutes', 'movementIntervalSeconds', 'scanlineIntervalMinutes', 'scanlineIntervalSeconds'].forEach(id => { const sel = document.getElementById(id); if (sel) for (let i = 0; i <= 59; i++) { const opt = document.createElement('option'); opt.value = i; opt.textContent = i; sel.appendChild(opt); } });
 			const countySelect = qs('#countySelect');
 			for (const county in taiwanLocations) { const opt = document.createElement('option'); opt.value = county; opt.textContent = county; countySelect.appendChild(opt); }
-			loadState(); updateSettingsModalUI(); updateSettingDependencies(); initializeTimers(); initializeAnalogClock(); createAnalogCalendar();
+			loadState(); 
+			constrainPositions();
+			updateSettingsModalUI(); updateSettingDependencies(); initializeTimers(); initializeAnalogClock(); createAnalogCalendar();
 			applyAllSettings(); applyTransforms(); updateWidgetVisibility(); clearInterval(timers.weather); updateWeather();
 			timers.weather = setInterval(updateWeather, 10 * 60 * 1000);
 			initializeEventListeners();
