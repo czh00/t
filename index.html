@@ -131,15 +131,44 @@
 		.zodiac-item { background-color: #444; padding: 10px; border-radius: 8px; border: 1px solid #555; }
 		.zodiac-item .zodiac-icon { height: 4em; margin-bottom: 5px; }
 		.zodiac-item p { margin: 0; font-weight: bold; }
-		#master-layout { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); transition: transform 1s ease-in-out; will-change: transform; }
+		#master-layout {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			transition: transform 1s ease-in-out;
+			will-change: transform;
+			z-index: 2; /* 確保佈局在網格之上 */
+		}
 		.widget-wrapper { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); transition: transform 1s ease-in-out; will-change: transform; z-index: 10; display: inline-flex; justify-content: center; align-items: center; }
 		body.edit-mode .widget-wrapper { cursor: grab; }
 		#dateTimeDisplay { font-family: 'Digital Dismay', 'Noto Sans TC', sans-serif; font-weight: bold; text-align: center; padding: 10px; text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); cursor: default; z-index: 10; }
-		.time-text { font-size: 36vw; font-weight: normal; margin-bottom: -8vw; position: relative; display: inline-flex; align-items: baseline; gap: 0; white-space: nowrap; padding-right: 8vw; line-height: 0.7; }
+		.time-text { font-size: 42vw; font-weight: normal; margin-bottom: -8vw; position: relative; display: inline-flex; align-items: baseline; gap: 0; white-space: nowrap; padding-right: 1vw; line-height: 0.7; }
 		.time-colon { line-height: 1; display: inline-flex; align-items: center; justify-content: center; }
 		.time-colon svg { fill: currentColor; position: relative; top: 0.05em; height: 0.6em; }
-		.time-seconds { font-size: 8vw; font-weight: normal; position: absolute; right: 30px; bottom: 0vw; text-align: right; width: 6vw; }
-		.time-ampm { font-size: 5vw; font-weight: bold; position: absolute; top: 0vw; right: 20px; text-align: right; width: 8vw; }
+		.time-seconds { font-size: 8vw; font-weight: normal; position: absolute; right: 0vw; bottom: 1vw; text-align: right; width: 6vw; }
+		.time-ampm { font-size: 5vw; font-weight: bold; position: absolute; top: 1vw; right: 0vw; text-align: right; width: 8vw; }
+        /* 為了讓 ::before 偽元素可以正確地定位，需要將時、分、秒設為相對定位 */
+        #hoursDisplay, #minutesDisplay, #secondsDisplay {
+            position: relative;
+        }
+
+        /* 使用 ::before 偽元素來建立 "88" 背景 */
+        #hoursDisplay::before,
+        #minutesDisplay::before,
+        #secondsDisplay::before {
+            content: '88'; /* 顯示的內容 */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: rgba(255, 255, 255, 0.1); /* 設定一個非常淡的顏色 */
+            z-index: -1; /* 將其放置在實際數字的後面 */
+            display: flex;
+            justify-content: center; /* 水平置中 */
+            align-items: baseline; /* 對齊基線，與數字的對齊方式相同 */
+        }
 		.gregorian-date-text, .lunar-and-jieqi-line { font-family: 'Noto Sans TC', 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; white-space: nowrap; cursor: default; position: relative; z-index: 1; width: 92vw; font-weight: 1000; padding: 1vw 0; }
 		.gregorian-date-text { font-size: 6.5vw; }
 		.lunar-and-jieqi-line { font-size: 6.25vw; }
@@ -204,9 +233,31 @@
 		.move-handle::after { width: 10%; height: 60%; top: 20%; left: 45%; }
 		.resize-handle-x { position: absolute; top: 50%; right: -10px; transform: translateY(-50%); width: 10px; height: 40px; background-color: rgba(0, 255, 255, 0.8); border: 1px solid #fff; border-radius: 5px; cursor: ew-resize; pointer-events: auto; z-index: 101; display: none; }
 		body.edit-mode .resize-handle-x { display: block; }
+		#edit-mode-grid {
+			display: none; /* 預設隱藏 */
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			/* --- MODIFICATION START --- */
+			/* 改用更清晰的 linear-gradient 和 background-size 來繪製網格 */
+			/* 這樣可以避免因渲染差異導致線條看起來模糊或合併 */
+			background-image:
+				linear-gradient(to right, rgba(0, 255, 255, 0.2) 1px, transparent 1px),
+				linear-gradient(to bottom, rgba(0, 255, 255, 0.2) 1px, transparent 1px);
+			background-size: 50px 50px;
+			/* --- MODIFICATION END --- */
+			z-index: 90; /* 確保網格在元件之上，但在編輯控制項之下 */
+			pointer-events: none; /* 確保它不可互動 */
+		}
+		body.edit-mode #edit-mode-grid {
+			display: block; /* Show only in edit mode */
+		}
 	</style>
 </head>
 <body>
+	<div id="edit-mode-grid"></div>
 	<div id="background-scanline-overlay"></div>
 	<div id="text-scanline-overlay"></div>
 	<div id="master-layout">
@@ -394,7 +445,34 @@
 		function saveState() { try { localStorage.setItem('mergedClockSettings_v4', JSON.stringify(settings)); localStorage.setItem('mergedClockTransforms_v4', JSON.stringify(transformState)); } catch (e) { console.error("儲存狀態失敗:", e); } }
 		function loadState() { try { const storedSettings = localStorage.getItem('mergedClockSettings_v4'); settings = storedSettings ? { ...defaultSettings, ...JSON.parse(storedSettings) } : { ...defaultSettings }; const storedTransforms = localStorage.getItem('mergedClockTransforms_v4'); transformState = storedTransforms ? { ...defaultTransformState, ...JSON.parse(storedTransforms) } : { ...defaultTransformState }; } catch (e) { console.error("解析狀態失敗:", e); settings = { ...defaultSettings }; transformState = { ...defaultTransformState }; } settings.editMode = false; }
 		function updateSettingsModalUI() { for (const key in settings) { const el = document.getElementById(key); if (el) { if (el.type === 'checkbox') el.checked = settings[key]; else if (el.tagName !== 'SELECT' || !['countySelect', 'districtSelect'].includes(key)) el.value = settings[key]; } } setLocationSelectorsFromEnglish(settings.weatherLocation); }
-		function restoreDefaults() { settings = { ...defaultSettings }; transformState = { ...defaultTransformState }; saveState(); updateSettingsModalUI(); applyAllSettings(); applyTransforms(); updateWidgetVisibility(); applyScanlineEffect(); applyMovement(); updateSettingDependencies(); state.lastMarqueeContent = ''; state.lastWeatherContent = ''; updateWeather(); }
+		function restoreDefaults() {
+			// Reset settings and transforms to their default values.
+			settings = { ...defaultSettings }; 
+			transformState = { ...defaultTransformState };
+			
+			// Explicitly set edit mode to false, as the default state is not edit mode.
+			settings.editMode = false; 
+			
+			// Also reset the helper state variable that tracks movement before editing.
+			state.movementEnabledBeforeEdit = true;
+
+			// Save the newly restored state to localStorage.
+			saveState();
+			
+			// Update all UI elements to reflect the default settings.
+			updateSettingsModalUI();      // Updates checkboxes, color pickers, etc.
+			toggleEditModeState();        // IMPORTANT: Correctly updates the edit mode UI (icon, body class) and calls applyMovement.
+			applyAllSettings();           // Applies colors.
+			applyTransforms();            // Applies default positions and sizes.
+			updateWidgetVisibility();     // Shows/hides widgets based on defaults.
+			applyScanlineEffect();        // Applies default scanline settings.
+			updateSettingDependencies();  // Enables/disables related settings in the panel.
+			
+			// Clear caches to force a refresh of dynamic content.
+			state.lastMarqueeContent = '';
+			state.lastWeatherContent = '';
+			updateWeather();
+		}
 		function setRandomColors() { for (const key in settings) { if (key.toLowerCase().includes('color')) settings[key] = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0'); } saveState(); updateSettingsModalUI(); applyAllSettings(); }
 		function initializeTimers() { Object.values(timers).forEach(clearInterval); timers.main = setInterval(updateDigitalClock, 1000); timers.analog = setInterval(updateAnalogClock, 50); applyMovement(); applyScanlineEffect(); }
 		function getEncompassingBoundingBox(elements) {
@@ -403,14 +481,28 @@
 			if (!hasVisibleElements) return null;
 			return { left: minX, top: minY, right: maxX, bottom: maxY, width: maxX - minX, height: maxY - minY };
 		}
+		
+		// --- MODIFIED FUNCTION: applyMovement ---
+		// 負責啟動或停止隨機移動的計時器
 		function applyMovement() {
 			clearInterval(timers.movement);
-			if (settings.editMode) return;
+			if (settings.editMode) return; // 編輯模式下不移動
 			if (settings.enableMovement) {
 				const intervalMs = (parseInt(settings.movementIntervalMinutes) * 60 + parseInt(settings.movementIntervalSeconds)) * 1000;
-				if (intervalMs > 0) { moveRandomly(qs('#master-layout')); timers.movement = setInterval(() => moveRandomly(qs('#master-layout')), intervalMs); }
-			} else { applyTransforms(); }
+				if (intervalMs > 0) { 
+					moveRandomly(); // 啟用時先移動一次
+					timers.movement = setInterval(moveRandomly, intervalMs); 
+				}
+			} else { 
+				// 若關閉移動，則將主容器移回中心
+				if (transformState['master']) {
+					transformState['master'].x = 0;
+					transformState['master'].y = 0;
+				}
+				applyTransforms(); 
+			}
 		}
+
 		function applyScanlineEffect() {
 			clearInterval(timers.scanline);
 			const bg = qs('#background-scanline-overlay'), txt = qs('#text-scanline-overlay');
@@ -429,17 +521,47 @@
 			qsa('.calendar-bg-month, .analog-calendar-bg-month').forEach(el => el.style.color = bgMonthColor);
 			updateWeatherDisplay(); updateDigitalClock(); updateAnalogClock();
 		}
-		function moveRandomly(element) {
-			if (!element || settings.editMode) return;
+
+		// --- MODIFIED FUNCTION: moveRandomly ---
+		// 執行一次隨機移動，確保所有可見元件組成的群組都保持在畫面內
+		function moveRandomly() {
+			if (settings.editMode) return;
+			
+			// 我們只移動 master-layout 這個最外層的容器
 			const id = 'master';
-			if (!transformState[id]) transformState[id] = { x: 0, y: 0, scale: 1};
-			const T = transformState[id], allWidgets = qsa('.widget-wrapper'), bbox = getEncompassingBoundingBox(allWidgets);
-			if (!bbox) return;
-			const scaledWidth = bbox.width / T.scale, scaledHeight = bbox.height / T.scale;
-			const maxX = (window.innerWidth - scaledWidth) / 2, maxY = (window.innerHeight - scaledHeight) / 2;
-			if (maxX > 0 && maxY > 0) { T.x = Math.random() * (maxX * 2) - maxX; T.y = Math.random() * (maxY * 2) - maxY; } else { T.x = 0; T.y = 0; }
-			setStyle(element, { transform: `translate(calc(-50% + ${T.x}px), calc(-50% + ${T.y}px)) scale(${T.scale})` });
+			if (!transformState[id]) transformState[id] = { x: 0, y: 0, scale: 1 };
+			
+			const T = transformState[id];
+			const allWidgets = qsa('.widget-wrapper');
+			const bbox = getEncompassingBoundingBox(allWidgets); // 取得所有可見元件的群組邊界
+
+			if (!bbox) return; // 如果沒有可見的元件，就不執行任何操作
+
+			// 考慮縮放後的實際寬高
+			const scaledWidth = bbox.width / T.scale;
+			const scaledHeight = bbox.height / T.scale;
+			
+			const margin = 10; // 離螢幕邊緣保留一點點距離
+			
+			// 計算 X 和 Y 軸可以移動的最大範圍
+			const maxX = (window.innerWidth - scaledWidth) / 2 - margin;
+			const maxY = (window.innerHeight - scaledHeight) / 2 - margin;
+
+			// 只有在元件群組比螢幕小時，才進行隨機移動
+			if (maxX > 0 && maxY > 0) {
+				// 在 [-maxX, +maxX] 和 [-maxY, +maxY] 的範圍內產生隨機座標
+				T.x = Math.random() * (maxX * 2) - maxX;
+				T.y = Math.random() * (maxY * 2) - maxY;
+			} else {
+				// 如果元件群組比螢幕還大，就將它置中
+				T.x = 0;
+				T.y = 0;
+			}
+			
+			// 套用新的座標，並帶有平滑的過渡動畫
+			applyTransforms();
 		}
+
 		function applyTransforms() {
 			const masterEl = qs('#master-layout'), T_master = transformState['master'] || defaultTransformState['master'];
 			if(masterEl) { masterEl.style.transition = state.isDragging ? 'none' : 'transform 1s ease-in-out'; masterEl.style.transform = `translate(calc(-50% + ${T_master.x}px), calc(-50% + ${T_master.y}px)) scale(${T_master.scale})`; }
@@ -462,11 +584,30 @@
 		function toggleEditModeState() {
 			document.body.classList.toggle('edit-mode', settings.editMode);
 			const wrenchIcon = qs('#edit-mode-icon .wrench-icon'), closeIcon = qs('#edit-mode-icon .close-icon-svg');
-			if (wrenchIcon && closeIcon) { wrenchIcon.style.display = settings.editMode ? 'none' : 'block'; closeIcon.style.display = settings.editMode ? 'block' : 'none'; }
+			if (wrenchIcon && closeIcon) { 
+				wrenchIcon.style.display = settings.editMode ? 'none' : 'block'; 
+				closeIcon.style.display = settings.editMode ? 'block' : 'none'; 
+			}
 			qs('#edit-mode-icon').title = settings.editMode ? '結束編輯' : '編輯模式';
-			if (settings.editMode) { state.movementEnabledBeforeEdit = settings.enableMovement; if (settings.enableMovement) { settings.enableMovement = false; qs('#enableMovement').checked = false; } }
-			else { settings.enableMovement = state.movementEnabledBeforeEdit; qs('#enableMovement').checked = state.movementEnabledBeforeEdit; }
-			applyMovement(); updateSettingDependencies();
+
+			if (settings.editMode) {
+				// --- 進入編輯模式 ---
+				// 1. 儲存當前的「隨機移動」設定狀態。
+				state.movementEnabledBeforeEdit = settings.enableMovement;
+				// 2. 為了方便編輯，一律暫時關閉「隨機移動」。
+				//    這樣可以確保不論原始狀態為何，進入編輯模式時的行為都一致。
+				settings.enableMovement = false;
+				qs('#enableMovement').checked = false;
+			} else {
+				// --- 退出編輯模式 ---
+				// 1. 恢復進入編輯模式前的「隨機移動」設定。
+				settings.enableMovement = state.movementEnabledBeforeEdit;
+				qs('#enableMovement').checked = state.movementEnabledBeforeEdit;
+			}
+			
+			// 根據更新後的設定，應用移動效果（開啟或關閉計時器）並更新設定面板中的相關選項狀態。
+			applyMovement(); 
+			updateSettingDependencies();
 		}
 		function updateSettingDependencies() {
 			const toggleSettingGroup = (parentSelector, childSelectors, isParentEnabled) => {
