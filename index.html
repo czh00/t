@@ -83,7 +83,7 @@
 		.weekly-gregorian-day { font-size: 1.5em; font-weight: bold; } /* 週曆國曆日期的樣式 */
 		.weekly-lunar-day { font-size: 0.9em; color: #ccc; margin-top: 5px; } /* 週曆農曆日期的樣式 */
 		.weekly-calendar-day .event-indicator { font-size: 0.8em; padding: 2px 5px; border-radius: 4px; margin-top: 5px; display: block; text-align: center; width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;} /* 週曆事件指示器的樣式 */
-		.yearly-calendar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; overflow-y: auto; padding: 10px; max-height: 75vh; } /* 年曆網格的樣式：自適應欄數、垂直滾動、最大高度 */
+		.yearly-calendar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; overflow-y: auto; padding: 10px; max-height: 75vh; } /* 年曆網格的樣式：自適應欄數、垂直滾動、最大高度 */
 		.yearly-month-header { font-size: 1.2em; font-weight: bold; text-align: center; margin-bottom: 10px; color: #00FF00; cursor: pointer; } /* 年曆中月份標頭的樣式 */
 		.yearly-weekdays, .yearly-day-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; text-align: center; } /* 年曆中星期標頭和日期網格的樣式 */
 		.yearly-weekdays div { font-size: 0.8em; color: #aaa; } /* 年曆中星期標頭的文字樣式 */
@@ -202,7 +202,7 @@
 		.yearly-month-container .calendar-bg-month { font-size: 10rem; top: 52%; } /* 年曆中月份的背景月份樣式 */
 		.analog-calendar-bg-month { font-size: 10rem; } /* 類比時鐘旁日曆的背景月份樣式 */
 		.calendar-content, .yearly-calendar-content { position: relative; overflow: hidden; } /* 為日曆內容設定相對定位和隱藏溢出，以容納背景月份 */
-		.yearly-month-container { position: relative; overflow: hidden; background-color: transparent; border: 1px solid #555; } /* 年曆中每個月份容器的樣式 */
+		.yearly-month-container { position: relative; overflow: hidden; background-color: transparent; border: 1px solid #555; min-height: 10vh; } /* 年曆中每個月份容器的樣式 */
 		.calendar-day, .weekly-calendar-day { background-color: transparent !important; z-index: 1; } /* 確保日期格子的背景透明，且層級高於背景月份 */
 		.calendar-day.other-month { color: #777; } /* 非當前月份的日期樣式：灰色文字 */
 		.calendar-day:hover, .weekly-calendar-day:hover, .calendar-container .calendar-day:hover { background-color: rgba(94, 94, 94, 0.5) !important; } /* 日期格子懸停時的背景色 */
