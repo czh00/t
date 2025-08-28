@@ -83,7 +83,7 @@
 		.weekly-gregorian-day { font-size: 1.5em; font-weight: bold; } /* 週曆國曆日期的樣式 */
 		.weekly-lunar-day { font-size: 0.9em; color: #ccc; margin-top: 5px; } /* 週曆農曆日期的樣式 */
 		.weekly-calendar-day .event-indicator { font-size: 0.8em; padding: 2px 5px; border-radius: 4px; margin-top: 5px; display: block; text-align: center; width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;} /* 週曆事件指示器的樣式 */
-		.yearly-calendar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; overflow: auto; max-height: 50vh; } /* 年曆網格的樣式：自適應欄數、垂直滾動、最大高度 */
+		.yearly-calendar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; max-height: 50vh; overflow-y: auto; } /* 年曆網格的樣式：自適應欄數，並增加最大高度和滾動條 */
 		.yearly-month-header { font-size: 1.2em; font-weight: bold; text-align: center; margin-bottom: 10px; color: #00FF00; cursor: pointer; } /* 年曆中月份標頭的樣式 */
 		.yearly-weekdays, .yearly-day-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 03px text-align: center; } /* 年曆中星期標頭和日期網格的樣式 */
 		.yearly-weekdays div { font-size: 0.8em; color: #aaa; } /* 年曆中星期標頭的文字樣式 */
