@@ -66,6 +66,9 @@
 		.settings-column h3 { text-align: center; margin: 0; color: #00FF00; } /* 設定區塊欄目標題的樣式 */
 		.calendar-content, .weekly-calendar-content { background-color: #2c2c2c; margin: auto; padding: 20px; border: 1px solid #888; border-radius: 10px; width: 95%; max-width: 900px; } /* 月曆和週曆內容區域的樣式 */
 		.yearly-calendar-content { background-color: #2c2c2c; margin: auto; padding: 20px; border: 1px solid #888; border-radius: 10px; width: 60%; max-width: 1200px; } /* 年曆內容區域的樣式，寬度更大 */
+		#yearlyCalendarModal .modal-content {
+			display: block; /* 覆蓋 .modal-content 的 display: flex，解決 flex 容器下的 overflow-y 問題 */
+		}
 		.calendar-weekdays, .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; } /* 星期標頭和日期網格的樣式：使用 grid 佈局，七欄等寬 */
 		#calendarModal .calendar-grid { max-height: 65vh; overflow-y: auto; } /* 月曆彈出視窗中的日期網格：設定最大高度和垂直滾動條 */
 		.calendar-weekdays div { font-weight: bold; padding-bottom: 5px; text-align: center; color: #aaa; } /* 星期標頭中每個元素的樣式 */
@@ -83,7 +86,7 @@
 		.weekly-gregorian-day { font-size: 1.5em; font-weight: bold; } /* 週曆國曆日期的樣式 */
 		.weekly-lunar-day { font-size: 0.9em; color: #ccc; margin-top: 5px; } /* 週曆農曆日期的樣式 */
 		.weekly-calendar-day .event-indicator { font-size: 0.8em; padding: 2px 5px; border-radius: 4px; margin-top: 5px; display: block; text-align: center; width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;} /* 週曆事件指示器的樣式 */
-		.yearly-calendar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; max-height: 50vh; overflow-y: auto; } /* 年曆網格的樣式：自適應欄數，並增加最大高度和滾動條 */
+		.yearly-calendar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; } /* 年曆網格的樣式：自適應欄數 */
 		.yearly-month-header { font-size: 1.2em; font-weight: bold; text-align: center; margin-bottom: 10px; color: #00FF00; cursor: pointer; } /* 年曆中月份標頭的樣式 */
 		.yearly-weekdays, .yearly-day-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 03px text-align: center; } /* 年曆中星期標頭和日期網格的樣式 */
 		.yearly-weekdays div { font-size: 0.8em; color: #aaa; } /* 年曆中星期標頭的文字樣式 */
@@ -191,7 +194,8 @@
 		.calendar-content .calendar-bg-month { font-size: 20rem; top: 42%; } /* 彈出視窗月曆的背景月份樣式 */
 		.yearly-month-container .calendar-bg-month { font-size: 10rem; top: 52%; } /* 年曆中月份的背景月份樣式 */
 		.analog-calendar-bg-month { font-size: 10rem; } /* 類比時鐘旁日曆的背景月份樣式 */
-		.calendar-content, .yearly-calendar-content { position: relative; overflow: hidden; } /* 為日曆內容設定相對定位和隱藏溢出，以容納背景月份 */
+		.calendar-content { position: relative; overflow: hidden; } /* 為月曆內容設定相對定位和隱藏溢出，以容納背景月份 */
+		.yearly-calendar-content { position: relative; } /* 為年曆內容設定相對定位，移除 overflow: hidden 以便滾動 */
 		.yearly-month-container { position: relative; overflow: hidden; background-color: transparent; border: 1px solid #555; } /* 年曆中每個月份容器的樣式 */
 		.calendar-day, .weekly-calendar-day { background-color: transparent !important; z-index: 1; } /* 確保日期格子的背景透明，且層級高於背景月份 */
 		.calendar-day.other-month { color: #777; } /* 非當前月份的日期樣式：灰色文字 */
