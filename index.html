@@ -141,17 +141,7 @@
 		.time-seconds { font-size: 8vw; font-weight: normal; position: absolute; right: 0vw; bottom: 1vw; text-align: right; width: 6vw; } /* 秒數文字樣式：絕對定位於右下角 */
 		.time-ampm { font-size: 4.2vw; font-weight: bold; position: absolute; top: 1vw; right: 0vw; text-align: right; width: 8vw; } /* AM/PM 文字樣式：絕對定位於右上角 */
 		#hoursDisplay, #minutesDisplay, #secondsDisplay { position: relative; } /* 時、分、秒顯示容器：相對定位 */
-		#hoursDisplay::before, #minutesDisplay::before, #secondsDisplay::before { /* 使用 ::before 偽元素為時、分、秒顯示 '88' 作為背景佔位符，製造數位螢幕效果 */
-			content: '88'; /* 偽元素的內容 */
-			position: absolute; /* 絕對定位 */
-			top: 0; left: 0; /* 位置與父元素重合 */
-			width: 100%; height: 100%; /* 大小與父元素相同 */
-			color: rgba(255, 255, 255, 0.1); /* 半透明顏色 */
-			z-index: -1; /* 位於父元素下方 */
-			display: flex; /* 使用 flex 佈局 */
-			justify-content: center; /* 水平置中 */
-			align-items: baseline; /* 基線對齊 */
-		} /* 偽元素樣式結束 */
+		#hoursDisplay::before, #minutesDisplay::before, #secondsDisplay::before { content: '88'; position: absolute; top: 0; left: 0; width: 100%; height: 100%; color: rgba(255, 255, 255, 0.1); z-index: -1; display: flex; justify-content: center; align-items: baseline; } /* 使用 ::before 偽元素為時、分、秒顯示 '88' 作為背景佔位符，製造數位螢幕效果 */
 		.gregorian-date-text, .lunar-and-jieqi-line { font-family: 'Noto Sans TC', 'Inter', sans-serif; display: flex; justify-content: center; align-items: baseline; white-space: nowrap; cursor: default; position: relative; z-index: 1; width: 92vw; font-weight: 1000; padding: 0.1vw 0; line-height: 0.9; } /* 國曆和農曆行的通用樣式 */
 		.gregorian-date-text { font-size: 6.5vw; } /* 國曆日期文字大小 */
 		.lunar-and-jieqi-line { font-size: 6.25vw; } /* 農曆和節氣行文字大小 */
@@ -202,8 +192,8 @@
 		.yearly-month-container .calendar-bg-month { font-size: 10rem; top: 52%; } /* 年曆中月份的背景月份樣式 */
 		.analog-calendar-bg-month { font-size: 10rem; } /* 類比時鐘旁日曆的背景月份樣式 */
 		.calendar-content, .yearly-calendar-content { position: relative; overflow: hidden; } /* 為日曆內容設定相對定位和隱藏溢出，以容納背景月份 */
-			.yearly-month-container { position: relative; overflow: hidden; background-color: transparent; border: 1px solid #555; } /* 年曆中每個月份容器的樣式 */
-	.calendar-day, .weekly-calendar-day { background-color: transparent !important; z-index: 1; } /* 確保日期格子的背景透明，且層級高於背景月份 */
+		.yearly-month-container { position: relative; overflow: hidden; background-color: transparent; border: 1px solid #555; } /* 年曆中每個月份容器的樣式 */
+		.calendar-day, .weekly-calendar-day { background-color: transparent !important; z-index: 1; } /* 確保日期格子的背景透明，且層級高於背景月份 */
 		.calendar-day.other-month { color: #777; } /* 非當前月份的日期樣式：灰色文字 */
 		.calendar-day:hover, .weekly-calendar-day:hover, .calendar-container .calendar-day:hover { background-color: rgba(94, 94, 94, 0.5) !important; } /* 日期格子懸停時的背景色 */
 		.calendar-day.other-month:hover { background-color: rgba(74, 74, 74, 0.5) !important; } /* 非當前月份日期懸停時的背景色 */
@@ -216,14 +206,7 @@
 		.move-handle::after { width: 10%; height: 60%; top: 20%; left: 45%; } /* 移動控制柄的豎線 */
 		.resize-handle-x { position: absolute; top: 50%; right: -10px; transform: translateY(-50%); width: 10px; height: 40px; background-color: rgba(0, 255, 255, 0.8); border: 1px solid #fff; border-radius: 5px; cursor: ew-resize; pointer-events: auto; z-index: 101; display: none; } /* 水平縮放控制柄的樣式 */
 		body.edit-mode .resize-handle-x { display: block; } /* 編輯模式下顯示水平縮放控制柄 */
-		#edit-mode-grid { /* 編輯模式下的網格覆蓋層樣式 */
-			display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; /* 預設隱藏，固定定位覆蓋全螢幕 */
-			background-image: /* 使用兩個線性漸層來繪製網格線 */
-				linear-gradient(to bottom, transparent 24px, rgba(0, 255, 255, 0.2) 24px, rgba(0, 255, 255, 0.2) 25px, transparent 25px), /* 水平線 */
-				linear-gradient(to right, transparent 24px, rgba(0, 255, 255, 0.2) 24px, rgba(0, 255, 255, 0.2) 25px, transparent 25px); /* 垂直線 */
-			background-size: 50px 50px; background-position: center center; /* 設定網格大小和位置 */
-			z-index: 90; pointer-events: none; /* 較低的層級，不影響滑鼠事件 */
-		} /* 編輯模式網格樣式結束 */
+		#edit-mode-grid { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-image: linear-gradient(to bottom, transparent 24px, rgba(0, 255, 255, 0.2) 24px, rgba(0, 255, 255, 0.2) 25px, transparent 25px), linear-gradient(to right, transparent 24px, rgba(0, 255, 255, 0.2) 24px, rgba(0, 255, 255, 0.2) 25px, transparent 25px); background-size: 50px 50px; background-position: center center; z-index: 90; pointer-events: none; } /* 編輯模式下的網格覆蓋層樣式 */
 		#edit-mode-grid::before, #edit-mode-grid::after { content: ''; position: absolute; background-color: rgba(255, 0, 255, 0.5); z-index: 91; } /* 編輯模式網格的中心十字線（偽元素） */
 		#edit-mode-grid::before { top: 0; left: 50%; width: 1px; height: 100%; transform: translateX(-50%); } /* 中心垂直線 */
 		#edit-mode-grid::after { top: 50%; left: 0; width: 100%; height: 1px; transform: translateY(-50%); } /* 中心水平線 */
