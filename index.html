@@ -77,6 +77,228 @@
             overflow-y: auto;
             position: relative;
         }
+        
+        /* --- [開始] 全螢幕彈窗通用響應式樣式 --- */
+        /* 說明: 這個區塊的樣式專為非設定頁的彈出視窗設計，
+           讓它們能自動填滿整個螢幕，並根據螢幕大小縮放字級和間距，
+           以達到在小螢幕或高解析度螢幕上都有良好閱讀性的效果。 */
+        .modal:not(#settingsModal) .modal-content {
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            max-height: none;
+            border-radius: 0;
+            margin: 0;
+            border: none;
+            padding: 2vmin; /* 使用 vmin 作為內距單位，讓它隨螢幕最小邊縮放 */
+            gap: 1.5vmin;   /* 使用 vmin 作為子元素間距單位 */
+        }
+        /* 字體與控制項縮放 */
+        .modal:not(#settingsModal) .modal-header {
+            padding: 0;
+            margin: 0;
+        }
+        .modal:not(#settingsModal) .modal-header h2,
+        .modal:not(#settingsModal) .modal-header h3 {
+            /* clamp(最小值, 偏好值, 最大值)
+               字體大小會在 1.5em 到 3em 之間，並試圖維持螢幕最小邊的 5% 大小 */
+            font-size: clamp(1.5em, 5vmin, 3em);
+        }
+        .modal:not(#settingsModal) .modal-header button {
+            font-size: clamp(1em, 3vmin, 1.6em);
+            padding: 1vmin 1.8vmin;
+        }
+        .modal:not(#settingsModal) .today-btn {
+             font-size: clamp(0.9em, 2.5vmin, 1.4em);
+             padding: 1vmin 1.8vmin;
+        }
+        .modal:not(#settingsModal) .action-button {
+            font-size: clamp(0.9em, 3vmin, 1.5em);
+            padding: 1vmin 2vmin;
+        }
+        .modal:not(#settingsModal) .close-icon {
+            font-size: clamp(1.5rem, 6vmin, 3.5rem);
+        }
+        /* 詳細資訊彈窗 */
+        .modal:not(#settingsModal) .details-content {
+            max-width: 100%;
+        }
+        /* [調整] 加大當日資訊的字級 */
+        .modal:not(#settingsModal) .details-content p {
+            font-size: clamp(1.5em, 4.5vmin, 2.5em);
+        }
+        /* [調整] 讓宜忌的標題與內容也能隨畫面縮放 */
+        .modal:not(#settingsModal) .details-content .yi-ji-grid {
+            grid-template-columns: 8vmin 1fr; /* 標題寬度隨螢幕縮放 */
+            gap: 1vmin 2vmin;
+            font-size: clamp(1.4em, 4vmin, 2.2em);
+        }
+        /* 月曆、週曆、年曆 */
+        .modal:not(#settingsModal) .calendar-weekdays {
+            gap: 1vmin;
+            top: 0; /* [修改] 調整置頂位置以符合標頭高度 */
+            padding: 1vmin 0;
+        }
+        .modal:not(#settingsModal) .calendar-weekdays div {
+            font-size: clamp(0.8em, 2.5vmin, 1.2em);
+        }
+        .modal:not(#settingsModal) .calendar-grid {
+            gap: 1vmin;
+        }
+        #calendarModal .modal-content {
+            overflow: hidden; /* 防止背景月份文字溢出 */
+        }
+        #calendarModal .calendar-grid {
+            max-height: none;
+            flex-grow: 1; /* 讓日曆格線填滿剩餘空間 */
+            padding-bottom: 2vmin;
+        }
+        .modal:not(#settingsModal) .calendar-day {
+            padding: 1vmin;
+            font-size: clamp(0.9em, 2vmin, 1.2em);
+        }
+        .modal:not(#settingsModal) .gregorian-day {
+            font-size: clamp(1.2em, 3vmin, 1.8em);
+        }
+        .modal:not(#settingsModal) .lunar-day {
+            font-size: clamp(0.8em, 2vmin, 1.1em);
+        }
+        .modal:not(#settingsModal) .event-indicator {
+            font-size: clamp(0.8em, 1.8vmin, 1em);
+            padding: 0.5vmin 1vmin;
+            margin-top: 0.5vmin;
+        }
+        .modal:not(#settingsModal) .calendar-bg-month {
+            font-size: 80vmin; /* 背景月份跟著螢幕大小縮放 */
+        }
+        /* 週曆 */
+        .modal:not(#settingsModal) .weekly-calendar-grid {
+            gap: 1vmin;
+            flex-grow: 1;
+        }
+        .modal:not(#settingsModal) .weekly-calendar-day {
+            padding: 1.5vmin;
+            min-height: 15vmin; /* 最小高度隨螢幕縮放 */
+        }
+        .modal:not(#settingsModal) .weekly-day-header {
+            font-size: clamp(1.1em, 3vmin, 1.6em);
+            margin-bottom: 1vmin;
+        }
+        .modal:not(#settingsModal) .weekly-gregorian-day {
+            font-size: clamp(1.5em, 4vmin, 2.2em);
+        }
+        .modal:not(#settingsModal) .weekly-lunar-day {
+            font-size: clamp(0.9em, 2.2vmin, 1.2em);
+            margin-top: 1vmin;
+        }
+        /* --- [新增] 以下為天氣與年曆的響應式樣式 --- */
+        /* 年曆 */
+        .modal:not(#settingsModal) .yearly-calendar-grid {
+            /* 每個月份的最小寬度設為 vmin，讓它在小螢幕上能自動換行 */
+            grid-template-columns: repeat(auto-fit, minmax(25vmin, 1fr));
+            gap: 1.5vmin;
+            overflow-y: auto; /* 內容過多時啟用滾動 */
+            flex-grow: 1; /* 填滿剩餘空間 */
+        }
+        .modal:not(#settingsModal) .yearly-month-container .calendar-bg-month {
+            font-size: 28vmin;
+        }
+        .modal:not(#settingsModal) .yearly-month-header {
+            font-size: clamp(1.2em, 3.5vmin, 1.8em);
+            margin-bottom: 1.5vmin;
+        }
+        .modal:not(#settingsModal) .yearly-day-grid {
+            gap: 0.5vmin;
+        }
+        .modal:not(#settingsModal) .yearly-weekdays div {
+            font-size: clamp(0.8em, 2vmin, 1.1em);
+        }
+        .modal:not(#settingsModal) .yearly-day {
+            font-size: clamp(0.9em, 2.2vmin, 1.2em);
+            padding: 0.5vmin;
+            min-height: 4vmin;
+        }
+        /* 天氣 */
+        .modal:not(#settingsModal) .weather-forecast-grid,
+        .modal:not(#settingsModal) .hourly-weather-grid {
+            /* 每個預報項目的最小寬度設為 vmin，使其自動換行 */
+            grid-template-columns: repeat(auto-fit, minmax(15vmin, 1fr));
+            gap: 1.5vmin;
+        }
+        .modal:not(#settingsModal) .forecast-day,
+        .modal:not(#settingsModal) .hourly-item {
+            padding: 1.5vmin;
+        }
+        .modal:not(#settingsModal) .forecast-day p,
+        .modal:not(#settingsModal) .hourly-item p {
+            font-size: clamp(0.9em, 2.2vmin, 1.2em);
+        }
+        .modal:not(#settingsModal) .weather-icon {
+            height: 6vmin; /* 圖示高度隨螢幕縮放 */
+        }
+        .modal:not(#settingsModal) .hourly-item .weather-icon {
+            height: 5vmin;
+        }
+        /* --- [新增] 以上為天氣與年曆的響應式樣式 --- */
+        /* 月相 */
+        .modal:not(#settingsModal) #moonPhaseDisplay {
+            gap: 0;
+            top: 0; /* [修改] 調整置頂位置 */
+            padding-bottom: 0;
+        }
+        .modal:not(#settingsModal) #moonPhaseDisplay p {
+            font-size: clamp(1.1em, 3vmin, 1.6em);
+            max-width: 100%;
+        }
+        .modal:not(#settingsModal) .moon-calendar-container {
+            max-width: 100%;
+            max-height: none;
+            flex-grow: 1; /* 讓月曆容器填滿剩餘空間 */
+        }
+        #moonPhaseModal .modal-content {
+            overflow: hidden;
+        }
+        #moonPhaseModal #moonPhaseModalContent {
+            flex-grow: 1; /* 讓內容區塊填滿標頭以外的剩餘空間 */
+            display: flex;
+            overflow: hidden; /* 確保子元素滾動正常 */
+        }
+        .modal:not(#settingsModal) #moonCalendarGrid {
+            overflow-y: auto; /* 讓月曆本身可以滾動 */
+            flex-grow: 1;
+        }
+        .modal:not(#settingsModal) #moonCalendarGrid .calendar-day {
+            min-height: 10vmin;
+            padding: 0.5vmin;
+            font-size: clamp(0.8em, 2vmin, 1.1em);
+            gap: 0.5vmin;
+        }
+        .modal:not(#settingsModal) #moonCalendarGrid .gregorian-day {
+            font-size: clamp(1.1em, 2.8vmin, 1.5em);
+        }
+        .modal:not(#settingsModal) #moonCalendarGrid .moon-phase-icon-small svg,
+        .modal:not(#settingsModal) #moonCalendarGrid .moon-phase-icon-small img {
+            width: 4vmin;
+            height: 4vmin;
+        }
+        /* 生肖 */
+        .modal:not(#settingsModal) .zodiac-grid {
+            grid-template-columns: repeat(auto-fit, minmax(18vmin, 1fr));
+            gap: 2vmin;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .modal:not(#settingsModal) .zodiac-item {
+            padding: 1.5vmin;
+        }
+        .modal:not(#settingsModal) .zodiac-item .zodiac-icon {
+            height: 12vmin;
+            margin-bottom: 1vmin;
+        }
+        .modal:not(#settingsModal) .zodiac-item p {
+            font-size: clamp(1em, 3vmin, 1.5em);
+        }
+        /* --- [結束] 全螢幕彈窗樣式 --- */
 
         /* --- 共用標頭樣式 (彈窗 & 主畫面日曆) --- */
         .modal-header {
@@ -124,7 +346,7 @@
         .modal-header button,
         .calendar-header button {
             background: none;
-            border: 1px solid #555;
+            border: 0;
             color: #00FF00;
             font-size: 1.2em;
             cursor: pointer;
@@ -137,9 +359,10 @@
             background-color: #555;
             color: #fff;
         }
+        /* [修改] 今天按鈕的字體大小使用相對單位 em，並移除 !important 以利於在彈窗中被響應式樣式覆蓋 */
         .today-btn {
-            font-size: 0.9em !important; /* !important 確保覆蓋通用設定 */
-            padding: 4px 10px !important;
+            font-size: 0.8em;
+            padding: 4px 10px;
         }
         .close-icon {
             font-size: 1.5rem;
@@ -223,14 +446,15 @@
             gap: 5px; 
             text-align: center; 
             position: sticky; /* 置頂 */
-            top: 50px; /* 標頭的高度 */
+            top: 0; /* 標頭的高度 */
             background-color: #333; /* 背景色以遮蓋下方內容 */
             z-index: 10;
             padding: 5px 0;
         }
         .calendar-weekdays div { font-weight: bold; color: #aaa; }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
-        #calendarModal .calendar-grid { max-height: 65vh; overflow-y: auto; }
+        /* [修改] 移除 max-height 限制，解決不必要的捲動條問題 */
+        #calendarModal .calendar-grid { overflow-y: auto; }
         /* 日期格子共用樣式 */
         .calendar-day {
             border-radius: 5px; padding: 5px;
@@ -265,7 +489,7 @@
             z-index: 0; pointer-events: none;
             font-family: 'Noto Sans TC', 'Inter', sans-serif;
             line-height: 1; transition: color 0.4s ease;
-            font-size: 12rem;
+            font-size: 30rem;
         }
         
         /* --- 主畫面日曆 (Analog Calendar Widget) --- */
@@ -274,17 +498,17 @@
             text-align: center; z-index: 10;
             display: flex; flex-direction: column; flex-shrink: 0;
             position: relative; padding: 15px;
-            background-color: rgba(30, 30, 30, 0.7);
+            background-color: transparent;
             border-radius: 10px; overflow: hidden;
         }
-        #analog-calendar-grid .weekday-header { color: var(--calendar-weekday-color); }
+        #analog-calendar-widget .weekday-header { color: var(--calendar-weekday-color); }
         .calendar-container .calendar-day { min-height: 6vh; }
         .calendar-container .calendar-day:hover { background-color: rgba(94, 94, 94, 0.7) !important; }
         .calendar-container .calendar-day.is-today { border-color: var(--highlight-color); box-shadow: 0 0 5px var(--highlight-color); }
         .calendar-container .calendar-day .gregorian-day { font-size: clamp(1.1rem, 1.8vw, 1.4rem); color: var(--calendar-day-color); }
         .calendar-container .calendar-day .lunar-day { font-size: clamp(0.75rem, 1.1vw, 0.9rem); color: var(--calendar-lunar-color); }
         .calendar-container .calendar-day .event-indicator { font-size: clamp(0.7rem, 1vw, 0.8rem); padding: 2px 4px; }
-        .calendar-container .calendar-weekdays { top: 70px; background-color: transparent;}
+        .calendar-container .calendar-weekdays { top: 30px; background-color: transparent; font-weight: bold;}
 
 
         /* --- 週曆 (Weekly Calendar) --- */
@@ -318,7 +542,8 @@
         .yearly-indicators .jieqi { background-color: #28a745; }
 
         /* --- 詳細資訊 (Details Modals) --- */
-        .details-content { max-width: 800px; text-align: left;}
+        /* [修改] 移除 max-width 限制，讓彈窗能全螢幕寬 */
+        .details-content { text-align: left;}
         .details-content p { margin-bottom: 10px; font-size: 1.2em; line-height: 1.6; }
         .details-content strong { color: #FFD700; }
         .details-content .yi-ji-grid { display: grid; grid-template-columns: 40px 1fr; gap: 5px 10px; text-align: left;}
@@ -327,7 +552,6 @@
         .details-content .countdown-section { border-top: 1px solid #555; margin-top: 15px; padding-top: 15px; font-size: 1em; }
 
         /* --- 天氣 (Weather) --- */
-        #weatherForecastModal .modal-content, #hourlyWeatherModal .modal-content { max-width: 1000px; }
         .weather-forecast-grid, .hourly-weather-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 10px; width: 100%; text-align: center; }
         .hourly-weather-grid { grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); }
         .forecast-day, .hourly-item { background-color: #444; padding: 10px; border-radius: 8px; border: 1px solid #555; }
@@ -344,7 +568,6 @@
         .weather-svg-icon { display: inline-block; vertical-align: middle; transform: translateY(-10%); }
 
         /* --- 月相 (Moon Phase) --- */
-        #moonPhaseModal .modal-content { max-width: 500px; }
         #moonPhaseModalContent { flex-direction: column; align-items: center; gap: 0px; text-align: center; }
         #moonPhaseDisplay {
             display: flex;
@@ -353,7 +576,7 @@
             gap: 15px;
             width: 100%;
             position: sticky;
-            top: 50px;
+            top: 0;
             background-color: #333;
             z-index: 10;
             padding-bottom: 10px;
@@ -381,7 +604,6 @@
         #moonCalendarGrid .lunar-day { font-size: 0.75em; }
 
         /* --- 生肖 (Zodiac) --- */
-        #zodiacModal .modal-content { max-width: 800px; }
         .zodiac-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 15px; width: 100%; text-align: center; }
         .zodiac-item { background-color: #444; padding: 10px; border-radius: 8px; border: 1px solid #555; }
         .zodiac-item .zodiac-icon { height: 4em; margin-bottom: 5px; }
@@ -429,7 +651,7 @@
         .tick-minute { height: 6px; width: 1px; top: 0; opacity: 0.7; }
         .number { position: absolute; top: 25px; left: 50%; transform: translateX(-50%); color: var(--number-color); font-family: 'Noto Sans TC', sans-serif; font-size: clamp(0.8rem, 2.2vw, 1.4rem); font-weight: 700; }
         .number div { transform: rotate(calc(-1 * var(--rotation))); }
-       
+
         /* --- 效果 (Effects) --- */
         #background-scanline-overlay, #text-scanline-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; background-color: transparent; display: none; }
         #background-scanline-overlay { z-index: -1; }
@@ -439,7 +661,65 @@
         #text-scanline-overlay.active.pattern-a { display: block; background-image: repeating-linear-gradient(to bottom, transparent, transparent 2px, var(--page-background-color) 2px, var(--page-background-color) 4px); }
         #text-scanline-overlay.active.pattern-b { display: block; background-image: repeating-linear-gradient(to bottom, var(--page-background-color) 0, var(--page-background-color) 2px, transparent 2px, transparent 4px); }
 
+        /* --- 提示訊息樣式 --- */
+        .notification-popup {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 255, 127, 0.85);
+            color: #111;
+            padding: 12px 25px;
+            border-radius: 8px;
+            z-index: 1000;
+            font-size: 1.1em;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: opacity 0.4s ease, top 0.4s ease;
+            pointer-events: none;
+        }
+        .notification-popup.show {
+            opacity: 1;
+            top: 50px;
+        }
+
         /* --- 編輯模式 (Edit Mode) --- */
+        /* --- 編輯模式存檔控制列樣式 --- */
+        #edit-mode-controls {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(30, 30, 30, 0.8);
+            padding: 10px;
+            border-radius: 10px 10px 0 0;
+            z-index: 210; /* 比控制圖示高 */
+            display: none; /* 預設隱藏 */
+            gap: 10px;
+            align-items: center;
+            border: 1px solid #555;
+            border-bottom: none;
+        }
+        body.edit-mode #edit-mode-controls {
+            display: flex; /* 編輯模式下顯示 */
+        }
+        #edit-mode-controls select,
+        #edit-mode-controls button {
+            background-color: #555;
+            color: white;
+            border: 1px solid #888;
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 1em;
+            cursor: pointer;
+            font-family: 'Noto Sans TC', sans-serif;
+            transition: background-color 0.3s;
+        }
+        #edit-mode-controls button:hover {
+            background-color: #777;
+        }
+
         .edit-controls-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 2px dashed rgba(0, 255, 255, 0.5); display: none; pointer-events: none; z-index: 99; }
         body.edit-mode .edit-controls-wrapper { display: block; }
         .move-handle { position: absolute; background-color: rgba(0, 255, 255, 0.8); border: 1px solid #fff; border-radius: 50%; pointer-events: auto; z-index: 100; box-shadow: 0 0 10px rgba(0, 255, 255, 0.7); width: 40px; height: 40px; top: 50%; left: 50%; cursor: move; }
@@ -458,7 +738,6 @@
     </style>
 </head>
 <body>
-    <!-- 主畫面元件 -->
     <div id="edit-mode-grid"></div>
     <div id="background-scanline-overlay"></div>
     <div id="text-scanline-overlay"></div>
@@ -516,7 +795,6 @@
         </div>
     </div>
 
-    <!-- 彈出視窗 (Modals) -->
     <div class="modal" id="settingsModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -669,7 +947,18 @@
         </div>
     </div>
 
-    <!-- 控制圖示 -->
+    <div id="edit-mode-controls">
+        <label for="layoutSlotSelect" style="color: #ccc; font-size: 0.9em;">版面槽:</label>
+        <select id="layoutSlotSelect">
+            <!-- 選項由 JavaScript 動態生成 -->
+        </select>
+        <button id="saveLayoutBtn">儲存</button>
+        <button id="loadLayoutBtn">讀取</button>
+        <button id="exportLayoutsBtn">匯出</button>
+        <button id="importLayoutsBtn">匯入</button>
+        <input type="file" id="importLayoutsInput" accept=".json" style="display: none;">
+    </div>
+
     <div id="edit-mode-icon" class="control-icon" title="編輯模式">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <g class="wrench-icon"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></g>
@@ -677,7 +966,7 @@
         </svg>
     </div>
     <div id="settings-icon" class="control-icon" title="設定">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61-.25-1.17-.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61.22l2-3.46c.12-.22.07.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61-.25-1.17-.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
     </div>
     <div id="fullscreen-icon" class="control-icon" title="全螢幕">
         <svg class="enter-fullscreen-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"></path></svg>
@@ -738,11 +1027,186 @@
         function hexToRgba(hex, alpha = 1) { if (!hex || !hex.startsWith('#')) return `rgba(255, 255, 255, ${alpha})`; const bigint = parseInt(hex.slice(1), 16); const r = (bigint >> 16) & 255, g = (bigint >> 8) & 255, b = bigint & 255; return `rgba(${r}, ${g}, ${b}, ${alpha})`; }
         function s2t(input) { if (typeof input !== 'string' && !Array.isArray(input)) return input; const map = {'见':'見','贵':'貴','无':'無','开':'開','纳':'納','财':'財','挂':'掛','梁':'樑','动':'動','种':'種','启':'啟','钻':'鑽','订':'訂','竖':'豎','门':'門','词':'詞','讼':'訟','发':'髮','养':'養','马':'馬','经':'經','络':'絡','盖':'蓋','会':'會','学':'學','艺':'藝','医':'醫','装':'裝','结':'結','网':'網','渔':'漁','猎':'獵','亲':'親','进':'進','扫':'掃','绘':'繪','齐':'齊','斋':'齋','庙':'廟','灶':'竈','谢':'謝','问':'問','婿':'壻','归':'歸','宁':'寧','坟':'墳','寿':'壽','坏':'壞','补':'補','厕':'廁','仓':'倉','涂':'塗','桥':'橋','筑':'築','饰':'飾','墙':'牆','买':'買','车':'車','产':'產','雇':'僱','佣':'傭','货':'貨','机':'機','械':'械','酝':'醞','酿':'釀','铸':'鑄','针':'針','库':'庫','疗':'療','诸':'諸','馀':'餘','丧':'喪','断':'斷','蚁':'蟻','户':'戶','炉':'爐','栖':'棲','厨':'廚','胜':'勝','负':'負','灭':'滅','龙':'龍','鸡':'雞','猪':'豬','乌':'烏','双':'雙','宫':'宮','惊':'驚','蛰':'蟄','满':'滿','处':'處','时':'時','气':'氣','后':'後','灾':'災','复':'復','虚':'虛','贼':'賊','败':'敗','仪':'儀','祸':'禍','临':'臨','阴':'陰','阳':'陽','圣':'聖','冲':'沖','绝':'絕','岁':'歲','伤':'傷','杀':'殺','黄':'黃','节':'節','树':'樹','国':'國','万':'萬','长':'長','华':'華','为':'為','电':'電','声':'聲','冻':'凍','虫':'蟲','鱼':'魚','鹰':'鷹','来':'來','润':'潤','凉':'涼','麦':'麥','温':'溫','收':'收','闭':'閉','闰':'閏','谷':'穀','殓':'殮'}; const convert = (str) => str.split('').map(char => map[char] || char).join(''); return Array.isArray(input) ? input.map(convert) : convert(input); }
         function getWeekNumber(d) { d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7)); const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1)); const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7); return [d.getUTCFullYear(), weekNo]; }
+        
+        function showNotification(message, duration = 2000) {
+            let notification = qs('.notification-popup');
+            if (!notification) {
+                notification = document.createElement('div');
+                notification.className = 'notification-popup';
+                document.body.appendChild(notification);
+            }
+            notification.textContent = message;
+            notification.classList.remove('show'); // 確保動畫可以重新觸發
+            // 使用 requestAnimationFrame 來確保 class 的新增能夠觸發 transition
+            requestAnimationFrame(() => {
+                notification.classList.add('show');
+            });
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, duration);
+        }
 
         // --- 狀態儲存與載入 (State Management) ---
         // 說明: 負責將使用者的設定和元件位置儲存到瀏覽器的 localStorage，並在下次開啟時載入。
         function saveState() { try { localStorage.setItem('mergedClockSettings_v4', JSON.stringify(settings)); localStorage.setItem('mergedClockTransforms_v4', JSON.stringify(transformState)); } catch (e) { console.error("儲存狀態失敗:", e); } }
         function loadState() { try { const storedSettings = localStorage.getItem('mergedClockSettings_v4'); settings = storedSettings ? { ...defaultSettings, ...JSON.parse(storedSettings) } : { ...defaultSettings }; const storedTransforms = localStorage.getItem('mergedClockTransforms_v4'); transformState = storedTransforms ? { ...defaultTransformState, ...JSON.parse(storedTransforms) } : { ...defaultTransformState }; } catch (e) { console.error("解析狀態失敗:", e); settings = { ...defaultSettings }; transformState = { ...defaultTransformState }; } settings.editMode = false; }
+
+        // --- 版面配置存取 (Layout Slot Management) ---
+        // 說明: 負責處理多組版面配置的儲存、讀取、匯出與匯入功能。
+        function saveLayoutToSlot(slot) {
+            if (!slot || slot < 1 || slot > 10) return;
+
+            // 1. 產生預設的日期時間字串
+            const now = new Date();
+            const year = now.getFullYear().toString().slice(-2);
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const day = now.getDate().toString().padStart(2, '0');
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const defaultRemark = `${year}${month}${day}${hours}${minutes}`;
+
+            // 2. 跳出輸入框，詢問使用者備註
+            let remark = prompt("請輸入版面備註：", "");
+
+            // 3. 檢查使用者是否按下「取消」
+            //    - 如果 remark 是 null，代表使用者按了取消，直接中斷函式
+            if (remark === null) {
+                return; // 中止儲存操作
+            }
+
+            // 4. 如果使用者沒有按取消，但輸入是空的，就使用預設字串
+            if (remark.trim() === "") {
+                remark = defaultRemark;
+            }
+
+            try {
+                // 5. 準備要儲存的資料物件
+                const layoutData = { 
+                    transforms: transformState, 
+                    settings: settings,
+                    timestamp: now.toISOString(), // 仍然儲存ISO格式的時間，供未來使用
+                    remark: remark // 將使用者的備註或預設字串存入 remark 欄位
+                };
+                // 6. 存入 localStorage
+                localStorage.setItem(`mergedClockLayout_v5_slot_${slot}`, JSON.stringify(layoutData));
+                
+                // 7. 更新下拉選單的顯示文字
+                const optionToUpdate = qs(`#layoutSlotSelect option[value="${slot}"]`);
+                if (optionToUpdate) {
+                    const baseText = `版面 ${slot}`;
+                    // 直接顯示我們剛剛決定好的 remark
+                    optionToUpdate.textContent = `${baseText} (${remark})`;
+                }
+
+                showNotification(`版面 ${slot} 已儲存！`);
+            } catch (e) {
+                console.error(`儲存版面 ${slot} 失敗:`, e);
+                showNotification(`儲存版面 ${slot} 失敗。`, 3000);
+            }
+        }
+        function loadLayoutFromSlot(slot) {
+            if (!slot || slot < 1 || slot > 10) return;
+            try {
+                const storedLayoutData = localStorage.getItem(`mergedClockLayout_v5_slot_${slot}`);
+                if (storedLayoutData) {
+                    const layoutData = JSON.parse(storedLayoutData);
+                    settings = { ...defaultSettings, ...layoutData.settings };
+                    transformState = { ...defaultTransformState, ...layoutData.transforms };
+                    updateSettingsModalUI();
+                    applyAllSettings();
+                    applyTransforms();
+                    updateWidgetVisibility();
+                    updateSettingDependencies();
+                    showNotification(`已讀取版面 ${slot}。`);
+                } else {
+                    const oldStoredTransforms = localStorage.getItem(`mergedClockTransforms_v4_slot_${slot}`);
+                    if (oldStoredTransforms) {
+                         transformState = { ...defaultTransformState, ...JSON.parse(oldStoredTransforms) };
+                         applyTransforms();
+                         updateWidgetVisibility();
+                         showNotification(`已讀取舊版版面 ${slot} (僅位置)。`, 2500);
+                    } else {
+                        showNotification(`版面 ${slot} 沒有儲存的資料。`, 2500);
+                    }
+                }
+            } catch (e) {
+                console.error(`讀取版面 ${slot} 失敗:`, e);
+                showNotification(`讀取版面 ${slot} 失敗。`, 3000);
+            }
+        }
+        function exportLayoutsToFile() {
+            const layoutsToExport = {};
+            let hasData = false;
+            for (let i = 1; i <= 10; i++) {
+                const layoutData = localStorage.getItem(`mergedClockLayout_v5_slot_${i}`);
+                if (layoutData) {
+                    layoutsToExport[i] = JSON.parse(layoutData);
+                    hasData = true;
+                }
+            }
+
+            if (!hasData) {
+                showNotification("沒有可匯出的版面資料。", 2500);
+                return;
+            }
+
+            const jsonString = JSON.stringify(layoutsToExport, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            
+            const now = new Date();
+            const timestamp = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+            a.download = `time_layouts_${timestamp}.json`;
+            
+            document.body.appendChild(a);
+            a.click();
+            
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            showNotification("所有版面已匯出成檔案。", 2000);
+        }
+        function importLayoutsFromFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const importedLayouts = JSON.parse(e.target.result);
+                    let importedCount = 0;
+                    for (const slot in importedLayouts) {
+                        const slotNum = parseInt(slot, 10);
+                        if (!isNaN(slotNum) && slotNum >= 1 && slotNum <= 10) {
+                            const layoutData = importedLayouts[slot];
+                            if (layoutData && layoutData.transforms && layoutData.settings) {
+                                localStorage.setItem(`mergedClockLayout_v5_slot_${slotNum}`, JSON.stringify(layoutData));
+                                importedCount++;
+                            }
+                        }
+                    }
+                    if (importedCount > 0) {
+                        populateLayoutSlots(); // 重新整理下拉選單以顯示新的時間戳記
+                        showNotification(`成功匯入 ${importedCount} 個版面配置！`, 2500);
+                    } else {
+                        showNotification("檔案中未找到有效的版面資料。", 3000);
+                    }
+                } catch (error) {
+                    console.error("匯入版面失敗:", error);
+                    showNotification("讀取檔案失敗，請確認檔案格式是否正確。", 3000);
+                } finally {
+                    event.target.value = null;
+                }
+            };
+            reader.onerror = () => {
+                showNotification("讀取檔案時發生錯誤。", 3000);
+                event.target.value = null;
+            };
+            reader.readAsText(file);
+        }
 
         // --- 設定與UI更新 (Settings & UI Updates) ---
         // 說明: 處理設定面板的邏輯，以及將設定應用到畫面上。
@@ -849,7 +1313,24 @@
             const contentSpan = inner.querySelector(`.${classes.content}`), duplicateSpan = inner.querySelector(`.${classes.duplicate}`);
             if (!contentSpan || !duplicateSpan) return;
             contentSpan.innerHTML = text;
-            requestAnimationFrame(() => { const contentW = contentSpan.scrollWidth, containerW = container.offsetWidth; if (contentW > containerW) { duplicateSpan.innerHTML = text; container.classList.add('scrolling'); setStyle(inner, { animationDuration: `${contentW / 40}s` }); } else { duplicateSpan.innerHTML = ''; container.classList.remove('scrolling'); } });
+
+            requestAnimationFrame(() => {
+                const contentW = contentSpan.scrollWidth, containerW = container.offsetWidth;
+                if (contentW > containerW) {
+                    duplicateSpan.innerHTML = text;
+                    container.classList.add('scrolling');
+                    const computedStyle = window.getComputedStyle(container);
+                    const fontSize = parseFloat(computedStyle.fontSize); // 取得計算後的字體像素大小
+                    const speedFactor = 0.8; // 速度因子，可調整。數值越大滾動越快。這裡設定為每秒滾動約 0.8 個字高的距離。
+                    const speed = fontSize * speedFactor; // 根據字體大小計算實際速度 (像素/秒)
+                    const duration = contentW / speed; // 根據內容總寬度和新速度計算動畫總時間
+
+                    setStyle(inner, { animationDuration: `${duration}s` });
+                } else {
+                    duplicateSpan.innerHTML = '';
+                    container.classList.remove('scrolling');
+                }
+            });
         }
         function initializeAnalogClock() {
             const container = qs('#ticks-container'); container.innerHTML = '';
@@ -1021,7 +1502,16 @@
         function showHourlyWeather(dayIndex) { if (!state.weatherDataCache?.hourly) return; const grid = qs('#hourlyWeatherGrid'), title = qs('#hourlyWeatherModalTitle'); grid.innerHTML = ''; const date = new Date(state.weatherDataCache.daily.time[dayIndex]); const max = Math.round(state.weatherDataCache.daily.temperature_2m_max[dayIndex]), min = Math.round(state.weatherDataCache.daily.temperature_2m_min[dayIndex]); title.innerHTML = `${date.getMonth() + 1}月${date.getDate()}日 預報 <span style="font-size: 0.7em; color: #ccc;">(高 <span class="temp-high">${max}°</span> / 低 <span class="temp-low">${min}°</span>)</span>`; const now = new Date(); const start = dayIndex * 24, end = start + 24; for (let i = start; i < end; i += 3) { const hourDate = new Date(state.weatherDataCache.hourly.time[i]); const { desc } = getWeatherDescriptionAndEmoji(state.weatherDataCache.hourly.weather_code[i]); const hourCell = document.createElement('div'); hourCell.className = 'hourly-item'; if (dayIndex === 0) { const currentHour = now.getHours(), blockStartHour = hourDate.getHours(); if (currentHour >= blockStartHour && currentHour < blockStartHour + 3) hourCell.classList.add('is-now'); } hourCell.innerHTML = `<p class="hour-time">${hourDate.getHours().toString().padStart(2, '0')}:00</p><div class="weather-icon">${getWeatherSVGIcon(state.weatherDataCache.hourly.weather_code[i], '2em')}</div><p>${desc}</p><p>${Math.round(state.weatherDataCache.hourly.temperature_2m[i])}°C</p>`; grid.appendChild(hourCell); } qs('#weatherForecastModal').classList.remove('is-active'); qs('#hourlyWeatherModal').classList.add('is-active'); }
         function showZodiacDetails() { if (settings.editMode) return; const grid = qs('#zodiacGrid'); grid.innerHTML = ''; ['鼠', '牛', '虎', '兔', '龍', '蛇', '馬', '羊', '猴', '雞', '狗', '豬'].forEach(name => { const item = document.createElement('div'); item.className = 'zodiac-item'; item.innerHTML = `<div class="zodiac-icon">${getShengXiaoSVG(name, '100%')}</div><p>${name}</p>`; grid.appendChild(item); }); qs('#zodiacModal').classList.add('is-active'); }
         function showMoonPhaseDetails(date) { if (settings.editMode) return; const d = new Date(date); d.setHours(12, 0, 0, 0); state.moonCalendarDate = d; updateMainMoonPhaseDisplay(d); generateMoonPhaseCalendar(d.getFullYear(), d.getMonth(), d); qs('#moonPhaseModal').classList.add('is-active'); }
-        function updateMainMoonPhaseDisplay(date) { const lunar = Solar.fromDate(date).getLunar(), day = lunar.getDay(), details = getMoonPhaseDetails(day); const title = details.aka ? `${details.name} (${details.aka})` : details.name; qs('#moonPhaseModalTitle').textContent = `${date.getFullYear()}`; qs('#mainMoonIcon').innerHTML = getMoonPhaseSVG(day, '100px'); qs('#mainMoonDescription').textContent = `${title} - ${details.desc}`; qsa('#moonCalendarGrid .calendar-day').forEach(d => d.classList.remove('is-selected')); const selectedDayEl = qs(`#moonCalendarGrid .calendar-day[data-date-string='${date.toDateString()}']`); if (selectedDayEl) selectedDayEl.classList.add('is-selected'); }
+        function updateMainMoonPhaseDisplay(date) {
+            const lunar = Solar.fromDate(date).getLunar(), day = lunar.getDay(), details = getMoonPhaseDetails(day);
+            const title = details.aka ? `${details.name} (${details.aka})` : details.name;
+            qs('#moonPhaseModalTitle').textContent = `${date.getFullYear()}`;
+            qs('#mainMoonIcon').innerHTML = getMoonPhaseSVG(day, '15vmin');
+            qs('#mainMoonDescription').textContent = `${title} - ${details.desc}`;
+            qsa('#moonCalendarGrid .calendar-day').forEach(d => d.classList.remove('is-selected'));
+            const selectedDayEl = qs(`#moonCalendarGrid .calendar-day[data-date-string='${date.toDateString()}']`);
+            if (selectedDayEl) selectedDayEl.classList.add('is-selected');
+        }
         function generateMoonPhaseCalendar(year, month, selectedDate) { const grid = qs('#moonCalendarGrid'), weekdaysEl = qs('#moonCalendarWeekdays'); grid.innerHTML = ''; weekdaysEl.innerHTML = ''; ['日', '一', '二', '三', '四', '五', '六'].forEach(day => { const el = document.createElement('div'); el.textContent = day; weekdaysEl.appendChild(el); }); addCalendarBgMonth(qs('#moonPhaseModal .moon-calendar-container'), month + 1); const startDate = new Date(year, month, 1 - new Date(year, month, 1).getDay()), today = new Date(); for (let i = 0; i < 42; i++) { const date = new Date(startDate); date.setDate(startDate.getDate() + i); date.setHours(12, 0, 0, 0); const cell = document.createElement('div'); cell.className = 'calendar-day'; if (date.getMonth() !== month) cell.classList.add('other-month'); cell.dataset.dateString = date.toDateString(); cell.onclick = () => { state.moonCalendarDate = new Date(date); updateMainMoonPhaseDisplay(state.moonCalendarDate); }; const lunar = Solar.fromDate(date).getLunar(); const lunarText = lunar.getDay() === 1 ? s2t(lunar.getMonthInChinese()) + '月' : s2t(lunar.getDayInChinese()); cell.innerHTML = `<div class="gregorian-day">${date.getDate()}</div><div class="moon-phase-icon-small">${getMoonPhaseSVG(lunar.getDay(), '24px')}</div><div class="lunar-day">${lunarText}</div>`; if (today.toDateString() === date.toDateString()) cell.classList.add('is-today'); if (selectedDate.toDateString() === date.toDateString()) cell.classList.add('is-selected'); grid.appendChild(cell); } }
 
         // --- 動態效果與編輯模式 (Dynamic Effects & Edit Mode) ---
@@ -1102,6 +1592,82 @@
             const dragMove = (e) => { if (!state.isDragging || !state.dragTarget) return; e.preventDefault(); const T = transformState[state.dragTarget]; const el = qs(`#${state.dragTarget}-widget`); if (!el || !T) return; const event = e.touches ? e.touches[0] : e; const dx = event.clientX - state.startX; requestAnimationFrame(() => { if (!state.isDragging) return; if (state.dragType === 'move') { const handleSize = 40, margin = 10; const minX = -window.innerWidth / 2 + handleSize / 2 + margin, maxX = window.innerWidth / 2 - handleSize / 2 - margin; const minY = -window.innerHeight / 2 + handleSize / 2 + margin, maxY = window.innerHeight / 2 - handleSize / 2 + margin; T.x = Math.max(minX, Math.min(maxX, state.initialX + dx)); T.y = Math.max(minY, Math.min(maxY, state.initialY + (event.clientY - state.startY))); } else if (state.dragType === 'scale') { const rect = el.getBoundingClientRect(); const centerX = rect.left + rect.width / 2; const centerY = rect.top + rect.height / 2; const currentDist = Math.hypot(event.clientX - centerX, event.clientY - centerY); if (state.initialDist > 0) T.scale = Math.max(0.2, state.initialScale * (currentDist / state.initialDist)); } else if (state.dragType === 'resize-x') T.width = Math.max(20, state.initialWidth + (dx / window.innerWidth) * 100); applyTransforms(); }); };
             const dragEnd = () => { if (!state.isDragging) return; state.isDragging = false; state.dragTarget = null; state.dragType = null; document.body.style.cursor = 'default'; if (constrainPositions()) applyTransforms(); saveState(); window.removeEventListener('mousemove', dragMove); window.removeEventListener('touchmove', dragMove); window.removeEventListener('mouseup', dragEnd); window.removeEventListener('touchend', dragEnd); };
             document.addEventListener('mousedown', dragStart); document.addEventListener('touchstart', dragStart, { passive: false });
+            // --- [2024-09-03 新增] 編輯模式版面存讀檔事件 ---
+            qs('#saveLayoutBtn').addEventListener('click', () => {
+                // 取得目前下拉選單選擇的版面槽位
+                const selectedSlot = qs('#layoutSlotSelect').value;
+                // 呼叫儲存函式，並傳入選擇的槽位
+                saveLayoutToSlot(selectedSlot);
+            });
+
+            qs('#loadLayoutBtn').addEventListener('click', () => {
+                // 取得目前下拉選單選擇的版面槽位
+                const selectedSlot = qs('#layoutSlotSelect').value;
+                // 呼叫讀取函式，並傳入選擇的槽位
+                loadLayoutFromSlot(selectedSlot);
+            });
+            // --- [2025-09-03 新增] 匯出與匯入事件監聽 ---
+            // 監聽「匯出」按鈕的點擊事件
+            qs('#exportLayoutsBtn').addEventListener('click', exportLayoutsToFile);
+
+            // 監聽「匯入」按鈕的點擊事件
+            qs('#importLayoutsBtn').addEventListener('click', () => {
+                // 當「匯入」按鈕被點擊時，去觸發隱藏的檔案選擇輸入框
+                qs('#importLayoutsInput').click(); 
+            });
+
+            // 監聽隱藏的檔案選擇輸入框的變動事件 (也就是當使用者選擇了檔案後)
+            qs('#importLayoutsInput').addEventListener('change', importLayoutsFromFile);
+        }
+
+        // --- [2024-09-03 新增] 填充版面儲存槽下拉選單 ---
+        // 說明: 這個函式負責在「編輯模式」的控制列中，產生版面儲存槽的下拉選項。
+        function populateLayoutSlots() {
+            const select = qs('#layoutSlotSelect');
+            if (!select) return;
+            
+            select.innerHTML = '';
+
+            for (let i = 1; i <= 10; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                
+                let optionText = `版面 ${i}`; 
+                let displayText = ''; // 用來存放最終要顯示的文字
+
+                const storedLayoutData = localStorage.getItem(`mergedClockLayout_v5_slot_${i}`);
+                if (storedLayoutData) {
+                    try {
+                        const layoutData = JSON.parse(storedLayoutData);
+                        
+                        // 1. 優先讀取 remark 欄位
+                        if (layoutData.remark) {
+                            displayText = layoutData.remark;
+                        } 
+                        // 2. 如果沒有 remark，才去讀取舊的 timestamp
+                        else if (layoutData.timestamp) {
+                            const savedDate = new Date(layoutData.timestamp);
+                            const year = savedDate.getFullYear().toString().slice(-2);
+                            const month = (savedDate.getMonth() + 1).toString().padStart(2, '0');
+                            const day = savedDate.getDate().toString().padStart(2, '0');
+                            const hours = savedDate.getHours().toString().padStart(2, '0');
+                            const minutes = savedDate.getMinutes().toString().padStart(2, '0');
+                            displayText = `${year}${month}${day}${hours}${minutes}`;
+                        }
+                    } catch (e) {
+                        console.error(`解析版面 ${i} 的資料失敗:`, e);
+                    }
+                }
+
+                // 3. 組合最終的選項文字
+                if (displayText) {
+                    option.textContent = `${optionText} (${displayText})`;
+                } else {
+                    option.textContent = optionText; // 如果沒有任何資料，就只顯示 "版面 i"
+                }
+                
+                select.appendChild(option);
+            }
         }
 
         // --- 初始化 ---
@@ -1113,6 +1679,9 @@
             const countySelect = qs('#countySelect');
             for (const county in taiwanLocations) { const opt = document.createElement('option'); opt.value = county; opt.textContent = county; countySelect.appendChild(opt); }
             
+            // --- [2024-09-03 修改] 在此呼叫新函式來填充版面儲存槽 ---
+            populateLayoutSlots();
+
             initializeLedClock();
             
             loadState();
